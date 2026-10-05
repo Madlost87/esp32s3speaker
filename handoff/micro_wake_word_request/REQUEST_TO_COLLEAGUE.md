@@ -57,4 +57,4 @@ Puoi cambiare `probability_cutoff`, `sliding_window_size` e `tensor_arena_size` 
 - Deve essere compatibile con ESPHome microWakeWord v2.
 - Se possibile, includi anche una soglia iniziale consigliata e note su falsi positivi/falsi negativi.
 - Nel pacchetto trovi `example_model/hey_jarvis.json` e `example_model/hey_jarvis.tflite` come esempio di formato gia' accettato dal firmware.
-
+- Le versioni precise del firmware target e dei componenti TFLite/Micro Speech sono in `SOFTWARE_VERSIONS.md`.
