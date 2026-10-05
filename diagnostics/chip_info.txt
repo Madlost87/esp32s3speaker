@@ -1,0 +1,18 @@
+esptool:
+v5.3.1
+
+Chip identification:
+Chip type: ESP32-S3
+Package: QFN56
+Revision: v0.2
+Features: Wi-Fi, BT 5 LE, Dual Core + LP Core, 240MHz, Embedded PSRAM 8MB (AP_3v3)
+Crystal: 40MHz
+USB mode: USB-Serial/JTAG
+MAC: 28:84:85:b2:b8:18
+
+Flash identification:
+Detected flash size: 16MB
+Manufacturer: 20
+Device: 4018
+Flash type in eFuse: quad (4 data lines)
+Flash voltage in eFuse: 3.3V

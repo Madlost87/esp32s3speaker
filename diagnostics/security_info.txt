@@ -1,0 +1,9 @@
+Security information:
+Flags: 0x00000000
+Chip ID: 9
+Secure Boot: Disabled
+Flash Encryption: Disabled
+SPI_BOOT_CRYPT_CNT: 0x0
+
+Key block summary:
+All relevant key blocks reported empty or unused during read-only esptool security inspection.

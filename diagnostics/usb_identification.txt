@@ -1,0 +1,35 @@
+Host OS:
+Linux pc-denny 6.18.46-1-lts x86_64 GNU/Linux
+
+USB device:
+Bus 003 Device 012: ID 303a:1001 Espressif USB JTAG/serial debug unit
+
+USB tree:
+Bus 003 Port 009 Dev 012
+  If 0, Class=Communications, Driver=cdc_acm
+  If 1, Class=CDC Data, Driver=cdc_acm
+  If 2, Class=Vendor Specific Class, Driver=none
+
+Serial port:
+/dev/ttyACM0
+
+udevadm summary:
+KERNEL=="ttyACM0"
+DRIVERS=="cdc_acm"
+idVendor=="303a"
+idProduct=="1001"
+manufacturer=="Espressif"
+product=="USB JTAG/serial debug unit"
+serial=="28:84:85:B2:B8:18"
+bDeviceClass=="ef"
+bDeviceSubClass=="02"
+bDeviceProtocol=="01"
+bNumInterfaces==" 3"
+
+Kernel log summary:
+usb 3-9: new full-speed USB device number 12 using xhci_hcd
+usb 3-9: New USB device found, idVendor=303a, idProduct=1001, bcdDevice=1.01
+usb 3-9: Product: USB JTAG/serial debug unit
+usb 3-9: Manufacturer: Espressif
+usb 3-9: SerialNumber: 28:84:85:B2:B8:18
+cdc_acm 3-9:1.0: ttyACM0: USB ACM device

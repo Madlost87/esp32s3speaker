@@ -1,0 +1,606 @@
+model
+wifi
+Xiaozhi-B819
+Xiaozhi-B819
+cal_version
+wn9_nihaoxiaozhi_tts
+_MODEL_INFO_
+wakenet9l_tts1h8_
+xiaozhi
+I (%lu) %s: App version:      %s
+I (%lu) %s: ESP-IDF:          %s
+ESP_ERR_INVALID_VERSION
+ESP_ERR_NVS_NEW_VERSION_FOUND
+ESP_ERR_WIFI_BASE
+ESP_ERR_WIFI_NOT_INIT
+ESP_ERR_WIFI_NOT_STARTED
+ESP_ERR_WIFI_NOT_STOPPED
+ESP_ERR_WIFI_IF
+ESP_ERR_WIFI_MODE
+ESP_ERR_WIFI_STATE
+ESP_ERR_WIFI_CONN
+ESP_ERR_WIFI_NVS
+ESP_ERR_WIFI_MAC
+ESP_ERR_WIFI_SSID
+ESP_ERR_WIFI_PASSWORD
+ESP_ERR_WIFI_TIMEOUT
+ESP_ERR_WIFI_WAKE_FAIL
+ESP_ERR_WIFI_WOULD_BLOCK
+ESP_ERR_WIFI_NOT_CONNECT
+ESP_ERR_WIFI_POST
+ESP_ERR_WIFI_INIT_STATE
+ESP_ERR_WIFI_STOP_STATE
+ESP_ERR_WIFI_NOT_ASSOC
+ESP_ERR_WIFI_TX_DISALLOW
+ESP_ERR_WIFI_TWT_FULL
+ESP_ERR_WIFI_TWT_SETUP_TIMEOUT
+ESP_ERR_WIFI_TWT_SETUP_TXFAIL
+ESP_ERR_WIFI_TWT_SETUP_REJECT
+ESP_ERR_WIFI_DISCARD
+ESP_ERR_WIFI_ROC_IN_PROGRESS
+ESP_ERR_WIFI_REGISTRAR
+ESP_ERR_WIFI_WPS_TYPE
+ESP_ERR_WIFI_WPS_SM
+ESP_ERR_MESH_WIFI_NOT_START
+audio
+i2s_channel_enable(tx_handle_)
+virtual void AudioCodec::Start()
+./main/audio/audio_codec.cc
+i2s_channel_enable(rx_handle_)
+I (%lu) %s: Audio codec started
+audio_input
+audio_output
+opus_codec
+AudioService
+E (%lu) %s: Failed to initialize wake word
+audio_power_timer
+I (%lu) %s: Resampling audio from %d to %d
+W (%lu) %s: Audio output task stopped
+E (%lu) %s: Failed to decode audio
+E (%lu) %s: Failed to encode audio
+W (%lu) %s: Opus codec task stopped
+OpusHead
+I (%lu) %s: OpusHead: version=%d, channels=%d, sample_rate=%d
+OpusTags
+I (%lu) %s: %s audio testing
+W (%lu) %s: Audio testing queue is full, stopping audio testing
+W (%lu) %s: Audio input task stopped
+virtual int BoxAudioCodec::Write(const int16_t*, int)
+virtual int BoxAudioCodec::Read(int16_t*, int)
+virtual BoxAudioCodec::~BoxAudioCodec()
+void BoxAudioCodec::CreateDuplexChannels(gpio_num_t, gpio_num_t, gpio_num_t, gpio_num_t, gpio_num_t)
+/./main/audio/codecs/box_audio_codec.cc
+i2s_new_channel(&chan_cfg, &tx_handle_, &rx_handle_)
+i2s_channel_init_std_mode(tx_handle_, &std_cfg)
+i2s_channel_init_tdm_mode(rx_handle_, &tdm_cfg)
+BoxAudioCodec
+BoxAudioCodec::BoxAudioCodec(void*, int, int, gpio_num_t, gpio_num_t, gpio_num_t, gpio_num_t, gpio_num_t, gpio_num_t, uint8_t, uint8_t, bool)
+I (%lu) %s: BoxAudioDevice initialized
+virtual void BoxAudioCodec::SetOutputVolume(int)
+virtual void BoxAudioCodec::EnableInput(bool)
+esp_codec_dev_set_in_channel_gain(input_dev_, ESP_CODEC_DEV_MAKE_CHANNEL_MASK(0), AUDIO_CODEC_DEFAULT_MIC_GAIN)
+virtual void BoxAudioCodec::EnableOutput(bool)
+I (%lu) %s: Initialize LVGL library
+I (%lu) %s: Initialize LVGL port
+,"reason":"wake_word_detected"
+opus
+audio_params
+E (%lu) %s: Failed to encrypt audio data
+E (%lu) %s: Invalid audio packet size: %u
+E (%lu) %s: Invalid audio packet type: %x
+W (%lu) %s: Received audio packet with old sequence: %lu, expected: %lu
+W (%lu) %s: Received audio packet with wrong sequence: %lu, expected: %lu
+E (%lu) %s: Failed to decrypt audio data, ret: %d
+Protocol-Version
+I (%lu) %s: Connecting to websocket server: %s with version: %d
+E (%lu) %s: Invalid JSONRPC version: %s
+{"protocolVersion":"2024-11-05","capabilities":{"tools":{}},"serverInfo":{"name":"waveshare-s3-audio-board","version":"
+Provides the real-time information of the device, including the current status of the audio speaker, screen, battery, network, etc.
+1. Answering questions about current condition (e.g. what is the current volume of the audio speaker?)
+2. As the first step to control the device (e.g. turn up / down the volume of the audio speaker, etc.)
+self.audio_speaker.set_volume
+Set the volume of the audio speaker. If the current volume is unknown, you must call `self.get_device_status` tool first and then call this tool.
+E (%lu) %s: Too many retries, exit version check
+W (%lu) %s: Check new version failed, retry in %d seconds (%d/%d)
+E (%lu) %s: Firmware upgrade failed, restarting audio service and continuing operation...
+I (%lu) %s: Wake word detected: %s
+audio_testing
+factory
+I (%lu) %s: Running from factory partition, skipping
+waveshare-s3-audio-board/
+Activation-Version
+I (%lu) %s: New firmware version: %s
+E (%lu) %s: Firmware version is the same, skipping upgrade
+wifi
+https://api.tenclass.net/xiaozhi/ota/
+I (%lu) %s: Current version: %s
+E (%lu) %s: Check version URL is not properly set
+E (%lu) %s: Failed to check version, status code: %d
+I (%lu) %s: New version available: %s
+I (%lu) %s: Current is the latest version
+XIAOZHI_STATE_EVENTS
+esp_event_handler_register(XIAOZHI_STATE_EVENTS, XIAOZHI_STATE_CHANGED_EVENT, [](void* handler_args, esp_event_base_t base, int32_t id, void* event_data) { auto* data = static_cast<device_state_event_data_t*>(event_data); auto& manager = DeviceStateEventManager::GetInstance(); for (const auto& callback : manager.GetCallbacks()) { callback(data->previous_state, data->current_state); } }, nullptr)
+waveshare-s3-audio-board
+{"version":2,"language":"
+"chip_model_name":"
+"model":
+"idf_version":"
+audio_speaker
+WifiBoard
+Xiaozhi
+waveshare_lcd_1_85c
+void CustomBoard::InitializeTca9555()
+./main/boards/waveshare-s3-audio-board/esp32-s3-audio_board.cc
+void CustomBoard::InitializeJd9853Display()
+esp_lcd_new_panel_jd9853(panel_io, &panel_config, &panel)
+JD9853
+/./main/boards/waveshare-s3-audio-board/esp_lcd_jd9853.c
+E (%lu) %s: %s(%d): no mem for jd9853 panel
+E (%lu) %s: %s(%d): unsupported rgb endian
+AfeAudioProcessor
+audio_communication
+I (%lu) %s: Audio communication task started, feed size: %d fetch size: %d
+AfeWakeWord
+E (%lu) %s: Failed to initialize wakenet model
+I (%lu) %s: Model %d: %s
+audio_detection
+I (%lu) %s: Audio detection task started, feed size: %d fetch size: %d
+I (%lu) %s: Encode wake word opus %d packets in %ld ms
+wake_word_encode_task_stack_ != nullptr
+virtual void AfeWakeWord::EncodeWakeWordData()
+/./main/audio/wake_words/afe_wake_word.cc
+wake_word_encode_task_buffer_ != nullptr
+encode_wake_word
+Sec-WebSocket-Version
+OpusEncoderWrapper
+E (%lu) %s: Failed to create audio encoder, error code: %d
+E (%lu) %s: Audio encoder is not configured
+E (%lu) %s: Audio data size is not equal to frame size, size: %u, frame size: %u
+E (%lu) %s: Failed to encode audio, error code: %ld
+OpusDecoderWrapper
+E (%lu) %s: Failed to create audio decoder, error code: %d
+E (%lu) %s: Audio decoder is not configured
+E (%lu) %s: Failed to decode audio, error code: %d
+OpusResampler
+WifiConfigurationAp
+esp_read_mac(mac, ESP_MAC_WIFI_SOFTAP)
+std::string WifiConfigurationAp::GetSsid()
+./managed_components/78__esp-wifi-connect/wifi_configuration_ap.cc
+void WifiConfigurationAp::StartWebServer()
+esp_wifi_set_config(WIFI_IF_STA, &wifi_config)
+bool WifiConfigurationAp::ConnectToWifi(const std::string&, const std::string&)
+E (%lu) %s: Failed to connect to WiFi: %d
+I (%lu) %s: Connecting to WiFi %s
+I (%lu) %s: Connected to WiFi %s
+E (%lu) %s: Failed to connect to WiFi %s
+ WiFi"}
+E (%lu) %s: Failed to set WiFi power: %d
+Failed to set WiFi power
+E (%lu) %s: Failed to save WiFi power: %d
+void WifiConfigurationAp::StartAccessPoint()
+esp_wifi_init(&cfg)
+esp_wifi_set_mode(WIFI_MODE_APSTA)
+esp_wifi_set_config(WIFI_IF_AP, &wifi_config)
+esp_wifi_set_ps(WIFI_PS_NONE)
+esp_wifi_start()
+I (%lu) %s: WiFi max tx power from NVS: %d
+esp_wifi_set_max_tx_power(max_tx_power_)
+esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &WifiConfigurationAp::WifiEventHandler, this, &instance_any_id_)
+void WifiConfigurationAp::Start()
+esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &WifiConfigurationAp::IpEventHandler, this, &instance_got_ip_)
+wifi_scan_timer
+esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id_)
+void WifiStation::Stop()
+./managed_components/78__esp-wifi-connect/wifi_station.cc
+esp_wifi_stop()
+esp_wifi_deinit()
+void WifiStation::Start()
+esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &WifiStation::WifiEventHandler, this, &instance_any_id_)
+esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &WifiStation::IpEventHandler, this, &instance_got_ip_)
+esp_wifi_set_mode(WIFI_MODE_STA)
+WiFiScanTimer
+esp_wifi_sta_get_ap_info(&ap_info)
+int8_t WifiStation::GetRssi()
+uint8_t WifiStation::GetChannel()
+esp_wifi_set_ps(enabled ? WIFI_PS_MIN_MODEM : WIFI_PS_NONE)
+void WifiStation::SetPowerSaveMode(bool)
+WifiStation
+void WifiStation::StartConnect()
+esp_wifi_connect()
+./managed_components/78__esp-wifi-connect/ssid_manager.cc
+I2S_IF
+ES8311
+ES7210
+I (%lu) %s: Enable ES7210_INPUT_MIC1
+I (%lu) %s: Enable ES7210_INPUT_MIC2
+I (%lu) %s: Enable ES7210_INPUT_MIC3
+I (%lu) %s: Enable ES7210_INPUT_MIC4
+_MODEL_INFO_
+MODEL_LOADER
+Initializing models from SPIFFS, partition label: %s
+E (%lu) %s: Failed to find SPIFFS partition
+E (%lu) %s: Failed to initialize SPIFFS (%s)
+E (%lu) %s: Failed to get SPIFFS partition information (%s)
+create static models
+I (%lu) %s: Successfully load srmodels
+esp_partition_mmap(partition, 0, partition->size, ESP_PARTITION_MMAP_DATA, &root, models->mmap_handle)
+./managed_components/espressif__esp-sr/src/model_path.c
+/srmodel
+E (%lu) %s: Failed to stop LVGL task
+I (%lu) %s: Stopped LVGL task
+E (%lu) %s: %s(%d): Create LVGL mutex fail!
+E (%lu) %s: %s(%d): Create LVGL task sem fail!
+E (%lu) %s: %s(%d): Create LVGL Event Group fail!
+taskLVGL
+E (%lu) %s: %s(%d): Create LVGL task fail!
+lvgl_port_ctx.lvgl_mux && "lvgl_port_init must be called first"
+/./managed_components/espressif__esp_lvgl_port/src/lvgl9/esp_lvgl_port.c
+E (%lu) %s: Failed to take LVGL task sem
+LVGL tick
+E (%lu) %s: %s(%d): Creating LVGL timer filed!
+I (%lu) %s: Starting LVGL task
+/./managed_components/espressif__esp_lvgl_port/src/lvgl9/esp_lvgl_port_disp.c
+E (%lu) %s: %s(%d): Swap bytes can be used only in display color format RGB565!
+E (%lu) %s: %s(%d): DMA buffer can be used only in display color format RGB565 (not aligned copy)!
+E (%lu) %s: %s(%d): Get RGB buffers failed
+E (%lu) %s: %s(%d): Not enough memory for LVGL buffer (buf1) allocation!
+E (%lu) %s: %s(%d): Not enough memory for LVGL buffer (buf2) allocation!
+E (%lu) %s: %s(%d): Monochrome can be used only in display color format RGB565 or I1!
+E (%lu) %s: %s(%d): Not enough memory for LVGL buffer (OLED buffer) allocation!
+E (%lu) %s: %s(%d): Not enough memory for LVGL buffer (rotation buffer) allocation!
+E (%lu) %s: %s(%d): Enable gpio wakeup failed
+E (%lu) %s: %s(%d): Configure gpio as wakeup source failed
+I (%lu) %s: IoT Button Version: %d.%d.%d
+E (%lu) %s: %s(%d): invalid led model
+lcd_panel.rgb
+E (%lu) %s: GPIO wakeup only supports level mode, but edge mode set. gpio_num:%u
+E (%lu) %s: Running firmware is factory
+W (%lu) %s: Detected flash size > 16 MB, but access beyond 16 MB is not supported for this flash model yet.
+WIFI_NMI
+WIFI_PWR
+WIFI_BB
+I2S0
+I2S1
+i2s_driver
+i2s_common
+E (%lu) %s: i2s%d might be occupied by other component
+E (%lu) %s: %s(%d): input parameter 'i2s_obj' is NULL
+E (%lu) %s: %s(%d): input parameter '*i2s_obj' is NULL
+E (%lu) %s: %s(%d): there still have channels under this i2s controller
+E (%lu) %s: %s(%d): invalid state, I2S has enabled
+E (%lu) %s: %s(%d): create I2S DMA descriptor array failed
+E (%lu) %s: %s(%d): invalid I2S port id
+E (%lu) %s: %s(%d): get i2s object failed
+E (%lu) %s: %s(%d): register I2S tx channel failed
+E (%lu) %s: %s(%d): register I2S rx channel failed
+i2s_std
+E (%lu) %s: %s(%d): invalid state, I2S should be disabled before reconfiguring the clock
+E (%lu) %s: %s(%d): invalid state, I2S should be disabled before reconfiguring the slot
+E (%lu) %s: %s(%d): set i2s standard slot failed
+i2s_pdm
+E (%lu) %s: %s(%d): This channel handle is registered on I2S1, but PDM is only supported on I2S0
+i2s_tdm
+i2s_platform
+E (%lu) %s: %s(%d): invalid i2s port id
+W (%lu) %s: i2s controller %d has been occupied by %s
+wifi_init
+E (%lu) %s: Number of WiFi cache TX buffers should not equal 0 when enable SPIRAM
+WIFI_EVENT
+wifi_init_default
+E (%lu) %s: esp_wifi_get_mac failed with %d
+E (%lu) %s: esp_wifi_register_if_rxcb for if=%p failed with %d
+I (%lu) %s: esp_wifi_internal_set_sta_ip failed with %d
+E (%lu) %s: Failed to create wifi interface handle
+//IDF/components/esp_wifi/src/wifi_default.c
+esp_netif_attach_wifi_ap(netif)
+esp_wifi_set_default_wifi_ap_handlers()
+esp_netif_attach_wifi_station(netif)
+esp_wifi_set_default_wifi_sta_handlers()
+wifi_netif
+E (%lu) %s: No memory to create a wifi interface handle
+E (%lu) %s: Unknown wifi interface id if=%d
+E (%lu) %s: esp_wifi_internal_reg_rxcb for if=%d failed with %d
+HPE_INVALID_VERSION
+invalid HTTP version
+E (%lu) %s: Unsupported protocol version
+Sec-WebSocket-Version: 13
+505 Version Not Supported
+HTTP version not supported by server
+W (%lu) %s: %s: unsupported HTTP version = %d.%d
+OS adapter function version error! Version %d is expected, but it is %x
+Invalid OSI esp_wifi_os_adapter.h md5, internal: %s, idf: %s
+Invalid WiFi esp_wifi_crypto_types.h md5, internal: %s, idf: %s
+Invalid WiFi esp_wifi_types.h md5, internal: %s, idf: %s
+Invalid WiFi esp_wifi.h md5, internal: %s, idf: %s
+Invalid WiFi esp_wifi_he.h md5, internal: %s, idf: %s
+Invalid WiFi esp_wifi_he_types.h md5, internal: %s, idf: %s
+net80211 rom version: %s
+WIFI_MESH_EVENT
+pp rom version: %s
+esp_efuse_read_field_blob(ESP_EFUSE_BLK_VERSION_MAJOR, &blk_ver_major, ESP_EFUSE_BLK_VERSION_MAJOR[0]->bit_count)
+W (%lu) %s: calibration efuse version does not match, set default version to 0
+(version >= ESP_EFUSE_ADC_CALIB_VER_MIN) && (version <= ESP_EFUSE_ADC_CALIB_VER_MAX)
+/IDF/components/hal/esp32s3/include/hal/i2s_ll.h
+E (%lu) %s: %s: NVS has not been initialized. Call nvs_flash_init before starting WiFi/BT.
+cal_version
+E (%lu) %s: %s: store calibration version failed(0x%x)
+I (%lu) %s: phy_version %s
+WIFI_AP_DEF
+WIFI_STA_DEF
+W (%lu) %s: %s: WakeNet is not initialized
+W (%lu) %s: %s: WakeNet is not initialized!
+W (%lu) %s: WakeNet %d is not initialized!
+|AGC(WakeNet)| -> 
+|WakeNet(%s,%s)| -> 
+I (%lu) %s: AFE Version: (%s)
+E (%lu) %s: Unsupported wakenet channel number %d
+/./components/esp_audio_front_end/esp_afe_sr_2mic.c
+/./components/esp_audio_front_end/esp_afe_sr_1mic.c
+W (%lu) %s: wakenet model not found. please load wakenet model...
+W (%lu) %s: wakenet is deactivated. vadnet model is used to select trigger channel.
+W (%lu) %s: wakenet is activated, disable WebRTC AGC.
+I (%lu) %s: Set WakeNet Model: %s
+I (%lu) %s: Set Second WakeNet Model: %s
+I (%lu) %s: Set VAD Model: %s
+I (%lu) %s: Set Noise Suppression Model: %s
+/./components/esp_audio_processor/automatic_gain_control/digital_agc.c
+/./components/esp_audio_processor/microphone_array_speech_enhancement/esp_bss_728.c
+/./components/esp_audio_processor/microphone_array_speech_enhancement/esp_bss_hps16fft.c
+/./components/esp_audio_processor/noise_suppression/webrtc_ns.c
+/./components/esp_audio_processor/esp_ns.c
+./components/esp_audio_processor/common_audio/vad/vad_filterbank.c
+./components/esp_audio_processor/common_audio/vad/vad_sp.c
+./components/esp_audio_processor/common_audio/signal_processing/downsample_fast.c
+./components/esp_audio_processor/common_audio/signal_processing/min_max_operations.c
+_MODEL_INFO_
+I (%lu) %s: model_name: %s, model_data: %s, info: %s, (%s %s)
+cq->nch == model->layers[0]->nch
+cq->n == model->layers[0]->n
+cq->c == model->layers[0]->c
+/./components/wakenet/wakenet9_quantized.c
+MC Quantized wakenet9: %s, tigger:v4, mode:%d, p:%d, (%s %s)
+/./components/wakenet/wakenet9l_quantized.c
+MC Quantized wakenet9l: %s, tigger:v4, mode:%d, p:%d, (%s %s)
+/./components/wakenet/wakenet9s_quantized_mc.c
+MC Quantized wakenet9s: %s, tigger:v4, mode:%d, p:%d, (%s %s)
+/./components/hufzip/hufzip_model.c
+Please check if there are target files in esp-sr/model/target
+Bpanel_jd9853_reset
+panel_jd9853_init
+panel_jd9853_draw_bitmap
+panel_jd9853_draw_bitmap
+panel_jd9853_invert_color
+panel_jd9853_mirror
+panel_jd9853_swap_xy
+panel_jd9853_disp_on_off
+esp_lcd_new_panel_jd9853
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+=OpusTags
+encoder=Lavc61.19.101 libopusOggS
+OpusHead
+>OpusTags
+encoder=Lavc59.37.100 libopusOggS
+OpusHead
+>OpusTags
+encoder=Lavc59.37.100 libopusOggS
+OpusHead
+>OpusTags
+encoder=Lavc59.37.100 libopusOggS
+OpusHead
+>OpusTags
+encoder=Lavc59.37.100 libopusOggS
+OpusHead
+>OpusTags
+encoder=Lavc59.37.100 libopusOggS
+OpusHead
+>OpusTags
+encoder=Lavc59.37.100 libopusOggS
+            background-color: rgba(0, 0, 0, 0.8);
+        <div class="tab active" onclick="switchTab('wifi')" data-lang="wifi_tab">WiFi 
+    <div id="wifi-tab" class="tab-content active">
+                <h3 data-lang="saved_wifi">
+ WiFi</h3>
+                <h3 data-lang="new_wifi">
+ WiFi</h3>
+                saved_wifi: '
+                new_wifi: '
+                select_wifi: '
+                wifi_tab: 'Wi-Fi 
+                saved_wifi: '
+                new_wifi: '
+                select_wifi: '
+                wifi_tab: 'Wi-Fi 
+                saved_wifi: 'Saved Wi-Fi',
+                new_wifi: 'New Wi-Fi',
+                select_wifi: 'Select an 2.4G Wi-Fi from the list below:',
+                wifi_tab: 'Wi-Fi Config',
+                saved_wifi: '
+                new_wifi: '
+                select_wifi: '
+                wifi_tab: 'Wi-Fi
+                apList.firstChild.textContent = translations[lang].select_wifi;
+                    apList.innerHTML = '<p>' + translations[lang].select_wifi + '</p>';
+    <title>WiFi Configuration</title>
+es8311_codec_new
+es7210_codec_new
+srmodel_mmap_init
+afe_disable_wakenet
+afe_enable_wakenet
+afe_disable_wakenet
+afe_enable_wakenet
+=model_get_chunksz
+model_process
+model_get_samp_rate
+model_destroy
+Bmodel_get_chunksz
+model_process
+model_get_samp_rate
+model_destroy
+model_create
+model_detect_mfcc
+Bmodel_create
+model_detect_mfcc
+Bmodel_create
+Bmodel_create
+model_detect_mfcc
+8get_model_param_by_name
+lvgl_port_unlock
+lvgl_port_lock
+lvgl_port_tick_init
+lvgl_port_init
+lvgl_port_disp_rotation_update
+_lvgl_port_transform_monochrome
+lvgl_port_flush_callback
+lvgl_port_disp_size_update_callback
+lvgl_port_add_disp_priv
+lvgl_port_add_disp_priv
+lvgl_port_flush_io_ready_callback
+lvgl_port_add_disp
+led_strip_rmt_set_pixel_rgbw
+esp_lcd_rgb_panel_get_frame_buffer
+gpio_wakeup_disable
+gpio_wakeup_enable
+rtc_gpio_wakeup_disable
+rtc_gpio_wakeup_enable
+get_efuse_factory_mac
+i2s_channel_read
+i2s_channel_write
+i2s_channel_disable
+i2s_channel_enable
+i2s_channel_get_info
+i2s_del_channel
+i2s_destroy_controller_obj
+i2s_register_channel
+i2s_new_channel
+i2s_check_set_mclk
+i2s_init_dma_intr
+i2s_alloc_dma_desc
+i2s_free_dma_desc
+i2s_channel_reconfig_std_slot
+i2s_channel_reconfig_std_clock
+i2s_std_set_gpio
+i2s_std_calculate_clock
+i2s_std_set_clock
+i2s_std_set_slot
+i2s_channel_init_std_mode
+i2s_channel_reconfig_pdm_rx_slot
+i2s_channel_reconfig_pdm_rx_clock
+i2s_pdm_rx_calculate_clock
+i2s_pdm_rx_set_clock
+i2s_pdm_rx_set_slot
+i2s_channel_reconfig_pdm_tx_slot
+i2s_channel_reconfig_pdm_tx_clock
+i2s_pdm_tx_calculate_clock
+i2s_pdm_tx_set_clock
+i2s_pdm_tx_set_slot
+i2s_channel_reconfig_tdm_slot
+i2s_channel_reconfig_tdm_clock
+i2s_tdm_set_gpio
+i2s_tdm_calculate_clock
+i2s_tdm_set_clock
+i2s_tdm_set_slot
+i2s_channel_init_tdm_mode
+i2s_platform_release_occupation
+i2s_platform_acquire_occupation
+<esp_netif_create_default_wifi_sta
+esp_netif_create_default_wifi_ap
+i2s_ll_rx_clk_set_src
+i2s_ll_tx_clk_set_src
+wifi nvs cfg alloc out of memory
+invalid wifi nvs key index %d
+wifi stop stage error, stage=%d
+wpa crypto funcs expected size=%d version=%d, actual size=%d version=%d
+invalid magic number %x, call WIFI_INIT_CONFIG_DEFAULT to init config
+timeout when WiFi un-init, type=%d
+wifi ipc: failed to post wifi task
+failed to post WiFi event=%d ret=%d
+wifi stop stage3: out of memory!
+wifi stop stage2: out of memory!
+wifi stop: out of memory!
+wifi deinit internal: wifi not stop
+create wifi task: failed to create task
+create wifi task: failed to create sem
+create wifi task: failed to create queue
+create wifi task: failed to create queue
+wifi assert: %d
+ap_probe_send over, reset wifi status to disassoc
+wifi certification version: v%d.%d
+wifi firmware version: %s
+Coexist!!! Wi-Fi station would only keep waked when available
+Coexist!!! Wi-Fi station would only keep waked when available
+wifi driver task: %x, prio:%d, stack:%d, core=%d
+Error! Should use default passive scan time parameter for WiFi scan when Bluetooth is enabled!!!!!!
+Error! Should use default active scan time parameter for WiFi scan when Bluetooth is enabled!!!!!!
+wifi osi_nvs_open fail ret=%d
+wifi_nvs_load: index mismatch, i=%d index=%d
+wifi_nvs_load: no mem
+wifi_nvs_set fail, index=%d ret=%d
+wifi_nvs_set: unknow type=%d index=%d
+wifi_nvs_set: wrong value
+wifi_nvs_set: wrong value
+wifi_nvs_set: wrong index
+wifi nvs cfg already init
+ioctl: failed to post WiFi task %d
+ioctl: failed to get wifi thread sem
+ioctl_process: wifi thread sem NULL, potential bug, type=%d
+wifi init: invalid config
+Cannot set PMF to optional when in WIFI_AUTH_WPA3_PSK! Setting PMF to required.
+Cannot set PMF to required when in WIFI_AUTH_WPA_WPA2_PSK! Setting PMF to optional.
+WPA3 Extended PSK authmodes are now part of WIFI_AUTH_WPA3_PSK and will be deprecated in future
+WPA3 Extended PSK authmodes are now part of WIFI_AUTH_WPA3_PSK and will be deprecated in future
+OWE is not enabled but threshold is set as WIFI_AUTH_OWE
+init failed to wifi global lock
+create wifi task: queue not null
+create wifi task: task not null
+wifi osi_nvs_open fail ret=%d
+GaRGb
+phy_version: %d, %s, %s, %s
+wifi_init_power:
+wifi_pagain:
+wifi_bbgain:
+wifi_diggain:
+wifi_correct_power:%d
+rc_dout, %d; wifi: %d, %d, %d, %d, bt: %d, %d, %d, %d
+wifi_cal_power, %d
+wifi_cal_atten, 
+wifi_pwctrl_atten, 
+RXDC_RFRX_WIFI, 
+RXDC_RXBB_WIFI, 
+RXDC_CHAN_WIFI, 
+wakeNet9_v1h24_Hi,ESP_3_0.63_0.635

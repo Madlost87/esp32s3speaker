@@ -1,0 +1,24 @@
+# Local credentials
+secrets.yaml
+esphome/secrets.yaml
+
+# Alternate local Git metadata used because .git is reserved by the workspace.
+.git-local/
+
+# ESPHome caches, virtualenvs, and generated firmware
+**/.esphome/
+**/.venv/
+build-test/
+*.bin
+*.elf
+*.map
+
+# Factory flash backups and local captures
+backups/
+
+# Python/cache/editor noise
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+desktop.ini

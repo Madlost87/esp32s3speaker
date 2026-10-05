@@ -1,0 +1,30 @@
+# Galileo/Jarvis voice satellite thin config.
+#
+# This file intentionally keeps the board-specific implementation pinned to the
+# tested upstream package. Local credentials live in secrets.yaml, which is
+# ignored by git.
+
+substitutions:
+  name: galileo-va
+  friendly_name: "Galileo Voice"
+
+  # Europe/Rome POSIX timezone.
+  posix_timezone: "CET-1CEST,M3.5.0,M10.5.0/3"
+
+  # Conservative first-flash volume clamps. Raise only after speaker testing.
+  volume_min: '0.25'
+  volume_max: '0.90'
+
+  # Keep first flash simple.
+  hidden_ssid: 'false'
+  enable_deep_sleep: 'false'
+
+packages:
+  core:
+    url: https://github.com/MichalZaniewicz/esphome-waveshare-esp32-s3-audio-va
+    ref: v1.1.1
+    files:
+      - base/core.yaml
+    refresh: 1d
+
+# Wi-Fi and local API settings come from secrets.yaml.
