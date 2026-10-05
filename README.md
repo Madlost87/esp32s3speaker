@@ -13,9 +13,10 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 | Build ESPHome | Pass | ESPHome 2026.9.1, firmware compilato correttamente |
 | Primo flash | Pass | Device online come `galileo-va.local` |
 | Wi-Fi/API ESPHome | Pass | IP osservato: `192.168.1.171`, API su porta `6053` |
-| Home Assistant | Pass iniziale | Connessione API osservata da Home Assistant |
-| Wake word locale | Build pass | `micro_wake_word` con modelli ESPHome v2 |
-| Audio runtime | Da completare | Speaker, microfoni e round trip Assist da collaudare bene |
+| Home Assistant | Pass | Connessione API e integrazione Assist verificate |
+| Wake word locale | Pass | `micro_wake_word` con modelli ESPHome v2 |
+| Audio runtime | Pass | Speaker, microfoni e round trip Assist testati sulla board |
+| Tuning audio | In corso | Da rifinire volumi, gain, filtri e pipeline audio |
 
 ## Hardware Rilevato
 
@@ -143,10 +144,12 @@ Sono esclusi da Git:
 
 Il backup factory resta deliberatamente locale: e' utile per recovery, ma non appartiene al repository pubblico.
 
-## Prossimi Passi
+## Lavoro Aperto
 
-1. Collaudare speaker a volume conservativo.
-2. Verificare acquisizione microfoni e mapping fisico left/right.
-3. Testare wake word locale con `hey_jarvis`.
-4. Integrare una wake word custom microWakeWord per Galileo.
-5. Validare round trip completo: wake word, STT italiano, intent/LLM, TTS su speaker.
+La board e' gia' stata portata online e il flusso vocale principale e' stato testato. La parte ancora da rifinire e' il tuning audio:
+
+1. Regolare i limiti di volume e il volume di default dello speaker.
+2. Tarare il gain ES7210 dei microfoni rispetto alla stanza reale.
+3. Capire quali filtri o parametri conviene gestire lato Home Assistant Assist e quali lato ESPHome.
+4. Verificare eventuali impostazioni di noise suppression, automatic gain e volume multiplier.
+5. Integrare una wake word custom microWakeWord per Galileo quando sara' disponibile il modello.
