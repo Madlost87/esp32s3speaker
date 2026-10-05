@@ -1,0 +1,20 @@
+# Micro Wake Word Handoff Package
+
+Questo pacchetto contiene le informazioni da inviare a chi deve produrre una wake word custom per il satellite vocale Galileo.
+
+## Contenuto
+
+- `REQUEST_TO_COLLEAGUE.md`: testo pronto da inoltrare.
+- `DEVICE_AUDIO_TARGET.md`: dettagli tecnici del device target.
+- `model_template/custom_wake_word.json`: template del manifest ESPHome microWakeWord v2.
+- `example_model/`: esempio reale gia' funzionante nel firmware, basato su `hey_jarvis`.
+
+## Output richiesto
+
+Chiedere al collega di consegnare una coppia di file:
+
+- `nome_wake_word.json`
+- `nome_wake_word.tflite`
+
+Il file JSON deve essere un manifest ESPHome microWakeWord v2 e deve puntare al relativo file `.tflite`.
+
