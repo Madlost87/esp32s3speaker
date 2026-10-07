@@ -26,19 +26,19 @@ Last compile result:
 - Device: `/dev/ttyACM0`
 - Firmware: freshly rebuilt after writing local Wi-Fi secrets
 - Upload: `INFO Successfully uploaded program.`
-- Network: connected to SSID `casazenari`
+- Network: connected to the local Wi-Fi SSID
 - IP: `192.168.1.171`
 - Hostname: `galileo-va.local`
 - ESPHome API: `galileo-va.local:6053`
 - OTA: `galileo-va.local:3232`
 - Signal: `-40 dB`
 
-Important note: the first upload reused an older cached build and tried to connect to the dummy SSID `GalileoBuildOnly`. The fix was to clean/rebuild the ESPHome project after creating `secrets.yaml`, then upload again. The rebuilt firmware contains `casazenari` and no longer contains `GalileoBuildOnly`.
+Important note: the first upload reused an older cached build and tried to connect to the dummy SSID `GalileoBuildOnly`. The fix was to clean/rebuild the ESPHome project after creating `secrets.yaml`, then upload again. The rebuilt firmware contains the local Wi-Fi credentials and no longer contains `GalileoBuildOnly`.
 
 ## First Boot Test Order
 
 1. Boot logs: PASS, no reboot loop observed.
-2. Wi-Fi: PASS, connected to `casazenari`.
+2. Wi-Fi: PASS, connected to the local Wi-Fi network.
 3. ESPHome API: PASS, reachable at `galileo-va.local:6053`.
 4. Home Assistant discovery/API connection.
 5. Select wake word `hey_jarvis` from the Home Assistant device controls.
