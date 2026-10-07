@@ -29,6 +29,19 @@ packages:
 
 # Wi-Fi and local API settings come from secrets.yaml.
 
+esphome:
+  on_boot:
+    - priority: -90
+      then:
+        - lambda: |-
+            id(alexa).disable();
+            id(okay_nabu).enable();
+            id(hey_jarvis).enable();
+            id(hey_mycroft).disable();
+            ESP_LOGI("wake_word", "Forced active wake words: Okay Nabu + Hey Jarvis");
+        - script.execute:
+            id: apply_wake_word_sensitivity
+
 # Assist STT audio tuning.
 #
 # The wake word is already reliable, but the longer audio sent to Home Assistant
