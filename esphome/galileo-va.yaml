@@ -44,11 +44,25 @@ esphome:
 
 # Assist STT audio tuning.
 #
-# The wake word is already reliable, but the longer audio sent to Home Assistant
-# benefits from ESPHome's software preprocessing. Hardware AEC / dual-mic
-# beamforming is not exposed by stock ESPHome for this board.
+# The wake word stays on one channel, but Assist can stream two mono sources to
+# Home Assistant. This lets HA compare both ES7210 mic channels for STT.
+microphone:
+  - id: !extend i2s_mics
+    channel: stereo
+
+micro_wake_word:
+  id: mww
+  microphone:
+    microphone: i2s_mics
+    channels: [0]
+
 voice_assistant:
   id: va
-  noise_suppression_level: 2
+  microphone:
+    - microphone: i2s_mics
+      channels: [0]
+    - microphone: i2s_mics
+      channels: [1]
+  noise_suppression_level: 4
   auto_gain: 31dBFS
-  volume_multiplier: 2
+  volume_multiplier: 3

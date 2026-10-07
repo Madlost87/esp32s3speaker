@@ -16,7 +16,7 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 | Home Assistant | Pass | Connessione API e integrazione Assist verificate |
 | Wake word locale | Pass | `micro_wake_word` con modelli ESPHome v2 |
 | Audio runtime | Pass | Speaker, microfoni e round trip Assist testati sulla board |
-| Tuning audio | In corso | Da rifinire volumi, gain, filtri e pipeline audio |
+| Tuning audio | In corso | Profilo stock ESPHome spinto a stereo mic + NS/AGC alto; profilo AFE sperimentale preservato |
 
 ## Hardware Rilevato
 
@@ -67,7 +67,7 @@ Entrypoint ESPHome:
 esphome/galileo-va.yaml
 ```
 
-La configurazione locale resta volutamente sottile: importa il package upstream testato e pinato a `v1.1.1`:
+La configurazione locale resta volutamente sottile: importa il package upstream testato e pinato a `v1.1.1`, poi applica il tuning locale per usare due canali microfonici ES7210 verso Assist:
 
 ```yaml
 packages:
@@ -77,6 +77,14 @@ packages:
     files:
       - base/core.yaml
 ```
+
+Il profilo sperimentale piu' vicino al firmware factory Xiaozhi, con AFE/AEC/TDM e componenti esterni, e' preservato separatamente:
+
+```text
+esphome/galileo-va-afe.yaml
+```
+
+Non e' il default stabile: serve come traccia per test futuri dell'audio stack completo.
 
 Le credenziali Wi-Fi/API non sono versionate. Il template e':
 
@@ -128,6 +136,7 @@ Contiene una richiesta tecnica pronta, i dettagli del target audio e un esempio 
 - `docs/initial_board_audit.md` - audit non distruttivo iniziale, factory firmware, partizioni e backup.
 - `docs/compatibility_audit.md` - compatibilita' ESPHome/Home Assistant, pinout e stato test.
 - `docs/first_flash_checklist.md` - checklist flash e ordine dei test runtime.
+- `docs/original_firmware_audio_adaptation.md` - confronto tra firmware factory Xiaozhi, hardware audio e adattamento ESPHome.
 - `docs/references.md` - fonti hardware/software usate durante l'audit.
 - `handoff/micro_wake_word_request/REQUEST_TO_COLLEAGUE.md` - testo pronto per chiedere una wake word custom.
 
@@ -148,8 +157,9 @@ Il backup factory resta deliberatamente locale: e' utile per recovery, ma non ap
 
 La board e' gia' stata portata online e il flusso vocale principale e' stato testato. La parte ancora da rifinire e' il tuning audio:
 
-1. Regolare i limiti di volume e il volume di default dello speaker.
-2. Tarare il gain ES7210 dei microfoni rispetto alla stanza reale.
-3. Capire quali filtri o parametri conviene gestire lato Home Assistant Assist e quali lato ESPHome.
-4. Verificare eventuali impostazioni di noise suppression, automatic gain e volume multiplier.
-5. Integrare una wake word custom microWakeWord per Galileo quando sara' disponibile il modello.
+1. Testare sul device il profilo stock dual-channel appena compilato.
+2. Regolare i limiti di volume e il volume di default dello speaker.
+3. Tarare il gain ES7210 dei microfoni rispetto alla stanza reale.
+4. Confrontare STT su canale 0/1 e comportamento con `noise_suppression_level: 4`, `auto_gain: 31dBFS`, `volume_multiplier: 3`.
+5. Valutare separatamente il profilo AFE/AEC sperimentale se serve recuperare il comportamento piu' vicino al firmware factory.
+6. Integrare una wake word custom microWakeWord per Galileo quando sara' disponibile il modello.

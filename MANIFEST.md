@@ -5,9 +5,9 @@ This folder is a clean documentation bundle for the Galileo ESP32-S3 Audio / ESP
 ## Included
 
 - `README.md`: ESP32-S3 Audio project summary.
-- `docs/`: project overview, board audit, compatibility notes, first flash checklist, and references.
+- `docs/`: project overview, board audit, compatibility notes, first flash checklist, factory audio adaptation notes, and references.
 - `diagnostics/`: sanitized hardware, USB, security, factory string, and partition diagnostics.
-- `esphome/`: thin ESPHome config and secrets template.
+- `esphome/`: thin ESPHome config, experimental AFE config, and secrets template.
 - `handoff/micro_wake_word_request/`: documentation and JSON templates for a future ESPHome microWakeWord custom model.
 
 ## Excluded
