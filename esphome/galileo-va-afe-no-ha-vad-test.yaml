@@ -1,0 +1,38 @@
+# =============================================================================
+# Waveshare ESP32-S3-AUDIO-Board: full AFE + Assist no early VAD cut test
+# =============================================================================
+#
+# Experimental overlay. Hardware audio stays identical to the stable full AFE
+# profile; this only disables Home Assistant-side silence detection for the
+# wake-word-started Assist session.
+
+packages:
+  base: !include galileo-va-afe.yaml
+
+substitutions:
+  friendly_name: Galileo Voice AFE No HA VAD Test
+
+script:
+  - id: !remove runtime_voice_start
+
+  - id: runtime_voice_start
+    mode: restart
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return (id(va).get_api_connection() != nullptr) && !id(va).is_running() &&
+                     !id(init_in_progress) && !id(g_ota_in_progress) &&
+                     !id(runtime).is_activity_active("mic_muted") &&
+                     !id(runtime).is_activity_active("va_stopping") &&
+                     (id(runtime).is_activity_active("va_start_requested") ||
+                      id(runtime).is_activity_active("va_barging"));
+          then:
+            - voice_assistant.start:
+                wake_word: !lambda |-
+                  return id(g_last_wake_word);
+                silence_detection: false
+          else:
+            - runtime_controller.event:
+                id: runtime
+                event: va_start_rejected

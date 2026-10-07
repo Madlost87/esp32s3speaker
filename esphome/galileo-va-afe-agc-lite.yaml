@@ -1,0 +1,20 @@
+# =============================================================================
+# Waveshare ESP32-S3-AUDIO-Board: full AFE + conservative AGC experiment
+# =============================================================================
+#
+# Experimental overlay. Compared with `galileo-va-afe-agc-test.yaml`, this keeps
+# AGC much softer so wake-word range can be tested without over-compressing the
+# post-AFE speech sent to Home Assistant STT.
+
+packages:
+  base: !include galileo-va-afe.yaml
+
+substitutions:
+  friendly_name: Galileo Voice AFE AGC Lite
+
+esp_afe:
+  id: afe_processor
+  agc_enabled: true
+  post_afe_agc_support: true
+  agc_compression_gain: 3
+  agc_target_level: 6

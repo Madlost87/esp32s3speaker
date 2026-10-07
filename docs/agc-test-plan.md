@@ -56,3 +56,16 @@ Record:
 
 Keep AGC only if it improves detection without adding false positives or playback
 instability.
+
+## Result on Galileo Voice
+
+AGC and AGC Lite both kept wake-word detection working, but Assist/STT closed the
+listening window too early after wake-word activation. The working mitigation is
+not AGC: keep the stable full AFE hardware path and disable Home Assistant-side
+silence detection for the wake-word-started Assist session.
+
+Working test profile:
+
+```text
+esphome/galileo-va-afe-no-ha-vad-test.yaml
+```
