@@ -28,3 +28,14 @@ packages:
     refresh: 1d
 
 # Wi-Fi and local API settings come from secrets.yaml.
+
+# Assist STT audio tuning.
+#
+# The wake word is already reliable, but the longer audio sent to Home Assistant
+# benefits from ESPHome's software preprocessing. Hardware AEC / dual-mic
+# beamforming is not exposed by stock ESPHome for this board.
+voice_assistant:
+  id: va
+  noise_suppression_level: 2
+  auto_gain: 31dBFS
+  volume_multiplier: 2
