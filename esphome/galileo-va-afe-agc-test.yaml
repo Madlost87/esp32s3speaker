@@ -1,0 +1,26 @@
+# =============================================================================
+# Waveshare ESP32-S3-AUDIO-Board: full AFE + AGC experiment
+# =============================================================================
+#
+# Experimental overlay. It keeps the normal full AFE firmware and enables AGC
+# in the ESP AFE path to test whether distant/quiet wake words and Assist STT
+# improve in an apartment.
+#
+# Do not treat this as the baseline until tested for:
+#   - false wake activations;
+#   - TTS/media stutter;
+#   - barge-in while the speaker is playing;
+#   - STT quality at 0.5 m, 1 m, 2 m and 3 m.
+
+packages:
+  base: !include galileo-va-afe.yaml
+
+substitutions:
+  friendly_name: Galileo Voice AFE AGC Test
+
+esp_afe:
+  id: afe_processor
+  agc_enabled: true
+  post_afe_agc_support: true
+  agc_compression_gain: 9
+  agc_target_level: 3

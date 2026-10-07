@@ -292,6 +292,7 @@ tca9555:
 # and speaker output through the shared esp_audio_stack component.
 
 esp_audio_stack:
+  id: audio_stack
   # WS3 full AFE profile:
   # - qualified full-load layout: Audio Stack runs on Core 1 / priority 19.
   #   AFE feed stays on Core 0 and fetch on Core 1; rates and queues stay unchanged.

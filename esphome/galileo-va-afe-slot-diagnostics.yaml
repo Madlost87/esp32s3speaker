@@ -1,0 +1,41 @@
+# =============================================================================
+# Waveshare ESP32-S3-AUDIO-Board: full AFE + TDM slot diagnostics
+# =============================================================================
+#
+# Diagnostic-only overlay. It keeps the normal full AFE firmware unchanged and
+# adds dBFS sensors for the four ES7210 TDM RX slots:
+#
+#   slot 0: expected right microphone
+#   slot 1: expected playback/AEC reference
+#   slot 2: expected left microphone
+#   slot 3: expected unused / near silent
+#
+# Compile this profile before any OTA. Flash only when you explicitly want a
+# short measurement run; the stable baseline remains `galileo-va-afe.yaml`.
+
+packages:
+  base: !include galileo-va-afe.yaml
+
+substitutions:
+  friendly_name: Galileo Voice AFE Slot Diagnostics
+
+sensor:
+  - platform: esp_audio_stack
+    esp_audio_stack_id: audio_stack
+    tdm_slot_levels:
+      - name: TDM Slot 0 Level
+        id: tdm_slot_0_level
+        slot: 0
+        update_interval: 500ms
+      - name: TDM Slot 1 Level
+        id: tdm_slot_1_level
+        slot: 1
+        update_interval: 500ms
+      - name: TDM Slot 2 Level
+        id: tdm_slot_2_level
+        slot: 2
+        update_interval: 500ms
+      - name: TDM Slot 3 Level
+        id: tdm_slot_3_level
+        slot: 3
+        update_interval: 500ms
