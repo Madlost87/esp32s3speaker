@@ -301,11 +301,18 @@ Roadmap lato ESP/satelliti:
 5. Rendere reale `ESP Cucina` solo dopo flash e test.
    - Oggi `ESP Cucina` e' solo un placeholder della rubrica.
    - Quando il device esiste, impostare IP stabile e testare SIP/RTP.
-6. Hardening firmware.
+6. Preparare il futuro SIP trunk.
+   - Il trunk e' un lavoro lato Home Assistant/provider, non lato firmware ESP.
+   - Non serve OTA se `Satellite Taverna` resta interno `101` nei gruppi locali.
+   - Serve OTA solo se si cambia interno, nome pubblicato, gruppi o comportamento
+     chiamata del satellite.
+   - Dopo l'attivazione trunk, testare inbound provider -> `RG Casa` e verificare
+     che il satellite squilli correttamente.
+7. Hardening firmware.
    - Tenere `esphome/secrets.yaml` fuori da Git.
    - Pin delle dipendenze esterne solo se serve stabilizzare una release.
    - Documentare ogni cambio audio/pin prima di OTA.
-7. Test regressione dopo ogni OTA.
+8. Test regressione dopo ogni OTA.
    - `6053` aperta.
    - `5060/udp` aperta.
    - chiamata HA -> `101`.
