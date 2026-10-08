@@ -60,6 +60,74 @@ I contatti statici non sostituiscono `sensor.voip_phonebook`: servono solo da
 fallback di avvio/offline. Gli interni numerici e i gruppi vengono risolti dalla
 rubrica centrale di Home Assistant.
 
+## Dove customizzare il lato ESP
+
+Le personalizzazioni operative stanno quasi tutte in
+`esphome/galileo-va-afe.yaml`, nel blocco `substitutions`.
+
+| Cosa vuoi cambiare | Dove | Serve OTA? | Note |
+| --- | --- | --- | --- |
+| Nome tecnico ESPHome/mDNS | `substitutions.name` | si | Cambiarlo crea un nuovo device HA. Per `Satellite Taverna` resta `galileo-va`. |
+| Nome umano | `substitutions.friendly_name` | si | Visibile in HA; va allineato anche nella rubrica del repo HA. |
+| Interno VoIP | `substitutions.voip_extension` | si | Deve essere unico e presente in `voip/phonebook.json` nell'altro repo. |
+| Gruppi squillo | `substitutions.voip_ring_groups` | si | Lista separata da virgole, per esempio `RG Casa,RG Tutti`. |
+| Gruppi conferenza | `substitutions.voip_conference_groups` | si | Lista separata da virgole, per esempio `CG Casa`. |
+| Componenti ESPHome esterni | `*_components_source` | si | Cambiare solo se vuoi provare fork o versioni pin. |
+| Asset remoti audio/UI | `assets_base` | si | Usare URL stabile; non mettere token nell'URL se il repo e' pubblico. |
+| Pin codec/I2S/LED/tasti | substitutions pinout e blocchi hardware | si | Cambiare solo con schema board verificato. |
+| Wi-Fi | `esphome/secrets.yaml` locale | si | File ignorato da Git: non committare SSID/password. |
+| IP del dispositivo | DHCP reservation/router o `wifi.manual_ip` se aggiunto | forse | Preferita reservation sul router. Se aggiungi `manual_ip`, serve OTA/USB. |
+
+Il blocco `voip_stack.static_contacts` contiene fallback locali name-only:
+`Casa`, `RG Casa`, `RG Tutti`, `ESP Cucina`, `Softphone 200`. Se cambi i nomi
+dei contatti o gruppi nel repo HA, aggiorna anche questa lista per mantenere il
+cycler hardware coerente durante l'avvio.
+
+## Cambio Home Assistant o centralino
+
+L'ESP non salva token Home Assistant e non conosce direttamente
+`HA_TOKEN`. Riceve la rubrica da Home Assistant tramite integrazione ESPHome/API
+e parla SIP/RTP verso i peer indicati da VoIP Stack.
+
+Se cambi host Home Assistant, Raspberry o centralino:
+
+1. Aggiorna la rubrica nel repo HA: IP `home_assistant_host`, contatti,
+   gruppi e script di provisioning.
+2. Assicurati che il nuovo HA veda l'ESP via ESPHome API su `6053`.
+3. Assicurati che il nuovo HA possa raggiungere SIP dell'ESP su
+   `192.168.1.171:5060/udp` o sul nuovo IP.
+4. Applica la rubrica da Home Assistant con `provision_voip_stack.py`.
+5. Rifai un test `Casa` -> `101` e un test ESP -> `Casa`.
+
+Non serve cambiare firmware ESP se sposti solo Home Assistant ma mantieni:
+
+- stesso interno `101`;
+- stessi nomi gruppo;
+- stesso IP ESP;
+- stesso schema SIP/RTP.
+
+Serve invece OTA se cambi identita' ESP, interno, gruppi pubblicati, pin,
+componenti o Wi-Fi.
+
+## Endpoint, chiavi e segreti
+
+Questo repo non deve contenere segreti runtime. Regole:
+
+- Wi-Fi solo in `esphome/secrets.yaml`, ignorato da Git.
+- Token Home Assistant solo in shell temporanea nel repo HA, mai qui.
+- Password softphone/SIP trunk solo in variabili ambiente o password manager.
+- API key o endpoint privati di servizi esterni non vanno messi nei pacchetti
+  ESPHome o in URL pubblici.
+
+Se un componente futuro richiede API key lato ESP, preferire una secret locale:
+
+```yaml
+api_key: !secret nome_servizio_api_key
+```
+
+e aggiungere solo un placeholder in `esphome/secrets.example.yaml`, non il
+valore reale.
+
 ## Architettura audio preservata
 
 Non sono stati modificati pin, codec, AFE, buffer, media player, wake word,
