@@ -284,19 +284,28 @@ Roadmap lato ESP/satelliti:
    - Key 1: chiamata/hangup.
    - Key 2/Key 3: cambio contatto e rifiuto chiamata.
    - Verificare comportamento durante squillo, occupato e chiamata attiva.
-3. Preparare un eventuale secondo satellite.
+3. Preparare la prova in ufficio.
+   - Opzione consigliata: usare un travel router che crea una LAN stabile per
+     Raspberry ed ESP, mantenendo gli IP attuali.
+   - Alternativa: aggiungere la Wi-Fi ufficio come seconda rete ESPHome in
+     `wifi.networks`, senza rimuovere la rete di casa.
+   - Salvare SSID/password ufficio solo in `esphome/secrets.yaml`, mai in Git.
+   - Fare OTA a casa prima della prova, per evitare recovery USB in ufficio.
+   - Se in ufficio gli IP cambiano, aggiornare il repo Home Assistant e
+     rieseguire il provisioning rubrica.
+4. Preparare un eventuale secondo satellite.
    - Duplicare il profilo operativo solo quando esiste il nuovo hardware.
    - Usare un `name` unico, per esempio `esp-cucina`.
    - Usare un interno unico, per esempio `102`.
    - Aggiornare anche `phonebook.json` nel repo Home Assistant.
-4. Rendere reale `ESP Cucina` solo dopo flash e test.
+5. Rendere reale `ESP Cucina` solo dopo flash e test.
    - Oggi `ESP Cucina` e' solo un placeholder della rubrica.
    - Quando il device esiste, impostare IP stabile e testare SIP/RTP.
-5. Hardening firmware.
+6. Hardening firmware.
    - Tenere `esphome/secrets.yaml` fuori da Git.
    - Pin delle dipendenze esterne solo se serve stabilizzare una release.
    - Documentare ogni cambio audio/pin prima di OTA.
-6. Test regressione dopo ogni OTA.
+7. Test regressione dopo ogni OTA.
    - `6053` aperta.
    - `5060/udp` aperta.
    - chiamata HA -> `101`.
