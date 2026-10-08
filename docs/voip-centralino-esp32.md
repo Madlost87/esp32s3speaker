@@ -116,11 +116,15 @@ protocollo OTA, ma dopo il riavvio il dispositivo non e' tornato raggiungibile
 su `6053` o `5060`.
 
 La causa trovata nel workspace locale e' `esphome/secrets.yaml` con valori
-placeholder per `wifi_ssid` e `wifi_password`. Il recupero richiede:
+placeholder per `wifi_ssid` e `wifi_password`.
 
-1. collegare fisicamente la board via USB alla macchina locale o al Raspberry;
-2. inserire credenziali Wi-Fi reali in `esphome/secrets.yaml` locale;
-3. eseguire `python3 scripts/check_esphome_secrets.py`;
-4. riflashare via seriale il firmware corretto;
-5. verificare che `192.168.1.171:6053` torni raggiungibile;
-6. solo dopo, ripetere eventuali OTA.
+Recupero completato: dopo aver inserito credenziali Wi-Fi reali nel file locale
+ignorato da Git, la board e' stata riflashata via USB seriale su
+`/dev/ttyACM0`. Il flash e' stato verificato da `esptool` e il dispositivo e'
+tornato raggiungibile su:
+
+- `192.168.1.171:6053` per ESPHome API;
+- `192.168.1.171:5060` per SIP VoIP Stack.
+
+I log ESPHome post-flash confermano boot ESPHome 2026.9.1, audio stack attivo,
+SIP configurato su UDP `5060`, segnale Wi-Fi `100%` e VAD funzionante.
