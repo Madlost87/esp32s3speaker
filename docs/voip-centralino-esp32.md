@@ -26,6 +26,127 @@ Il dispositivo e' un peer SIP locale. Non registra un account SIP e non usa
 digest authentication; la rubrica centrale e il routing sono gestiti da VoIP
 Stack su Home Assistant.
 
+## Inventario hardware/software della cassa
+
+Riepilogo del satellite `192.168.1.171`, utile per capire cosa e' gia' usato e
+cosa e' solo predisposto.
+
+### Hardware usato
+
+| Componente | Stato | Note |
+| --- | --- | --- |
+| Board Waveshare ESP32-S3-AUDIO-Board | usata | satellite principale `Satellite Taverna` |
+| ESP32-S3 dual core | usato | target ESP-IDF, Wi-Fi e runtime audio/VoIP |
+| Flash 16 MB | usata | firmware ESPHome, OTA e partizioni app |
+| PSRAM 8 MB octal | usata | buffer audio, task stack e componenti pesanti |
+| ES7210 ADC dual mic | usato | due microfoni su TDM |
+| ES8311 DAC | usato | uscita speaker e reference audio |
+| NS4150 mono 3 W | usato | amplificatore speaker |
+| Speaker integrato | usato | TTS, media, ringtone, VoIP RX |
+| WS2812 status ring | usato | 7 LED su `GPIO38` |
+| TCA9555 I/O expander | usato | tasti fisici e speaker enable |
+| Key 1 | usato | chiamata/hangup |
+| Key 2 | usato | prossimo contatto |
+| Key 3 | usato | contatto precedente o rifiuto se squilla |
+| BOOT `GPIO0` | usato | controlli runtime/mute tramite sequenze |
+| Batteria/charger board | non validato | hardware presente, non documentato come alimentazione operativa |
+
+### Pin e bus
+
+| Funzione | Pin |
+| --- | --- |
+| I2S MCLK | `GPIO12` |
+| I2S BCLK | `GPIO13` |
+| I2S LRCLK | `GPIO14` |
+| I2S DIN | `GPIO15` |
+| I2S DOUT | `GPIO16` |
+| I2C SDA | `GPIO11` |
+| I2C SCL | `GPIO10` |
+| LED WS2812 | `GPIO38` |
+| BOOT | `GPIO0` |
+
+TDM verificato su questa board:
+
+- slot `0`: microfono destro;
+- slot `2`: microfono sinistro;
+- slot `1`: reference playback per AEC;
+- slot `3`: inutilizzato/quasi silente.
+
+### Stack audio usato
+
+- audio full duplex;
+- ES7210/ES8311 a 48 kHz;
+- AFE con AEC, noise suppression, speech enhancement e VAD;
+- micro wake word e Assist ancora presenti nel profilo;
+- `mic_main` come sorgente VoIP TX;
+- `voip_speaker_input` come destinazione VoIP RX;
+- mixer/resampler condivisi per media, TTS, annunci e chiamate;
+- ringtone e timer attraverso pipeline audio locale.
+
+### Software e servizi
+
+| Elemento | Valore |
+| --- | --- |
+| ESPHome | `2026.9.1` |
+| ESP-IDF | `5.5.5` |
+| Profilo operativo | `esphome/galileo-va-afe.yaml` |
+| Nome tecnico | `galileo-va` |
+| Nome umano | `Satellite Taverna` |
+| IP attuale | `192.168.1.171` |
+| ESPHome API | TCP `6053` |
+| SIP | UDP `5060` |
+| RTP base | UDP `40000` |
+| Interno | `101` |
+| Gruppi | `RG Casa`, `RG Tutti`, `CG Casa` |
+
+Componenti principali:
+
+- `voip_stack`;
+- `esp_audio_stack`;
+- `esp_afe`;
+- `micro_wake_word`;
+- `voice_assistant`;
+- `runtime_controller`;
+- `sendspin`;
+- mixer/resampler/media player ESPHome;
+- diagnostica audio e VoIP.
+
+### Funzioni gia' validate
+
+- OTA via rete;
+- recovery USB su `/dev/ttyACM0`;
+- ESPHome API raggiungibile su `6053`;
+- SIP raggiungibile su `5060`;
+- chiamata Home Assistant `Casa` -> interno `101`;
+- risposta SIP `180 Ringing`;
+- ritorno a `idle` dopo hangup controllato;
+- ricezione rubrica da Home Assistant;
+- destinazione iniziale `Casa`;
+- audio stack attivo e VAD funzionante nei log.
+
+### Predisposto ma non ancora completato
+
+- `ESP Cucina`: solo placeholder rubrica;
+- `Softphone 200`: predisposto, account non ancora attivato;
+- SIP trunk/provider esterno;
+- comandi vocali per chiamare/rispondere/chiudere;
+- auto-answer da trunk con whitelist;
+- uso in ufficio/rete diversa;
+- secondo satellite fisico.
+
+### Non usato
+
+- Asterisk/FreePBX;
+- registrazione SIP dell'ESP;
+- numero VoIP pubblico;
+- token Home Assistant salvati sull'ESP;
+- esposizione SIP/RTP su Internet.
+
+In sintesi: la board audio e' sfruttata nelle parti importanti per il caso
+d'uso attuale, cioe' microfoni, speaker, codec, AEC, LED, tasti, Wi-Fi,
+ESPHome API e SIP/RTP. Le evoluzioni ancora aperte sono soprattutto lato
+centralino, provider SIP, automazioni e sicurezza.
+
 ## Identita' e nomi
 
 `galileo-va` e' l'identita' tecnica stabile del nodo ESPHome. Va mantenuta per
