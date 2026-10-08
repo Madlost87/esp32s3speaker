@@ -90,6 +90,9 @@ substitutions:
   # name so HA reuses the device entity and ESPHome reuses the build cache.
   name: galileo-va
   friendly_name: Galileo Voice AFE
+  voip_extension: "101"
+  voip_ring_groups: "RG Casa,RG Tutti"
+  voip_conference_groups: "CG Casa"
 
   ext_components_source: "github://n-IA-hane/esphome-intercom@main"
   voip_stack_components_source: "github://n-IA-hane/esphome-voip-stack@main"
@@ -424,6 +427,7 @@ runtime_controller:
   storage_in_psram: true
 
 voip_stack:
+  extension: ${voip_extension}
   use_ha_as_first_contact: true
   task_stacks_in_psram: true   # save ~28KB internal heap on S3 PSRAM builds by placing task stacks in PSRAM
   signaling_buffers_in_psram: true
@@ -431,9 +435,18 @@ voip_stack:
   # 12 KB realtime workers; S3 octal PSRAM supports their explicit task stacks.
   audio_task_stacks_in_psram: true
   buffers_in_psram: true # VoIP staging buffers in PSRAM; AEC/AFE buffers live in esp_audio_stack
-  conference_groups: "CG Casa"
+  conference_groups: ${voip_conference_groups}
   conference_ring: false
-  ring_groups: "RG Casa"
+  ring_groups: ${voip_ring_groups}
+  static_contacts:
+    # HA remains the central phonebook owner. These name-only entries are a
+    # local fallback so the hardware contact cycler still exposes the expected
+    # targets before HA has pushed sensor.voip_phonebook after a reboot.
+    - name: Casa
+    - name: RG Casa
+    - name: RG Tutti
+    - name: ESP Cucina
+    - name: Softphone 200
   audio:
     # SIP/RTP prefers the highest UDP-safe quality. TX is the AFE mic format,
     # with a 10 ms reframe available for peers that can drive the speaker at
