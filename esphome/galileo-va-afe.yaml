@@ -89,7 +89,7 @@ substitutions:
   # Hardware-shared identity: all Waveshare S3 firmware variants share the same
   # name so HA reuses the device entity and ESPHome reuses the build cache.
   name: galileo-va
-  friendly_name: Galileo Voice AFE
+  friendly_name: Satellite Taverna
   voip_extension: "101"
   voip_ring_groups: "RG Casa,RG Tutti"
   voip_conference_groups: "CG Casa"

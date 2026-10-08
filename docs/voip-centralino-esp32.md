@@ -2,7 +2,7 @@
 
 Data: 2026-10-08.
 
-Questo repository contiene il firmware del satellite `Galileo Voice AFE`.
+Questo repository contiene il firmware del satellite `Satellite Taverna`.
 La configurazione VoIP e' nel profilo operativo `esphome/galileo-va-afe.yaml`.
 
 ## Ruolo del dispositivo
@@ -10,7 +10,7 @@ La configurazione VoIP e' nel profilo operativo `esphome/galileo-va-afe.yaml`.
 | Campo | Valore |
 | --- | --- |
 | Nome ESPHome | `galileo-va` |
-| Friendly name | `Galileo Voice AFE` |
+| Friendly name | `Satellite Taverna` |
 | IP osservato | `192.168.1.171` |
 | Interno VoIP | `101` |
 | SIP | `udp/5060` |
