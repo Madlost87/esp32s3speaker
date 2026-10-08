@@ -273,6 +273,36 @@ VoIP Stack ha generato INVITE verso
 `sip:galileo-va@192.168.1.171;transport=udp`, ha ricevuto SIP `180 Ringing` e
 la chiamata e' stata chiusa manualmente tornando a `idle`.
 
+## Prossimi passi
+
+Roadmap lato ESP/satelliti:
+
+1. Mantenere `Satellite Taverna` come baseline stabile.
+   - Non cambiare `name: galileo-va` salvo migrazione intenzionale.
+   - Usare questo profilo come riferimento per audio, tasti, LED e VoIP.
+2. Testare meglio i controlli fisici.
+   - Key 1: chiamata/hangup.
+   - Key 2/Key 3: cambio contatto e rifiuto chiamata.
+   - Verificare comportamento durante squillo, occupato e chiamata attiva.
+3. Preparare un eventuale secondo satellite.
+   - Duplicare il profilo operativo solo quando esiste il nuovo hardware.
+   - Usare un `name` unico, per esempio `esp-cucina`.
+   - Usare un interno unico, per esempio `102`.
+   - Aggiornare anche `phonebook.json` nel repo Home Assistant.
+4. Rendere reale `ESP Cucina` solo dopo flash e test.
+   - Oggi `ESP Cucina` e' solo un placeholder della rubrica.
+   - Quando il device esiste, impostare IP stabile e testare SIP/RTP.
+5. Hardening firmware.
+   - Tenere `esphome/secrets.yaml` fuori da Git.
+   - Pin delle dipendenze esterne solo se serve stabilizzare una release.
+   - Documentare ogni cambio audio/pin prima di OTA.
+6. Test regressione dopo ogni OTA.
+   - `6053` aperta.
+   - `5060/udp` aperta.
+   - chiamata HA -> `101`.
+   - chiamata ESP -> `Casa`.
+   - audio bidirezionale.
+
 ## Regole operative
 
 - Non esporre `5060/udp` o RTP del satellite su Internet.
