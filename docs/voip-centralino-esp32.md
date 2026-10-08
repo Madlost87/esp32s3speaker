@@ -308,11 +308,18 @@ Roadmap lato ESP/satelliti:
      chiamata del satellite.
    - Dopo l'attivazione trunk, testare inbound provider -> `RG Casa` e verificare
      che il satellite squilli correttamente.
-7. Hardening firmware.
+7. Valutare comandi vocali e auto-answer.
+   - La chiamata vocale parte da Home Assistant/Assist, non dal firmware puro.
+   - Risposta/rifiuto vocali durante squillo vanno testati per interferenze tra
+     ringtone, wake word, microfono e VoIP.
+   - Auto-answer da trunk deve essere deciso lato Home Assistant con whitelist;
+     l'ESP deve solo comportarsi bene come endpoint audio.
+   - Non usare il satellite come unico sistema di emergenza.
+8. Hardening firmware.
    - Tenere `esphome/secrets.yaml` fuori da Git.
    - Pin delle dipendenze esterne solo se serve stabilizzare una release.
    - Documentare ogni cambio audio/pin prima di OTA.
-8. Test regressione dopo ogni OTA.
+9. Test regressione dopo ogni OTA.
    - `6053` aperta.
    - `5060/udp` aperta.
    - chiamata HA -> `101`.
