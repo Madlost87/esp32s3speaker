@@ -88,9 +88,9 @@ substitutions:
   runtime_controller_debug: "false"
   # Hardware-shared identity: all Waveshare S3 firmware variants share the same
   # name so HA reuses the device entity and ESPHome reuses the build cache.
-  name: galileo-va
-  friendly_name: Satellite Taverna
-  voip_extension: "101"
+  name: galileo-va-test
+  friendly_name: Satellite Test
+  voip_extension: "199"
   voip_ring_groups: "RG Casa,RG Tutti"
   voip_conference_groups: "CG Casa"
 
@@ -161,10 +161,9 @@ esphome:
     - priority: -90
       then:
         - lambda: |-
-            id(alexa).enable();
             id(okay_nabu).enable();
-            id(hey_jarvis).disable();
-            ESP_LOGI("wake_word", "Forced active wake words: Alexa + Okay Nabu; Hey Jarvis disabled");
+            id(hey_jarvis).enable();
+            ESP_LOGI("wake_word", "Forced active wake words: Okay Nabu + Hey Jarvis");
   platformio_options:
     board_build.flash_mode: dio
 
@@ -402,8 +401,6 @@ micro_wake_word:
   microphone: mic_main
   task_stack_in_psram: true
   models:
-    - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/alexa.json
-      id: alexa
     - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/okay_nabu.json
       id: okay_nabu
     - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/hey_jarvis.json

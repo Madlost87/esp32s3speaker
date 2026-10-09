@@ -109,6 +109,23 @@ handoff/micro_wake_word_request.tar.gz
 ```
 
 Contiene una richiesta tecnica pronta, i dettagli del target audio e un esempio reale `hey_jarvis` in formato JSON + TFLite.
+La gestione dei modelli wake word caricati nel firmware operativo e' descritta in:
+
+```text
+docs/wake-word-models.md
+```
+Per un collega developer c'e' anche una guida rapida dedicata:
+
+```text
+handoff/micro_wake_word_request/DEVELOPER_QUICK_TRAINING_GUIDE.md
+```
+
+Per chi ha una board uguale e vuole provare il modello su hardware reale, il pacchetto include anche:
+
+```text
+handoff/micro_wake_word_request/FLASH_IDENTICAL_BOARD.md
+handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical-board.yaml
+```
 
 ## Struttura Repository
 
@@ -139,6 +156,8 @@ Contiene una richiesta tecnica pronta, i dettagli del target audio e un esempio 
 - `docs/original_firmware_audio_adaptation.md` - confronto tra firmware factory Xiaozhi, hardware audio e adattamento ESPHome.
 - `docs/references.md` - fonti hardware/software usate durante l'audit.
 - `handoff/micro_wake_word_request/REQUEST_TO_COLLEAGUE.md` - testo pronto per chiedere una wake word custom.
+- `handoff/micro_wake_word_request/DEVELOPER_QUICK_TRAINING_GUIDE.md` - guida rapida per trainare una micro wake word compatibile.
+- `handoff/micro_wake_word_request/FLASH_IDENTICAL_BOARD.md` - guida per compilare/flashare una board uguale.
 
 ## Dati Locali Non Versionati
 
