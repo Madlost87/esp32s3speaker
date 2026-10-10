@@ -17,6 +17,7 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 | Wake word locale | Pass | `micro_wake_word` con modelli ESPHome v2 |
 | Audio runtime | Pass | Speaker, microfoni e round trip Assist testati sulla board |
 | Tuning audio | In corso | Profilo stock ESPHome spinto a stereo mic + NS/AGC alto; profilo AFE sperimentale preservato |
+| Golden firmware | Fatto | Recovery locale in `backups/golden-esp-voip-20261010/`, documentata in `docs/golden-firmware-recovery.md` |
 
 ## Hardware Rilevato
 
@@ -154,6 +155,7 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 - `docs/compatibility_audit.md` - compatibilita' ESPHome/Home Assistant, pinout e stato test.
 - `docs/first_flash_checklist.md` - checklist flash e ordine dei test runtime.
 - `docs/original_firmware_audio_adaptation.md` - confronto tra firmware factory Xiaozhi, hardware audio e adattamento ESPHome.
+- `docs/golden-firmware-recovery.md` - procedura per ripristinare la cassa allo stato funzionante attuale.
 - `docs/references.md` - fonti hardware/software usate durante l'audit.
 - `handoff/micro_wake_word_request/REQUEST_TO_COLLEAGUE.md` - testo pronto per chiedere una wake word custom.
 - `handoff/micro_wake_word_request/DEVELOPER_QUICK_TRAINING_GUIDE.md` - guida rapida per trainare una micro wake word compatibile.
