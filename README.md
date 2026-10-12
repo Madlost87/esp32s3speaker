@@ -156,6 +156,7 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 - `docs/first_flash_checklist.md` - checklist flash e ordine dei test runtime.
 - `docs/original_firmware_audio_adaptation.md` - confronto tra firmware factory Xiaozhi, hardware audio e adattamento ESPHome.
 - `docs/golden-firmware-recovery.md` - procedura per ripristinare la cassa allo stato funzionante attuale.
+- `docs/listen-feedback-sound.md` - spec del bip locale opzionale quando il satellite entra in ascolto.
 - `docs/references.md` - fonti hardware/software usate durante l'audit.
 - `handoff/micro_wake_word_request/REQUEST_TO_COLLEAGUE.md` - testo pronto per chiedere una wake word custom.
 - `handoff/micro_wake_word_request/DEVELOPER_QUICK_TRAINING_GUIDE.md` - guida rapida per trainare una micro wake word compatibile.

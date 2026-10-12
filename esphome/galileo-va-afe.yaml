@@ -416,6 +416,8 @@ voice_assistant:
   noise_suppression_level: 0
   auto_gain: 0dBFS
   volume_multiplier: 2.0
+  on_listening:
+    - script.execute: play_listen_feedback_sound
 
 # The shared media-player package defines these HTTP sources. On WS3, retain
 # their ring allocations across playback cycles so media, TTS and VoIP do not
@@ -642,7 +644,55 @@ switch:
             - delay: 50ms
       - speaker.mute_off: hw_speaker
 
+  - platform: template
+    name: Listen Feedback Sound
+    id: listen_feedback_sound
+    icon: mdi:bell-ring-outline
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+
   # VoIP switches
+
+script:
+  - id: play_listen_feedback_sound
+    mode: single
+    then:
+      - if:
+          condition:
+            and:
+              - switch.is_on: listen_feedback_sound
+              - switch.is_off: speaker_mute
+          then:
+            - logger.log:
+                level: INFO
+                tag: listen_feedback
+                format: "Listen feedback sound"
+            - speaker.play:
+                id: hw_speaker
+                data: !lambda |-
+                  constexpr int sample_rate = 48000;
+                  constexpr int duration_ms = 70;
+                  constexpr int samples = sample_rate * duration_ms / 1000;
+                  constexpr float frequency_hz = 880.0f;
+                  constexpr float amplitude = 5200.0f;
+                  std::vector<uint8_t> data;
+                  data.reserve(samples * 2);
+                  for (int i = 0; i < samples; i++) {
+                    float envelope = 1.0f;
+                    if (i < 240) {
+                      envelope = static_cast<float>(i) / 240.0f;
+                    } else if (i > samples - 240) {
+                      envelope = static_cast<float>(samples - i) / 240.0f;
+                    }
+                    float phase = 6.2831853f * frequency_hz * static_cast<float>(i) /
+                                  static_cast<float>(sample_rate);
+                    int16_t sample = static_cast<int16_t>(sinf(phase) * amplitude * envelope);
+                    data.push_back(static_cast<uint8_t>(sample & 0xFF));
+                    data.push_back(static_cast<uint8_t>((sample >> 8) & 0xFF));
+                  }
+                  return data;
+            - speaker.finish: hw_speaker
 
 select:
   - platform: template
