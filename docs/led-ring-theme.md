@@ -56,17 +56,50 @@ Caratteristiche:
 - non usa colori arcobaleno;
 - serve a dare l'impressione che la cassa stia parlando, non solo pulsando.
 
+### Talk Glow Color
+
+Variante colorata di `Talk Glow`, pensata per la fase wake/listening.
+
+Caratteristiche:
+
+- accende tutto il ring;
+- varia la luminosita' in modo non regolare;
+- non usa il colore dello stato come tinta unica;
+- attraversa una palette rosso -> viola -> blu;
+- sostituisce `KITT Scan` su `wake` e `listening`.
+
+`KITT Scan` resta disponibile come effetto nel package, ma non e' assegnato al
+tema corrente.
+
 ## Mapping Attuale
 
-Override locali rispetto al preset `ws2812_ring`:
+Palette sostitutiva locale rispetto al preset `ws2812_ring`:
 
 | Stato | Colore | Effetto | Brightness |
 | --- | --- | --- | --- |
-| `wake` | red | `KITT Scan` | `0.75` |
-| `listening` | red | `KITT Scan` | `0.75` |
-| `responding` | blue | `Talk Glow` | `1.0` |
+| `idle` | off | `None` | `0.0` |
+| `muted` | `[1.0, 0.0, 0.0]` | `Slow Pulse` | `0.45` |
+| `mic_muted` | `[1.0, 0.0, 0.08]` | `None` | `0.35` |
+| `speaker_muted` | `[0.9, 0.0, 0.45]` | `None` | `0.35` |
+| `wake` | rosso -> viola -> blu | `Talk Glow Color` | `0.9` |
+| `listening` | rosso -> viola -> blu | `Talk Glow Color` | `0.9` |
+| `thinking` | `[0.55, 0.15, 1.0]` | `Spin` | `0.75` |
+| `responding` | `[0.0, 0.25, 1.0]` | `Talk Glow` | `1.0` |
+| `voip_ringing` | `[1.0, 0.0, 0.0]` | `Ringing` | `1.0` |
+| `voip_calling` | `[0.85, 0.0, 0.7]` | `Calling` | `1.0` |
+| `voip_remote_ringing` | `[0.85, 0.0, 0.7]` | `Ringing` | `1.0` |
+| `voip_in_call` | `[0.15, 0.0, 0.9]` | `None` | `1.0` |
+| `error` | `[1.0, 0.0, 0.0]` | `None` | `0.75` |
+| `media` | `[0.2, 0.0, 1.0]` | `Spin` | `1.0` |
+| `boot` | `[0.75, 0.0, 0.35]` | `None` | `0.65` |
+| `no_wifi` | `[0.95, 0.0, 0.35]` | `Blink` | `0.75` |
+| `no_ha` | `[0.1, 0.15, 1.0]` | `Blink` | `0.65` |
+| `no_va` | `[0.55, 0.15, 1.0]` | `Blink` | `0.65` |
+| `timer_ringing` | `[0.9, 0.0, 0.75]` | `Fast Pulse` | `1.0` |
 
-Tutti gli altri stati restano quelli del preset `ws2812_ring`.
+La palette evita verde, giallo e arancione nel tema principale. Le differenze di
+stato sono affidate a posizione nella scala rosso/viola/blu, animazione e
+brightness.
 
 ## Rollback
 
@@ -108,5 +141,8 @@ poi compilare e caricare OTA.
 - OTA su `192.168.1.171`: PASS.
 - Post-OTA: device online, ESPHome API raggiungibile, audio stack e VoIP
   inizializzati.
+- Secondo OTA palette rosso/viola/blu: PASS.
+- Post-secondo OTA: boot riuscito, safe mode ha confermato avvio sano, Wi-Fi
+  `100%`, VoIP `idle`, PSRAM libera circa `4.29 MB`.
 - Validazione visiva da completare guardando fisicamente il ring durante wake,
   listening e risposta TTS.

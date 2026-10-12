@@ -18,7 +18,7 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 | Audio runtime | Pass | Speaker, microfoni e round trip Assist testati sulla board |
 | Profilo audio operativo | Pass | Full AFE con dual mic, TDM, AEC, NS, SE e reference hardware |
 | VoIP locale | Pass | Satellite Taverna, interno `101`, SIP `5060/udp`, RTP base `40000` |
-| LED ring theme | OTA pass | Package LED locale con effetti `KITT Scan` e `Talk Glow`; validazione visiva da fare sul ring |
+| LED ring theme | OTA pass | Palette rosso/viola/blu con `Talk Glow Color` su wake/listening; validazione visiva da fare sul ring |
 | Listen feedback sound | Pass | Switch per-device `Listen Feedback Sound`, LED solo oppure LED + bip locale |
 | Golden firmware | Fatto | Recovery locale in `backups/golden-esp-voip-20261010/`, documentata in `docs/golden-firmware-recovery.md` |
 
