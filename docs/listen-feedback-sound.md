@@ -17,12 +17,12 @@ Il TTS non fa parte di questa prima feature.
 Il feedback di ascolto e' temporale e locale:
 
 ```text
-wake word rilevata -> LED ascolto -> eventuale bip -> ascolto Assist
+wake word rilevata -> Assist entra in listening -> LED ascolto -> eventuale bip
 ```
 
-Non deve dipendere da Home Assistant, `galileo-core`, rete o TTS. Se il backend
-e' lento o non disponibile, la cassa deve comunque poter mostrare lo stato e,
-se abilitato, suonare il bip.
+Non deve dipendere da `galileo-core` o TTS. Il segnale deve pero' indicare solo
+lo stato realmente utile: se la wake word viene rilevata ma Assist non entra in
+`listening`, la cassa non deve illuminarsi come pronta e non deve suonare.
 
 ## Configurazione
 
@@ -52,13 +52,15 @@ Questo e' il profilo full AFE stabile usato dal satellite taverna.
 
 ## Comportamento Runtime
 
-Quando `voice_assistant` segnala `on_listening`:
+Quando il runtime controller risolve `va_state: listening`:
 
-1. il runtime/controller LED riceve lo stato ascolto dalle automazioni gia'
-   presenti;
+1. il ring LED mostra lo stato `listening`;
 2. se `Listen Feedback Sound` e' attivo e lo speaker non e' in mute, parte un
    bip PCM locale breve;
 3. se lo switch e' disattivato, non viene riprodotto nulla.
+
+Lo stato `wake` resta visivamente spento: non deve comunicare "puoi parlare"
+prima che il satellite sia davvero in ascolto.
 
 Il suono non e' una frase, non usa Piper, non usa Home Assistant TTS e non passa
 da `galileo-core`.
@@ -95,12 +97,20 @@ risultato nasce dopo l'intent, dentro Home Assistant / `galileo-core`.
 6. Con `Speaker Mute` ON:
    - verificare che il bip non venga riprodotto.
 
-## Limite Noto
+## Regola Di Aggancio
 
-Il bip viene agganciato a `voice_assistant.on_listening`, cioe' quando il
-satellite e' gia' entrato in ascolto. L'AFE/AEC dovrebbe gestire il suono locale
-come playback reference, ma il test reale deve confermare che il bip non degradi
-la prima parola pronunciata subito dopo la wake word.
+Il bip non e' agganciato direttamente alla wake word. Viene eseguito come
+azione della policy runtime `va_state` quando il valore diventa `listening`.
+Questo mantiene lo stesso significato tra LED e suono:
+
+```text
+nessun listening -> nessun LED ascolto -> nessun bip
+listening reale -> LED ascolto -> eventuale bip
+```
+
+L'AFE/AEC dovrebbe gestire il suono locale come playback reference, ma il test
+reale deve continuare a verificare che il bip non degradi la prima parola
+pronunciata subito dopo la wake word.
 
 ## Future: Feedback Di Comando Eseguito
 

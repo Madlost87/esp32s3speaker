@@ -39,7 +39,7 @@ Effetto scanner avanti/indietro ispirato alla barra luminosa KITT.
 
 Caratteristiche:
 
-- usa il colore dello stato, oggi rosso su `wake` e `listening`;
+- usa il colore dello stato quando viene assegnato a uno stato visibile;
 - scorre da un lato all'altro del ring e torna indietro;
 - usa una piccola scia per rendere il movimento meno secco sui 7 LED;
 - non cambia il significato dello stato, cambia solo la resa visiva.
@@ -58,7 +58,7 @@ Caratteristiche:
 
 ### Talk Glow Color
 
-Variante colorata di `Talk Glow`, pensata per la fase wake/listening.
+Variante colorata di `Talk Glow`, pensata per la fase `listening`.
 
 Caratteristiche:
 
@@ -66,10 +66,14 @@ Caratteristiche:
 - varia la luminosita' in modo non regolare;
 - non usa il colore dello stato come tinta unica;
 - attraversa una palette rosso -> viola -> blu;
-- sostituisce `KITT Scan` su `wake` e `listening`.
+- viene assegnata a `listening`, cioe' quando il satellite e' davvero pronto ad
+  acquisire la frase.
 
 `KITT Scan` resta disponibile come effetto nel package, ma non e' assegnato al
 tema corrente.
+
+Lo stato `wake` resta spento: se la wake word viene rilevata ma la pipeline non
+entra in `listening`, la cassa non deve sembrare pronta ad ascoltare.
 
 ## Mapping Attuale
 
@@ -81,7 +85,7 @@ Palette sostitutiva locale rispetto al preset `ws2812_ring`:
 | `muted` | `[1.0, 0.0, 0.0]` | `Slow Pulse` | `0.45` |
 | `mic_muted` | `[1.0, 0.0, 0.08]` | `None` | `0.35` |
 | `speaker_muted` | `[0.9, 0.0, 0.45]` | `None` | `0.35` |
-| `wake` | rosso -> viola -> blu | `Talk Glow Color` | `0.9` |
+| `wake` | off | `None` | `0.0` |
 | `listening` | rosso -> viola -> blu | `Talk Glow Color` | `0.9` |
 | `thinking` | `[0.55, 0.15, 1.0]` | `Spin` | `0.75` |
 | `responding` | `[0.0, 0.25, 1.0]` | `Talk Glow` | `1.0` |
@@ -130,7 +134,8 @@ poi compilare e caricare OTA.
 2. `esphome compile esphome/galileo-va-afe.yaml`.
 3. OTA solo se compila.
 4. Test wake word:
-   - `wake` / `listening`: scanner KITT rosso.
+   - wake senza `listening`: nessun LED ascolto e nessun bip;
+   - `listening`: `Talk Glow Color` rosso/viola/blu ed eventuale bip;
    - `responding`: ring blu con Talk Glow.
 5. Verificare che VoIP, mute, timer e stati errore mantengano colori leggibili.
 
@@ -144,5 +149,7 @@ poi compilare e caricare OTA.
 - Secondo OTA palette rosso/viola/blu: PASS.
 - Post-secondo OTA: boot riuscito, safe mode ha confermato avvio sano, Wi-Fi
   `100%`, VoIP `idle`, PSRAM libera circa `4.29 MB`.
-- Validazione visiva da completare guardando fisicamente il ring durante wake,
-  listening e risposta TTS.
+- Terzo OTA feedback su `listening` reale: PASS.
+- Post-terzo OTA: boot riuscito; log reale con `Listen feedback sound` e LED
+  `Talk Glow Color` nello stesso istante dello stato ascolto; poi `thinking`,
+  `responding` e ritorno OFF.

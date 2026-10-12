@@ -416,8 +416,6 @@ voice_assistant:
   noise_suppression_level: 0
   auto_gain: 0dBFS
   volume_multiplier: 2.0
-  on_listening:
-    - script.execute: play_listen_feedback_sound
 
 # The shared media-player package defines these HTTP sources. On WS3, retain
 # their ring allocations across playback cycles so media, TTS and VoIP do not
@@ -430,6 +428,13 @@ media_source:
 
 runtime_controller:
   storage_in_psram: true
+  policies:
+    va_state:
+      values:
+        listening:
+          value: 1
+          then:
+            - script.execute: play_listen_feedback_sound
   outputs:
     led:
       id: status_led
@@ -448,9 +453,9 @@ runtime_controller:
           effect: None
           brightness: 0.35
         wake:
-          color: [0.75, 0.0, 1.0]
-          effect: Talk Glow Color
-          brightness: 0.9
+          color: [0.0, 0.0, 0.0]
+          effect: None
+          brightness: 0.0
         listening:
           color: [0.75, 0.0, 1.0]
           effect: Talk Glow Color
