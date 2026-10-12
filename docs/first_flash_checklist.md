@@ -1,5 +1,11 @@
 # Galileo ESP32-S3 First Flash Checklist
 
+> Stato: documento storico del primo flash stock.
+>
+> Per compilare, caricare o recuperare il firmware operativo corrente usare
+> `esphome/galileo-va-afe.yaml`, `docs/voip-centralino-esp32.md` e
+> `docs/golden-firmware-recovery.md`.
+
 Use only after confirming the factory backup exists and `galileo-va.yaml` compiles.
 
 ## Before Flash

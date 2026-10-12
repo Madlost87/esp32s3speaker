@@ -20,11 +20,12 @@
 ## Microphone Chain
 
 - ADC microfonico: ES7210.
-- Microfono in ESPHome: `platform: i2s_audio`.
-- ADC type: external.
+- Microfono in ESPHome: `mic_main`, uscita processata dal profilo full AFE.
+- ADC type: external ES7210 via TDM.
 - PDM: false.
 - Bits per sample: 16 bit.
-- Sample rate osservato/configurato per ES7210: 16000 Hz.
+- Sample rate codec/TDM: 48000 Hz.
+- Sample rate consumato da wake/Assist dopo AFE: 16000 Hz.
 - Gain default ES7210: 24 dB.
 - Gain runtime: regolabile dal firmware a step di 3 dB.
 
@@ -40,22 +41,27 @@
 
 ## Audio Topology
 
-Il firmware usa due bus I2S logici sugli stessi clock:
+Il firmware operativo usa il profilo full AFE:
 
-- `i2s_input`: bus microfono, master, sempre in capture per la wake word.
-- `i2s_output`: bus speaker, slave, usa il clock del bus microfono.
+- ES7210/ES8311 su TDM 48 kHz;
+- slot `0` e `2`: microfoni fisici;
+- slot `1`: playback reference per AEC;
+- slot `3`: inutilizzato/quasi silente su questa board;
+- AFE con AEC, noise suppression, speech enhancement e VAD;
+- output processato a 16 kHz verso `micro_wake_word` e Assist.
 
-ES7210 ed ES8311 sono slave rispetto al clock generato dal lato microfono.
+Il vecchio profilo stock a due bus I2S resta solo come riferimento storico.
 
 ## Current ESPHome Model Configuration
 
-Il firmware attuale carica modelli ESPHome microWakeWord v2 simili a:
+Il firmware attuale carica questi modelli ESPHome microWakeWord v2:
 
 - `alexa`
 - `okay_nabu`
 - `hey_jarvis`
-- `hey_mycroft`
 - `vad`
 
-Il nuovo modello deve essere equivalente come formato al manifest di esempio incluso in `example_model/`.
+Al boot sono abilitati `alexa` e `okay_nabu`; `hey_jarvis` e' caricato ma
+disabilitato.
 
+Il nuovo modello deve essere equivalente come formato al manifest di esempio incluso in `example_model/`.

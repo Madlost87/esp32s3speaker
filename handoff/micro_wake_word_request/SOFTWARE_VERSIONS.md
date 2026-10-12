@@ -8,13 +8,12 @@ Queste versioni descrivono il firmware target su cui dovra' girare la wake word 
 | --- | --- |
 | Firmware framework | ESPHome |
 | ESPHome build version | 2026.9.1 |
-| Build timestamp osservato | 2026-10-05 12:26:18 +0200 |
+| Build timestamp osservato | 2026-10-12 |
 | ESP-IDF | 5.5.5 |
 | Target ESP-IDF | esp32s3 |
-| ESPHome config | `esphome/galileo-va.yaml` |
-| Upstream package | `MichalZaniewicz/esphome-waveshare-esp32-s3-audio-va` |
-| Upstream package ref | `v1.1.1` |
-| Upstream package min ESPHome | 2026.8.0 |
+| ESPHome config | `esphome/galileo-va-afe.yaml` |
+| Runtime packages | `n-IA-hane` ESPHome intercom/audio/VoIP/runtime-controller packages |
+| Upstream package min ESPHome | 2026.9.0 |
 
 ## Runtime Wake Word
 
@@ -24,7 +23,9 @@ Queste versioni descrivono il firmware target su cui dovra' girare la wake word 
 | Model manifest schema | microWakeWord JSON `version: 2` |
 | Model file format | TensorFlow Lite Micro `.tflite` |
 | VAD model | ESPHome microWakeWord `vad.json` v2 |
-| Wake models currently used | `alexa`, `okay_nabu`, `hey_jarvis`, `hey_mycroft` |
+| Wake models loaded | `alexa`, `okay_nabu`, `hey_jarvis` |
+| Wake models enabled at boot | `alexa`, `okay_nabu` |
+| Wake model loaded but disabled | `hey_jarvis` |
 | Inference location | On-device on ESP32-S3 |
 | Server model compatibility | Not openWakeWord/Wyoming server format |
 
@@ -46,13 +47,13 @@ Resolved ESP-IDF managed components observed in the ESPHome build:
 | Item | Value |
 | --- | --- |
 | Microphone ADC | ES7210 |
-| Audio input path | I2S external ADC |
+| Audio input path | ES7210 TDM through full AFE profile |
 | PDM | false |
 | Sample rate for wake/mic | 16000 Hz |
 | Bits per sample | 16 bit |
 | Default ES7210 gain | 24 dB |
 | Runtime gain step | 3 dB |
-| Channel expectation | Mono stream consumed by ESPHome wake pipeline |
+| Channel expectation | AFE processed mono stream consumed by ESPHome wake pipeline |
 
 ## Model Delivery Contract
 
@@ -72,4 +73,3 @@ The JSON should include the real recommended values for:
 - `minimum_esphome_version`
 
 If a different ESPHome minimum version is required, include it explicitly in the manifest and note it in the handoff.
-

@@ -161,9 +161,10 @@ esphome:
     - priority: -90
       then:
         - lambda: |-
+            id(alexa).enable();
             id(okay_nabu).enable();
-            id(hey_jarvis).enable();
-            ESP_LOGI("wake_word", "Forced active wake words: Okay Nabu + Hey Jarvis");
+            id(hey_jarvis).disable();
+            ESP_LOGI("wake_word", "Forced active wake words: Alexa + Okay Nabu; Hey Jarvis disabled");
   platformio_options:
     board_build.flash_mode: dio
 
@@ -401,6 +402,8 @@ micro_wake_word:
   microphone: mic_main
   task_stack_in_psram: true
   models:
+    - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/alexa.json
+      id: alexa
     - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/okay_nabu.json
       id: okay_nabu
     - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/hey_jarvis.json

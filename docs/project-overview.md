@@ -1,5 +1,12 @@
 # ESP32-S3 Audio / ESPHome Project
 
+> Stato: documento storico di bring-up.
+>
+> La guida operativa corrente e' il README principale insieme a
+> `docs/voip-centralino-esp32.md`. Il firmware attivo oggi e'
+> `esphome/galileo-va-afe.yaml`, non il vecchio profilo stock
+> `esphome/galileo-va.yaml`.
+
 ## Scope
 
 This track is the newer Galileo voice satellite path based on an ESP32-S3 audio board and ESPHome.
@@ -20,25 +27,26 @@ Goal:
 
 ## Repository Areas
 
-- `hardware/esp32-s3-audio/esphome/galileo-va.yaml`: thin local ESPHome config.
-- `hardware/esp32-s3-audio/esphome/secrets.example.yaml`: local secrets template.
-- `hardware/esp32-s3-audio/docs/initial_board_audit.md`: factory firmware and hardware audit.
-- `hardware/esp32-s3-audio/docs/compatibility_audit.md`: ESPHome/Home Assistant compatibility notes.
-- `hardware/esp32-s3-audio/docs/first_flash_checklist.md`: first flash result and runtime checklist.
-- `hardware/esp32-s3-audio/docs/references.md`: external reference links.
-- `hardware/esp32-s3-audio/diagnostics/`: sanitized chip, flash, USB, and factory diagnostic outputs.
+- `esphome/galileo-va-afe.yaml`: current full AFE ESPHome config.
+- `esphome/galileo-va.yaml`: historical stock ESPHome config.
+- `esphome/secrets.example.yaml`: local secrets template.
+- `docs/`: audit, runtime validation, recovery, wake-word and feature notes.
+- `diagnostics/`: sanitized chip, flash, USB, and factory diagnostic outputs.
 
 ## Firmware Shape
 
-The local ESPHome file is intentionally thin. Board-specific implementation is pulled from:
+The original local ESPHome file was intentionally thin and used:
 
 - `MichalZaniewicz/esphome-waveshare-esp32-s3-audio-va`
 - pinned ref: `v1.1.1`
 
+That profile is no longer the operational baseline. The current firmware uses
+the full AFE profile in `esphome/galileo-va-afe.yaml`.
+
 Local substitutions define:
 
 - device name: `galileo-va`
-- friendly name: `Galileo Voice`
+- friendly name: `Satellite Taverna`
 - conservative volume limits
 - Europe/Rome timezone
 - no deep sleep for first bring-up
@@ -59,15 +67,9 @@ Validated:
 - ESPHome API was reachable on port `6053`.
 - OTA was reachable on port `3232`.
 
-Prepared but still needs runtime validation:
-
-- Home Assistant discovery/adoption.
-- Assist device controls.
-- LED ring behavior.
-- Speaker and TTS playback.
-- Microphone audio into Assist.
-- Local wake word behavior.
-- Full Assist round trip.
+Later runtime validation moved the project to the full AFE baseline. Current
+validated items are tracked in `runtime-validation-20261008.md` and
+`voip-centralino-esp32.md`.
 
 ## Home Assistant Assist Path
 
@@ -78,10 +80,14 @@ Repo-side integration is prepared through ESPHome components:
 - `external_media_player`
 - `micro_wake_word`
 
-Initial wake word:
+Current wake-word model set:
 
+- `alexa`
+- `okay_nabu`
 - `hey_jarvis`
-- local ESPHome microWakeWord model
+
+At boot, `Alexa + Okay Nabu` are enabled and `Hey Jarvis` is loaded but
+disabled. See `wake-word-models.md`.
 
 Important distinction:
 
@@ -105,24 +111,20 @@ The ESP32-S3 path is prepared to participate in a Home Assistant Assist pipeline
 
 ## Next Actions
 
-1. Open/adopt `Galileo Voice` in Home Assistant through ESPHome.
-2. Confirm `hey_jarvis` is selected and enabled from device controls.
-3. Run the first-boot runtime checklist:
-   - LED ring
-   - speaker at conservative volume
-   - microphone into Assist
-   - wake word
-   - full Assist round trip
-4. Capture ESPHome logs for any codec, audio, wake, or API failures.
-5. Only raise volume limits after a clean speaker/TTS test.
+1. Keep `esphome/galileo-va-afe.yaml` as the baseline.
+2. Test `Listen Feedback Sound` ON/OFF and with `Speaker Mute`.
+3. Measure wake reliability and false positives for `Alexa + Okay Nabu`.
+4. Prepare the Galileo/Jarvis custom model when the ESPHome microWakeWord v2
+   files are available.
+5. Keep audio stack, pinout, AFE mode, VoIP packages and buffer strategy stable
+   unless a new test proves a concrete failure.
 
 ## Privacy And Git Notes
 
 Do not commit:
 
-- `hardware/esp32-s3-audio/esphome/secrets.yaml`
+- `esphome/secrets.yaml`
 - factory flash backups
 - generated firmware binaries
 - local Home Assistant credentials or tokens
 - runtime logs containing private network details
-

@@ -2,6 +2,12 @@
 
 Date: 2026-10-07
 
+> Stato: documento storico.
+>
+> Questo file descrive il passaggio iniziale dal firmware factory Xiaozhi allo
+> stock ESPHome e poi al profilo AFE. Dopo la validazione del 2026-10-08, il
+> profilo operativo e' `esphome/galileo-va-afe.yaml`.
+
 This note captures the result of comparing the original Xiaozhi factory firmware
 with the ESPHome firmware used for Galileo Voice.
 
@@ -29,7 +35,7 @@ channel for echo cancellation.
 
 ## Stock ESPHome Adaptation
 
-The default maintained firmware remains based on
+The first maintained firmware was based on
 `MichalZaniewicz/esphome-waveshare-esp32-s3-audio-va` pinned to `v1.1.1`.
 
 The safe "top within stock ESPHome" adaptation is in:
@@ -61,17 +67,18 @@ Latest verification:
 - RAM used: 43.5%, 148,707 / 341,760 bytes
 - Flash used: 22.2%, 1,802,755 / 8,126,464 app bytes
 
-## AFE Experimental Profile
+## AFE Profile
 
-The closer factory-style attempt is preserved separately:
+The closer factory-style profile is:
 
 ```text
 esphome/galileo-va-afe.yaml
 ```
 
-This profile is intentionally not the default. It uses external components from
-the `n-IA-hane` ESPHome audio/VoIP/AFE stack and models the hardware more like
-the factory firmware:
+This profile started as the experimental attempt, then became the operational
+baseline after runtime validation. It uses external components from the
+`n-IA-hane` ESPHome audio/VoIP/AFE stack and models the hardware more like the
+factory firmware:
 
 - ES7210/ES8311 through an ESP audio stack.
 - 48 kHz TDM capture.
@@ -87,17 +94,15 @@ The profile documents the observed slot mapping used for that experiment:
 - slot `1`: playback reference for AEC
 - slot `3`: near-silent / unused
 
-Treat this as an experimental branch for future work, not as the current stable
-firmware path.
+Treat the old stock profile as the comparison/fallback path. The AFE profile is
+the current stable firmware path.
 
 ## Current Conclusion
 
 The original firmware uses more of the audio hardware than the first ESPHome
-YAML did. The restored default YAML now pushes stock ESPHome as far as it can
-reasonably go without replacing the audio stack: stereo ES7210 capture into
-Assist, maximum ESPHome noise suppression, high AGC and higher volume
-multiplier.
+YAML did. The stock profile showed what could be done without replacing the
+audio stack, but the full factory-style hardware path requires an AFE-capable
+component stack.
 
-The full factory-style hardware path requires an AFE-capable component stack.
-That work is preserved in `galileo-va-afe.yaml`, but should be tested separately
-from the stable firmware.
+The current baseline is `galileo-va-afe.yaml`: full AFE, dual mic, TDM reference
+for AEC, wake/Assist, VoIP, LED and physical controls.

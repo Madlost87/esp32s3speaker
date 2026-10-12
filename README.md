@@ -10,13 +10,15 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 | --- | --- | --- |
 | Audit hardware | Fatto | Identificazione chip, USB, flash, PSRAM, codec e partizioni |
 | Backup factory | Fatto | Dump completo flash 16 MB salvato localmente e ignorato da Git |
-| Build ESPHome | Pass | ESPHome 2026.9.1, firmware compilato correttamente |
-| Primo flash | Pass | Device online come `galileo-va.local` |
+| Build ESPHome | Pass | ESPHome 2026.9.1, profilo full AFE compilato correttamente |
+| Flash/OTA | Pass | Device online come `galileo-va.local` |
 | Wi-Fi/API ESPHome | Pass | IP osservato: `192.168.1.171`, API su porta `6053` |
 | Home Assistant | Pass | Connessione API e integrazione Assist verificate |
-| Wake word locale | Pass | `micro_wake_word` con modelli ESPHome v2 |
+| Wake word locale | Pass | `micro_wake_word` ESPHome v2 con `Alexa + Okay Nabu` attive al boot |
 | Audio runtime | Pass | Speaker, microfoni e round trip Assist testati sulla board |
-| Tuning audio | In corso | Profilo stock ESPHome spinto a stereo mic + NS/AGC alto; profilo AFE sperimentale preservato |
+| Profilo audio operativo | Pass | Full AFE con dual mic, TDM, AEC, NS, SE e reference hardware |
+| VoIP locale | Pass | Satellite Taverna, interno `101`, SIP `5060/udp`, RTP base `40000` |
+| Listen feedback sound | Pass | Switch per-device `Listen Feedback Sound`, LED solo oppure LED + bip locale |
 | Golden firmware | Fatto | Recovery locale in `backups/golden-esp-voip-20261010/`, documentata in `docs/golden-firmware-recovery.md` |
 
 ## Hardware Rilevato
@@ -36,13 +38,14 @@ Il firmware originale rilevato era `xiaozhi` v1.8.9, con board SKU `waveshare-s3
 
 ## Architettura Audio
 
-La board usa ES7210 ed ES8311 su bus I2S condiviso. Il firmware ESPHome scelto usa due bus I2S logici sugli stessi clock:
+La board usa ES7210 ed ES8311 su bus audio condiviso. Il firmware operativo usa
+il profilo full AFE con TDM a 48 kHz:
 
 ```text
-ES7210 microphones -> I2S input bus -> ESP32-S3 -> micro_wake_word
-                                      -> Home Assistant Assist
+ES7210 TDM slot 0/2 -> ESP32-S3 -> AFE/AEC/NS/SE -> micro_wake_word
+ES7210 TDM slot 1   -> playback reference -------> AEC
 
-Home Assistant TTS/media -> ESP32-S3 -> I2S output bus -> ES8311 -> speaker
+Home Assistant TTS/media/VoIP -> ESP32-S3 -> ES8311 -> NS4150 -> speaker
 ```
 
 Pin principali:
@@ -58,34 +61,26 @@ Pin principali:
 | I2C SCL | GPIO10 | Controllo codec/expander |
 | LED data | GPIO38 | Ring WS2812 |
 
-Il microfono e' configurato come I2S esterno, non PDM, a 16 bit. La wake word gira sul device con ESPHome `micro_wake_word` e TensorFlow Lite Micro.
+I microfoni sono configurati tramite ES7210 esterno, non PDM. L'AFE produce il
+flusso voce usato da ESPHome `micro_wake_word`, Assist e VoIP TX.
 
 ## Firmware
 
-Entrypoint ESPHome:
-
-```text
-esphome/galileo-va.yaml
-```
-
-La configurazione locale resta volutamente sottile: importa il package upstream testato e pinato a `v1.1.1`, poi applica il tuning locale per usare due canali microfonici ES7210 verso Assist:
-
-```yaml
-packages:
-  core:
-    url: https://github.com/MichalZaniewicz/esphome-waveshare-esp32-s3-audio-va
-    ref: v1.1.1
-    files:
-      - base/core.yaml
-```
-
-Il profilo sperimentale piu' vicino al firmware factory Xiaozhi, con AFE/AEC/TDM e componenti esterni, e' preservato separatamente:
+Entrypoint ESPHome operativo:
 
 ```text
 esphome/galileo-va-afe.yaml
 ```
 
-Non e' il default stabile: serve come traccia per test futuri dell'audio stack completo.
+Questo e' il profilo stabile attuale del satellite `Satellite Taverna`. Usa componenti esterni AFE/audio/VoIP per sfruttare la board come il firmware factory: TDM 48 kHz, due microfoni fisici, reference hardware per AEC, speaker ES8311, LED ring e tasti fisici.
+
+Il vecchio profilo stock ESPHome resta nel repository come riferimento storico e fallback di confronto:
+
+```text
+esphome/galileo-va.yaml
+```
+
+Non e' il profilo operativo corrente.
 
 Le credenziali Wi-Fi/API non sono versionate. Il template e':
 
@@ -132,13 +127,23 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 
 ```text
 .
+|-- README.md
+|-- MANIFEST.md
+|-- AUDIT_HARDWARE.md
 |-- esphome/
+|   |-- galileo-va-afe.yaml
 |   |-- galileo-va.yaml
 |   `-- secrets.example.yaml
 |-- docs/
+|   |-- README.md
 |   |-- initial_board_audit.md
 |   |-- compatibility_audit.md
 |   |-- first_flash_checklist.md
+|   |-- golden-firmware-recovery.md
+|   |-- listen-feedback-sound.md
+|   |-- runtime-validation-20261008.md
+|   |-- voip-centralino-esp32.md
+|   |-- wake-word-models.md
 |   `-- references.md
 |-- diagnostics/
 |   |-- chip_info.txt
@@ -151,10 +156,17 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 
 ## File Importanti
 
+- `docs/README.md` - indice della documentazione e distinzione tra documenti operativi e storici.
+- `AUDIT_HARDWARE.md` - audit aggiornato di hardware, firmware attuale, gap e piano interventi.
+- `esphome/galileo-va-afe.yaml` - firmware operativo attuale per `Satellite Taverna`.
+- `esphome/galileo-va.yaml` - vecchio profilo stock, conservato come riferimento storico/fallback.
 - `docs/initial_board_audit.md` - audit non distruttivo iniziale, factory firmware, partizioni e backup.
 - `docs/compatibility_audit.md` - compatibilita' ESPHome/Home Assistant, pinout e stato test.
-- `docs/first_flash_checklist.md` - checklist flash e ordine dei test runtime.
-- `docs/original_firmware_audio_adaptation.md` - confronto tra firmware factory Xiaozhi, hardware audio e adattamento ESPHome.
+- `docs/first_flash_checklist.md` - checklist storica del primo flash stock.
+- `docs/original_firmware_audio_adaptation.md` - confronto storico tra firmware factory Xiaozhi, stock ESPHome e passaggio AFE.
+- `docs/runtime-validation-20261008.md` - validazione della baseline full AFE.
+- `docs/voip-centralino-esp32.md` - guida operativa ESP32-S3 per VoIP, audio, tasti e deploy.
+- `docs/wake-word-models.md` - stato corrente dei modelli wake word.
 - `docs/golden-firmware-recovery.md` - procedura per ripristinare la cassa allo stato funzionante attuale.
 - `docs/listen-feedback-sound.md` - spec del bip locale opzionale quando il satellite entra in ascolto.
 - `docs/references.md` - fonti hardware/software usate durante l'audit.
@@ -177,11 +189,11 @@ Il backup factory resta deliberatamente locale: e' utile per recovery, ma non ap
 
 ## Lavoro Aperto
 
-La board e' gia' stata portata online e il flusso vocale principale e' stato testato. La parte ancora da rifinire e' il tuning audio:
+La board e' gia' stata portata online, il profilo full AFE e' la baseline operativa e il flusso vocale principale e' stato testato. I prossimi lavori vanno fatti a piccoli passi, senza cambiare audio stack, pin, buffer o VoIP insieme ad altre feature:
 
-1. Testare sul device il profilo stock dual-channel appena compilato.
-2. Regolare i limiti di volume e il volume di default dello speaker.
-3. Tarare il gain ES7210 dei microfoni rispetto alla stanza reale.
-4. Confrontare STT su canale 0/1 e comportamento con `noise_suppression_level: 4`, `auto_gain: 31dBFS`, `volume_multiplier: 3`.
-5. Valutare separatamente il profilo AFE/AEC sperimentale se serve recuperare il comportamento piu' vicino al firmware factory.
-6. Integrare una wake word custom microWakeWord per Galileo quando sara' disponibile il modello.
+1. Testare sul campo lo switch `Listen Feedback Sound` con ON, OFF e `Speaker Mute`.
+2. Tarare wake word e falsi positivi per la combinazione corrente `Alexa + Okay Nabu`.
+3. Preparare il modello custom Galileo/Jarvis quando sara' disponibile in formato ESPHome microWakeWord v2.
+4. Misurare barge-in, STT, volume speaker e clipping con test ripetibili.
+5. Valutare solo in profilo separato AGC AFE, gain ES7210 e una futura variante no-VoIP.
+6. Progettare la feature futura di feedback comando eseguito, distinta dal bip di ascolto.

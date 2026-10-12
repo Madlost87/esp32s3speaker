@@ -82,6 +82,8 @@ micro_wake_word:
   microphone: mic_main
   task_stack_in_psram: true
   models:
+    - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/alexa.json
+      id: alexa
     - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/okay_nabu.json
       id: okay_nabu
     - model: https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/hey_jarvis.json
@@ -90,7 +92,8 @@ micro_wake_word:
       id: aiuto_aiuto
 ```
 
-Per un primo test si puo' anche sostituire temporaneamente `hey_jarvis` invece di aggiungere un terzo modello, cosi' si riduce il carico runtime.
+Per un primo test si puo' anche sostituire temporaneamente `hey_jarvis`
+invece di aggiungere un quarto modello, cosi' si riduce il carico runtime.
 
 ## Compilazione Prima Del Flash
 
