@@ -139,7 +139,7 @@ packages:
   voip_debug: github://n-IA-hane/esphome-intercom/packages/voip/debug.yaml@main
   s3_base: github://n-IA-hane/esphome-intercom/packages/platform/esp32s3_base.yaml@main
   native_diagnostics: github://n-IA-hane/esphome-intercom/packages/diagnostics/native.yaml@main
-  status_led: github://n-IA-hane/esphome-intercom/packages/led/status_ws2812_ring.yaml@main
+  status_led: !include packages/status_ws2812_ring_galileo.yaml
   afe_entities: github://n-IA-hane/esphome-intercom/packages/esp_afe/dual_mic_entities.yaml@main
   audio_stack_controls: github://n-IA-hane/esphome-intercom/packages/esp_audio_stack/controls.yaml@main
   speaker_power: github://n-IA-hane/esphome-intercom/packages/esp_audio_stack/speaker_power_switch.yaml@main
@@ -430,6 +430,23 @@ media_source:
 
 runtime_controller:
   storage_in_psram: true
+  outputs:
+    led:
+      id: status_led
+      preset: ws2812_ring
+      states:
+        wake:
+          color: red
+          effect: KITT Scan
+          brightness: 0.75
+        listening:
+          color: red
+          effect: KITT Scan
+          brightness: 0.75
+        responding:
+          color: blue
+          effect: Talk Glow
+          brightness: 1.0
 
 voip_stack:
   extension: ${voip_extension}

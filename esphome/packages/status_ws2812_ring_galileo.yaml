@@ -1,0 +1,134 @@
+# =============================================================================
+# Galileo WS2812 status LED ring.
+#
+# Local copy of the upstream WS2812 ring package with Galileo-specific effects.
+# Keeping this file local makes LED theme changes reviewable and easy to roll
+# back without editing ESPHome package caches.
+# =============================================================================
+
+substitutions:
+  status_led_name: Status LED
+  status_led_pin: GPIO38
+  status_led_num_leds: "7"
+  status_led_rgb_order: RGB
+
+light:
+  - platform: esp32_rmt_led_strip
+    id: status_led
+    name: ${status_led_name}
+    pin: ${status_led_pin}
+    num_leds: ${status_led_num_leds}
+    rgb_order: ${status_led_rgb_order}
+    chipset: WS2812
+    default_transition_length: 0ms
+    effects:
+      - pulse:
+          name: "Slow Pulse"
+          transition_length: 1200ms
+          update_interval: 1200ms
+          min_brightness: 20%
+          max_brightness: 100%
+      - pulse:
+          name: "Fast Pulse"
+          transition_length: 250ms
+          update_interval: 250ms
+          min_brightness: 15%
+          max_brightness: 100%
+      - addressable_lambda:
+          name: "Ringing"
+          update_interval: 120ms
+          lambda: |-
+            static bool on = true;
+            static uint32_t last = 0;
+            if (initial_run) {
+              on = true;
+              last = millis();
+            }
+            if (millis() - last >= 300) {
+              last = millis();
+              on = !on;
+            }
+            it.all() = on ? current_color : Color(0, 0, 0);
+      - addressable_lambda:
+          name: "Calling"
+          update_interval: 120ms
+          lambda: |-
+            static bool on = true;
+            static uint32_t last = 0;
+            if (initial_run) {
+              on = true;
+              last = millis();
+            }
+            if (millis() - last >= 500) {
+              last = millis();
+              on = !on;
+            }
+            it.all() = on ? current_color : Color(0, 0, 0);
+      - addressable_lambda:
+          name: "Blink"
+          update_interval: 120ms
+          lambda: |-
+            static bool on = true;
+            static uint32_t last = 0;
+            if (initial_run) {
+              on = true;
+              last = millis();
+            }
+            if (millis() - last >= 420) {
+              last = millis();
+              on = !on;
+            }
+            it.all() = on ? current_color : Color(0, 0, 0);
+      - addressable_lambda:
+          name: "Spin"
+          update_interval: 75ms
+          lambda: |-
+            static uint8_t pos = 0;
+            if (initial_run) pos = 0;
+            it.all() = Color(0, 0, 0);
+            it[pos] = current_color;
+            it[(pos + it.size() - 1) % it.size()] = current_color * 100;
+            it[(pos + it.size() - 2) % it.size()] = current_color * 25;
+            pos = (pos + 1) % it.size();
+      - addressable_lambda:
+          name: "KITT Scan"
+          update_interval: 35ms
+          lambda: |-
+            const int count = it.size();
+            if (count <= 0) return;
+            if (count == 1) {
+              it[0] = current_color;
+              return;
+            }
+
+            const float span = static_cast<float>((count - 1) * 2);
+            float phase = fmodf(static_cast<float>(millis()) / 150.0f, span);
+            float center = phase <= count - 1 ? phase : span - phase;
+
+            for (int i = 0; i < count; i++) {
+              float distance = fabsf(static_cast<float>(i) - center);
+              uint8_t scale = 0;
+              if (distance < 0.20f) {
+                scale = 255;
+              } else if (distance < 1.20f) {
+                scale = static_cast<uint8_t>((1.20f - distance) * 150.0f);
+              } else if (distance < 2.20f) {
+                scale = static_cast<uint8_t>((2.20f - distance) * 45.0f);
+              }
+              it[i] = current_color * scale;
+            }
+      - addressable_lambda:
+          name: "Talk Glow"
+          update_interval: 55ms
+          lambda: |-
+            const float now = static_cast<float>(millis()) / 1000.0f;
+            for (int i = 0; i < it.size(); i++) {
+              float voice =
+                0.58f +
+                0.23f * sinf(now * 7.4f + static_cast<float>(i) * 1.7f) +
+                0.15f * sinf(now * 12.9f + static_cast<float>(i) * 0.6f) +
+                0.08f * sinf(now * 19.7f + static_cast<float>(i) * 2.3f);
+              if (voice < 0.18f) voice = 0.18f;
+              if (voice > 1.0f) voice = 1.0f;
+              it[i] = current_color * static_cast<uint8_t>(voice * 255.0f);
+            }

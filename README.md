@@ -18,6 +18,7 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 | Audio runtime | Pass | Speaker, microfoni e round trip Assist testati sulla board |
 | Profilo audio operativo | Pass | Full AFE con dual mic, TDM, AEC, NS, SE e reference hardware |
 | VoIP locale | Pass | Satellite Taverna, interno `101`, SIP `5060/udp`, RTP base `40000` |
+| LED ring theme | OTA pass | Package LED locale con effetti `KITT Scan` e `Talk Glow`; validazione visiva da fare sul ring |
 | Listen feedback sound | Pass | Switch per-device `Listen Feedback Sound`, LED solo oppure LED + bip locale |
 | Golden firmware | Fatto | Recovery locale in `backups/golden-esp-voip-20261010/`, documentata in `docs/golden-firmware-recovery.md` |
 
@@ -140,6 +141,7 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 |   |-- compatibility_audit.md
 |   |-- first_flash_checklist.md
 |   |-- golden-firmware-recovery.md
+|   |-- led-ring-theme.md
 |   |-- listen-feedback-sound.md
 |   |-- runtime-validation-20261008.md
 |   |-- voip-centralino-esp32.md
@@ -168,6 +170,7 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 - `docs/voip-centralino-esp32.md` - guida operativa ESP32-S3 per VoIP, audio, tasti e deploy.
 - `docs/wake-word-models.md` - stato corrente dei modelli wake word.
 - `docs/golden-firmware-recovery.md` - procedura per ripristinare la cassa allo stato funzionante attuale.
+- `docs/led-ring-theme.md` - tema LED ring, effetti custom e rollback.
 - `docs/listen-feedback-sound.md` - spec del bip locale opzionale quando il satellite entra in ascolto.
 - `docs/references.md` - fonti hardware/software usate durante l'audit.
 - `handoff/micro_wake_word_request/REQUEST_TO_COLLEAGUE.md` - testo pronto per chiedere una wake word custom.
@@ -192,8 +195,9 @@ Il backup factory resta deliberatamente locale: e' utile per recovery, ma non ap
 La board e' gia' stata portata online, il profilo full AFE e' la baseline operativa e il flusso vocale principale e' stato testato. I prossimi lavori vanno fatti a piccoli passi, senza cambiare audio stack, pin, buffer o VoIP insieme ad altre feature:
 
 1. Testare sul campo lo switch `Listen Feedback Sound` con ON, OFF e `Speaker Mute`.
-2. Tarare wake word e falsi positivi per la combinazione corrente `Alexa + Okay Nabu`.
-3. Preparare il modello custom Galileo/Jarvis quando sara' disponibile in formato ESPHome microWakeWord v2.
-4. Misurare barge-in, STT, volume speaker e clipping con test ripetibili.
-5. Valutare solo in profilo separato AGC AFE, gain ES7210 e una futura variante no-VoIP.
-6. Progettare la feature futura di feedback comando eseguito, distinta dal bip di ascolto.
+2. Testare sul campo il tema LED ring con `KITT Scan` e `Talk Glow`.
+3. Tarare wake word e falsi positivi per la combinazione corrente `Alexa + Okay Nabu`.
+4. Preparare il modello custom Galileo/Jarvis quando sara' disponibile in formato ESPHome microWakeWord v2.
+5. Misurare barge-in, STT, volume speaker e clipping con test ripetibili.
+6. Valutare solo in profilo separato AGC AFE, gain ES7210 e una futura variante no-VoIP.
+7. Progettare la feature futura di feedback comando eseguito, distinta dal bip di ascolto.

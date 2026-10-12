@@ -27,6 +27,7 @@ Profilo corrente:
   funzionante salvato localmente.
 - `wake-word-models.md`: stato corrente dei modelli `micro_wake_word` e
   profili di test.
+- `led-ring-theme.md`: tema del ring LED, effetti custom e rollback.
 - `listen-feedback-sound.md`: specifica del bip locale opzionale quando il
   satellite entra in ascolto.
 - `runtime-validation-20261008.md`: evidenza runtime della baseline full AFE.
