@@ -14,7 +14,7 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 | Flash/OTA | Pass | Device online come `galileo-va.local` |
 | Wi-Fi/API ESPHome | Pass | IP osservato: `192.168.1.171`, API su porta `6053` |
 | Home Assistant | Pass | Connessione API e integrazione Assist verificate |
-| Wake word locale | Pass | `micro_wake_word` ESPHome v2 con `Alexa + Okay Nabu` attive al boot |
+| Wake word locale | Pass | `micro_wake_word` ESPHome v2 con `Okay Nabu + Hey Jarvis` attive al boot |
 | Audio runtime | Pass | Speaker, microfoni e round trip Assist testati sulla board |
 | Profilo audio operativo | Pass | Full AFE con dual mic, TDM, AEC, NS, SE e reference hardware |
 | VoIP locale | Pass | Satellite Taverna, interno `101`, SIP `5060/udp`, RTP base `40000` |
@@ -196,7 +196,7 @@ La board e' gia' stata portata online, il profilo full AFE e' la baseline operat
 
 1. Testare sul campo lo switch `Listen Feedback Sound` con ON, OFF e `Speaker Mute`.
 2. Testare sul campo il tema LED ring con `KITT Scan` e `Talk Glow`.
-3. Tarare wake word e falsi positivi per la combinazione corrente `Alexa + Okay Nabu`.
+3. Tarare wake word e falsi positivi per la combinazione corrente `Okay Nabu + Hey Jarvis`.
 4. Preparare il modello custom Galileo/Jarvis quando sara' disponibile in formato ESPHome microWakeWord v2.
 5. Misurare barge-in, STT, volume speaker e clipping con test ripetibili.
 6. Valutare solo in profilo separato AGC AFE, gain ES7210 e una futura variante no-VoIP.

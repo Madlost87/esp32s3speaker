@@ -86,8 +86,8 @@ Current wake-word model set:
 - `okay_nabu`
 - `hey_jarvis`
 
-At boot, `Alexa + Okay Nabu` are enabled and `Hey Jarvis` is loaded but
-disabled. See `wake-word-models.md`.
+At boot, `Okay Nabu + Hey Jarvis` are enabled. `Alexa` is loaded but disabled.
+See `wake-word-models.md`.
 
 Important distinction:
 
@@ -113,7 +113,7 @@ The ESP32-S3 path is prepared to participate in a Home Assistant Assist pipeline
 
 1. Keep `esphome/galileo-va-afe.yaml` as the baseline.
 2. Test `Listen Feedback Sound` ON/OFF and with `Speaker Mute`.
-3. Measure wake reliability and false positives for `Alexa + Okay Nabu`.
+3. Measure wake reliability and false positives for `Okay Nabu + Hey Jarvis`.
 4. Prepare the Galileo/Jarvis custom model when the ESPHome microWakeWord v2
    files are available.
 5. Keep audio stack, pinout, AFE mode, VoIP packages and buffer strategy stable

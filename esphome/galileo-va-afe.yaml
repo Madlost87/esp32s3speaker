@@ -161,10 +161,10 @@ esphome:
     - priority: -90
       then:
         - lambda: |-
-            id(alexa).enable();
+            id(alexa).disable();
             id(okay_nabu).enable();
-            id(hey_jarvis).disable();
-            ESP_LOGI("wake_word", "Forced active wake words: Alexa + Okay Nabu; Hey Jarvis disabled");
+            id(hey_jarvis).enable();
+            ESP_LOGI("wake_word", "Active wake words: Okay Nabu + Hey Jarvis; Alexa disabled");
   platformio_options:
     board_build.flash_mode: dio
 

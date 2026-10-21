@@ -14,39 +14,18 @@ Modelli caricati nel firmware:
 Comportamento al boot:
 
 ```text
-alexa      abilitata
+alexa      disabilitata
 okay_nabu  abilitata
-hey_jarvis caricata ma disabilitata
+hey_jarvis abilitata
 ```
 
-Questa e' la configurazione di test caricata il 2026-10-09 per provare
-`Alexa` insieme a `Okay Nabu`. Home Assistant puo' mostrare le tendine
-`Wake word` come `No wake word`, ma il firmware abilita direttamente i modelli
-al boot.
-
-Il default stabile precedente era `Okay Nabu + Hey Jarvis`, con `Alexa`
-caricata ma disabilitata.
+`Alexa` resta disponibile ma non attiva. Home Assistant puo' mostrare le
+tendine `Wake word` come `No wake word`, ma il firmware forza direttamente lo
+stato dei tre modelli al boot.
 
 ## Perche' La UI Puo' Essere Asincrona
 
 Nel profilo AFE il firmware forza lo stato dei modelli con:
-
-```cpp
-id(alexa).enable();
-id(okay_nabu).enable();
-id(hey_jarvis).disable();
-```
-
-La UI di Home Assistant espone controlli generati dal componente, ma oggi non e'
-la fonte di verita' per la combinazione attiva. La fonte di verita' operativa e'
-il firmware ESPHome.
-
-## Profili Di Test
-
-Per testare Alexa senza cambiare architettura, modificare solo il blocco
-`on_boot`.
-
-Default stabile:
 
 ```cpp
 id(alexa).disable();
@@ -54,29 +33,9 @@ id(okay_nabu).enable();
 id(hey_jarvis).enable();
 ```
 
-Test Alexa + Nabu:
-
-```cpp
-id(alexa).enable();
-id(okay_nabu).enable();
-id(hey_jarvis).disable();
-```
-
-Test Alexa + Jarvis:
-
-```cpp
-id(alexa).enable();
-id(okay_nabu).disable();
-id(hey_jarvis).enable();
-```
-
-Test solo Alexa:
-
-```cpp
-id(alexa).enable();
-id(okay_nabu).disable();
-id(hey_jarvis).disable();
-```
+La UI di Home Assistant espone controlli generati dal componente, ma oggi non e'
+la fonte di verita' per la combinazione attiva. La fonte di verita' operativa e'
+il firmware ESPHome.
 
 ## Procedura Sicura
 
@@ -84,8 +43,7 @@ id(hey_jarvis).disable();
 2. Flashare solo se la compilazione passa.
 3. Testare wake word vicina e lontana.
 4. Controllare falsi positivi con TV/parlato normale.
-5. Tornare al default stabile se Alexa crea falsi positivi o consuma troppa
-   memoria.
+5. Ripristinare il firmware precedente se emergono regressioni.
 
 Non affidare ancora la selezione delle combinazioni alle tendine Home Assistant:
 prima va resa esplicita la sincronizzazione tra UI e stato reale dei modelli.

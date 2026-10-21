@@ -14,8 +14,9 @@ Profilo corrente:
 - IP osservato: `192.168.1.171`;
 - ESPHome: `2026.9.1`;
 - audio: full AFE, TDM 48 kHz, dual mic, AEC/NS/SE, reference hardware;
-- wake word attive al boot: `Alexa + Okay Nabu`;
-- `Hey Jarvis`: caricato ma disabilitato;
+- wake word disponibili: `Alexa + Okay Nabu + Hey Jarvis`;
+- wake word attive al boot: `Okay Nabu + Hey Jarvis`;
+- `Alexa`: caricata ma disabilitata;
 - VoIP: interno `101`, SIP `5060/udp`, RTP base `40000`;
 - feedback ascolto: switch per-device `Listen Feedback Sound`.
 
