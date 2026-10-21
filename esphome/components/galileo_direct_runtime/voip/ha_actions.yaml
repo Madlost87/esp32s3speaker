@@ -1,0 +1,3 @@
+# Retired in 2026.10.0. Remove this include; VoIP now owns its HA interface.
+voip_stack:
+  legacy_ha_package: ha_actions

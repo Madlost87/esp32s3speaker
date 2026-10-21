@@ -1,0 +1,22 @@
+# =============================================================================
+# Local VA control commands exposed to Home Assistant as ESPHome API actions.
+#
+# Prerequisites:
+#   - id `runtime`: runtime_controller using the full_voice_voip profile
+# =============================================================================
+
+script:
+  # One implementation serves both locally recognized speech and the HA API.
+  # Only announcement audio is stopped, leaving Sendspin/background media intact.
+  - id: voice_quiet_internal
+    mode: restart
+    then:
+      - runtime_controller.event:
+          id: runtime
+          event: voice_stop
+
+api:
+  actions:
+    - action: voice_quiet
+      then:
+        - script.execute: voice_quiet_internal

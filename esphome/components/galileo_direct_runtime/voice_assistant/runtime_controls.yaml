@@ -1,0 +1,34 @@
+# User-facing Voice Assistant microphone control.
+#
+# Provides:
+#   switch: mute (wake-word controls are a separate package)
+#
+switch:
+  - platform: template
+    name: Mic Mute
+    id: mute
+    icon: mdi:microphone-off
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - logger.log:
+          level: INFO
+          tag: mute
+          format: "Mic mute ON"
+      - runtime_controller.event:
+          id: runtime
+          event: galileo_direct_stop
+      - microphone.mute: ${mic_id}
+      - runtime_controller.event:
+          id: runtime
+          event: mic_muted
+    on_turn_off:
+      - logger.log:
+          level: INFO
+          tag: mute
+          format: "Mic mute OFF"
+      - microphone.unmute: ${mic_id}
+      - runtime_controller.event:
+          id: runtime
+          event: mic_unmuted

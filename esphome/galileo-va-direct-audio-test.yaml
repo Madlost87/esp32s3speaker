@@ -1,0 +1,28 @@
+# Experimental Spec 007 configuration. Compile only; do not upload this file.
+# It inherits the validated satellite unchanged and adds a disabled PCM tap.
+
+packages:
+  golden_satellite: !include galileo-va-afe.yaml
+
+# Keep every generated artifact away from the golden profile's build tree.
+esphome:
+  name: galileo-va-direct-audio-test
+  build_path: build/galileo-va-direct-audio-test
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [galileo_audio_tap]
+
+galileo_audio_tap:
+  id: direct_audio_tap
+  microphone: mic_main
+  host: 192.168.1.186
+  port: 19007
+  # Deliberately non-secret test marker: this configuration must never be
+  # deployed. A real session id will be supplied from ignored local secrets.
+  session_id: !secret galileo_audio_bridge_session_id
+  # Armed only for the attended, five-minute Spec 007 test. It remains idle
+  # until the authenticated API start command supplies this same session id.
+  enabled: true

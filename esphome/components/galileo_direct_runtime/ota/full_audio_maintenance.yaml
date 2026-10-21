@@ -1,0 +1,59 @@
+# =============================================================================
+# OTA maintenance mode for full-experience audio devices without LVGL.
+#
+# ESPHome emits ota.on_begin before esp_ota_begin(), so this hook can quiesce
+# audio tasks before flash erase/write preparation starts.
+#
+# Required components: one Audio Stack and one VoIP Stack.
+# Other required IDs:
+#   - mww
+#   - speaker_media_player
+#   - script: start_mww_when_ready
+# =============================================================================
+
+packages:
+  ota_idf_backend: !include idf_backend.yaml
+
+ota:
+  - platform: esphome
+    id: ota_esphome
+    on_begin:
+      - logger.log:
+          level: INFO
+          tag: ota
+          format: "OTA begin: pausing full audio runtime"
+      - globals.set:
+          id: g_ota_in_progress
+          value: "true"
+      - media_player.stop:
+          id: speaker_media_player
+          announcement: true
+      - runtime_controller.event:
+          id: runtime
+          event: galileo_direct_stop
+      - micro_wake_word.stop:
+      - voip_stack.stop:
+      - esp_audio_stack.stop:
+      - wait_until:
+          condition:
+            esp_audio_stack.is_idle:
+          timeout: 2s
+    on_abort:
+      - script.execute: ota_full_audio_restore
+    on_error:
+      - script.execute: ota_full_audio_restore
+
+script:
+  - id: ota_full_audio_restore
+    mode: restart
+    then:
+      - logger.log:
+          level: WARN
+          tag: ota
+          format: "OTA aborted/failed: restoring full audio runtime"
+      - globals.set:
+          id: g_ota_in_progress
+          value: "false"
+      - esp_audio_stack.start:
+      # The SIP listener remains available. Do not dial after an OTA failure.
+      - script.execute: start_mww_when_ready

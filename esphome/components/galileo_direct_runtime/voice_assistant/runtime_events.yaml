@@ -1,0 +1,117 @@
+# Voice Assistant runtime_controller event forwarding.
+#
+# Include this when Voice Assistant state is rendered by runtime_controller. This package
+# defines the VA component and forwards its lifecycle events; it does
+# not create user-facing switches or buttons.
+
+voice_assistant:
+  id: va
+  media_player: speaker_media_player
+  # Allow the HTTP reader's connection attempts before reporting a start failure.
+  tts_playback_start_timeout: 35s
+  on_start:
+    - runtime_controller.event:
+        id: runtime
+        event: va_start
+  on_listening:
+    - runtime_controller.event:
+        id: runtime
+        event: va_listening
+  on_stt_vad_end:
+    - runtime_controller.event:
+        id: runtime
+        event: va_thinking
+  on_stt_end:
+    - script.execute:
+        id: ui_stt_ended
+        text: !lambda 'return x;'
+    # Commands that silence the current satellite must not be delegated to the
+    # selected conversation agent. Agents differ in local-intent handling and
+    # may otherwise answer the phrase instead of stopping their announcement.
+    - if:
+        condition:
+          lambda: |-
+            std::string command = x;
+            std::transform(command.begin(), command.end(), command.begin(),
+                           [](unsigned char c) { return std::tolower(c); });
+            while (!command.empty() && std::isspace(static_cast<unsigned char>(command.front())))
+              command.erase(command.begin());
+            while (!command.empty() && (std::isspace(static_cast<unsigned char>(command.back())) ||
+                   command.back() == '.' || command.back() == '!' || command.back() == '?'))
+              command.pop_back();
+            return command == "stai zitta" || command == "sta zitta" ||
+                   command == "zitta" || command == "zitto" || command == "taci" ||
+                   command == "basta" || command == "annulla" ||
+                   command == "ferma la risposta" || command == "smetti di parlare";
+        then:
+          - script.execute: voice_quiet_internal
+  on_intent_progress:
+    # ESPHome exposes the streaming TTS media URL here. It is transport state,
+    # not assistant response text, so it must never reach display adapters.
+    - if:
+        condition:
+          lambda: return !x.empty();
+        then:
+          - runtime_controller.event:
+              id: runtime
+              event: va_responding
+  on_tts_start:
+    - logger.log:
+        level: INFO
+        tag: va
+        format: "VA: tts_start"
+    # ESPHome's on_tts_start payload is the assistant response text. Populate
+    # text/mood before committing the responding state so renderers never see
+    # an empty or transport-URL response frame.
+    - script.execute:
+        id: ui_tts_started
+        text: !lambda 'return x;'
+    - runtime_controller.event:
+        id: runtime
+        event: va_responding
+  on_tts_end:
+    - logger.log:
+        level: INFO
+        tag: va
+        format: "VA: tts_end"
+  on_end:
+    - logger.log:
+        level: INFO
+        tag: va
+        format: "VA: end"
+    - runtime_controller.event:
+        id: runtime
+        event: va_end
+  on_idle:
+    - logger.log:
+        level: INFO
+        tag: va
+        format: "VA: idle"
+    - runtime_controller.event:
+        id: runtime
+        event: va_idle
+  on_error:
+    - logger.log:
+        level: INFO
+        tag: va
+        format: "VA: error"
+    - runtime_controller.event:
+        id: runtime
+        event: va_error
+  on_client_connected:
+    - logger.log:
+        tag: va
+        format: "VA: client connected"
+    - globals.set:
+        id: init_in_progress
+        value: "false"
+    - runtime_controller.event:
+        id: runtime
+        event: va_client_connected
+  on_client_disconnected:
+    - logger.log:
+        tag: va
+        format: "VA: client disconnected"
+    - runtime_controller.event:
+        id: runtime
+        event: va_client_disconnected

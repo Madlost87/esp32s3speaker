@@ -1,0 +1,7 @@
+# Full preset state, composed from feature-owned globals.
+packages:
+  media_globals: !include media_globals.yaml
+  lifecycle_globals: !include lifecycle_globals.yaml
+  voice_globals: !include voice_globals.yaml
+  presentation_globals: !include presentation_globals.yaml
+  ha_presence_globals: !include ha_presence_globals.yaml

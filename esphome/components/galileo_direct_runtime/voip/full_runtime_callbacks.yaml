@@ -1,0 +1,44 @@
+# VoIP callbacks for full runtime_controller devices.
+#
+# This package only connects voip_stack lifecycle callbacks to full-runtime UI
+# hook scripts and ringtone stop logic. It does not define VA/MWW controls.
+
+voip_stack:
+  on_calling:
+    - script.execute:
+        id: ui_call_started
+        peer: !lambda 'return peer;'
+  on_ringing:
+    - script.execute:
+        id: ui_call_started
+        peer: !lambda 'return peer;'
+  on_dest_ringing:
+    - script.execute:
+        id: ui_call_dest_ringing
+        peer: !lambda 'return peer;'
+  on_in_call:
+    - script.execute:
+        id: ui_call_started
+        peer: !lambda 'return peer;'
+  on_hangup:
+    # Trigger delivery is deferred to the main loop. A newer live call can
+    # already own the UI when an older call's terminal callback arrives.
+    - if:
+        condition:
+          not:
+            voip_stack.is_active:
+        then:
+          - script.execute:
+              id: ui_call_ended
+              peer: !lambda 'return peer;'
+              reason: !lambda 'return reason;'
+  on_call_failed:
+    - if:
+        condition:
+          not:
+            voip_stack.is_active:
+        then:
+          - script.execute:
+              id: ui_call_ended
+              peer: !lambda 'return peer;'
+              reason: !lambda 'return reason;'

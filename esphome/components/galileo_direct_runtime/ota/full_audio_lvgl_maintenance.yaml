@@ -1,0 +1,65 @@
+# =============================================================================
+# OTA maintenance mode for full-experience LVGL devices.
+#
+# ESPHome emits ota.on_begin before esp_ota_begin(), so this hook can quiesce
+# busy audio/UI tasks before flash erase/write preparation starts.
+#
+# Required components: one Audio Stack and one VoIP Stack.
+# Other required IDs:
+#   - mww
+#   - speaker_media_player
+#   - scripts: ai_animation_loop, timer_alarm_loop, start_mww_when_ready, draw_display
+# =============================================================================
+
+packages:
+  ota_idf_backend: !include idf_backend.yaml
+
+ota:
+  - platform: esphome
+    on_begin:
+      - logger.log:
+          level: INFO
+          tag: ota
+          format: "OTA begin: pausing full audio runtime and LVGL"
+      - globals.set:
+          id: g_ota_in_progress
+          value: "true"
+      - script.stop: ai_animation_loop
+      - script.stop: timer_alarm_loop
+      - runtime_controller.event:
+          id: runtime
+          event: timer_stopped
+      - media_player.stop:
+          id: speaker_media_player
+          announcement: true
+      - voice_assistant.stop:
+      - micro_wake_word.stop:
+      - voip_stack.stop:
+      - esp_audio_stack.stop:
+      - wait_until:
+          condition:
+            esp_audio_stack.is_idle:
+          timeout: 2s
+      - lvgl.pause:
+          show_snow: false
+    on_abort:
+      - script.execute: ota_full_audio_lvgl_restore
+    on_error:
+      - script.execute: ota_full_audio_lvgl_restore
+
+script:
+  - id: ota_full_audio_lvgl_restore
+    mode: restart
+    then:
+      - logger.log:
+          level: WARN
+          tag: ota
+          format: "OTA aborted/failed: restoring full audio runtime and LVGL"
+      - globals.set:
+          id: g_ota_in_progress
+          value: "false"
+      - lvgl.resume:
+      - esp_audio_stack.start:
+      # VoIP stop only ends a call; start would dial the selected contact.
+      - script.execute: start_mww_when_ready
+      - script.execute: draw_display

@@ -1,0 +1,18 @@
+# Optional standard ESPHome entity platforms for a full-duplex VoIP endpoint.
+# Keep these outside the core component: upstream ESPHome does not permit a
+# component to AUTO_LOAD primary entity platforms.
+switch:
+  - platform: voip_stack
+    auto_answer:
+      name: Auto Answer
+      restore_mode: RESTORE_DEFAULT_ON
+    dnd:
+      name: Do Not Disturb
+      restore_mode: RESTORE_DEFAULT_OFF
+
+number:
+  - platform: voip_stack
+    master_volume:
+      name: Master Volume
+    mic_gain:
+      name: Mic Gain

@@ -1,0 +1,23 @@
+# Empty presentation and call hooks for board extensions.
+packages:
+  voice_hooks: !include ../voice_assistant/ui_hooks.yaml
+script:
+  - id: update_led
+    mode: restart
+    then: []
+  - id: render_ui_state
+    mode: restart
+    then: []
+  - id: ui_call_started
+    parameters:
+      peer: string
+    then: []
+  - id: ui_call_dest_ringing
+    parameters:
+      peer: string
+    then: []
+  - id: ui_call_ended
+    parameters:
+      peer: string
+      reason: string
+    then: []

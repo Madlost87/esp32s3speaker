@@ -1,0 +1,6 @@
+# Optional timer asset and playback.
+packages:
+  timer_alarm: !include ../runtime/timer_alarm_orchestration.yaml
+audio_file:
+  - id: timer_finished_sound
+    file: ${assets_base}assets/sounds/timer_finished.flac

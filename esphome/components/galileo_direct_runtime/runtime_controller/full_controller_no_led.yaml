@@ -1,0 +1,3 @@
+# Full preset without a physical status LED.
+packages:
+  full_controller_base: !include full_controller_base.yaml

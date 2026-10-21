@@ -1,0 +1,14 @@
+# Full preset with a physical status LED.
+substitutions:
+  runtime_controller_debug: "false"
+  runtime_controller_led_id: status_led
+  runtime_controller_led_preset: ws2812_ring
+
+
+packages:
+  full_controller_base: !include full_controller_base.yaml
+runtime_controller:
+  outputs:
+    led:
+      id: ${runtime_controller_led_id}
+      preset: ${runtime_controller_led_preset}
