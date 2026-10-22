@@ -1,12 +1,13 @@
-# Experimental Spec 007 configuration. Compile only; do not upload this file.
-# It inherits the validated satellite unchanged and adds a disabled PCM tap.
+# Experimental Spec 007 configuration. It inherits a golden-era, SHA-pinned
+# satellite baseline and adds only the authenticated PCM tap.
 
 packages:
-  golden_satellite: !include galileo-va-afe.yaml
+  golden_satellite: !include galileo-va-afe-pinned-20261010.yaml
 
 # Keep every generated artifact away from the golden profile's build tree.
 esphome:
-  name: galileo-va-direct-audio-test
+  # Preserve the golden hostname/API identity; only artifacts are isolated.
+  name: galileo-va
   build_path: build/galileo-va-direct-audio-test
 
 external_components:
