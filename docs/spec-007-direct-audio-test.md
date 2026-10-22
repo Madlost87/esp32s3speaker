@@ -19,15 +19,26 @@ l'hang-up vocale durante una chiamata. Non e' emersa alcuna regressione.
 
 ## Confini Operativi
 
+Aggiornamento TTS 2026-10-22: aggiunto `media_player: speaker_media_player`
+al tap del profilo di test, compilato con ESPHome 2026.9.1 e installato OTA.
+Servizio nativo `galileo_direct_tts` verificato dopo il riavvio, stato VoIP
+`idle`. Primo WAV dell'ora prelevato dalla cassa via server temporaneo Core:
+trasferimento riuscito e ascolto confermato dall'utente. Ripetere i test Assist/TTS/VoIP
+e hang-up vocale prima di attestare nuovamente la parita'. Golden invariato.
+
 Il tap e' inattivo fino a un comando API autenticato: non riceve attivazioni
 automatiche da wake word, Assist o VoIP. Il test non modifica il percorso TTS
-e non sostituisce la pipeline Assist. Non installare
+quotidiano e non sostituisce la pipeline Assist. Non installare
 `galileo-va-direct-audio-cutover.yaml`: rimane un candidato solo da compilare.
 
 ## Prossimo Passo
 
-Il primo STT locale Vosk e' stato provato il 2026-10-22 su una nuova cattura
-effimera (19,25 s, zero frame mancanti). Ha riconosciuto la richiesta dell'ora,
-ma ha incluso wake word e duplicato nel transcript; il router ha restituito
-`unknown` e non ha eseguito alcuna azione. Il prossimo passo e' normalizzare
-wake word e duplicati, senza collegare ancora risposta o stati VoIP al bridge.
+L'ultima prova Vosk ha trascritto esattamente `che ore sono` (30,624 s di
+cattura, 1,46 s dopo taglio silenzi, zero frame mancanti). Il codice Core ora
+gestisce `local.time`; la risposta e' stata sintetizzata e ascoltata in un
+test separato. Non esiste ancora un turno automatico completo.
+
+Prima ripetere la parita' dopo l'ultimo OTA, poi integrare wake/fine parlato,
+STT/risposta/TTS e gestione errori/stati VoIP. Cutover solo dopo test ripetuti
+e rollback della versione candidata. Nessun listener o audio temporaneo resta
+attivo; il golden e lo stack VoIP non sono stati modificati.

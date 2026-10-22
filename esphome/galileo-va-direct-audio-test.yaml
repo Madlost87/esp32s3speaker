@@ -19,10 +19,10 @@ external_components:
 galileo_audio_tap:
   id: direct_audio_tap
   microphone: mic_main
+  media_player: speaker_media_player
   host: 192.168.1.186
   port: 19007
-  # Deliberately non-secret test marker: this configuration must never be
-  # deployed. A real session id will be supplied from ignored local secrets.
+  # Session credential is supplied from ignored local secrets.
   session_id: !secret galileo_audio_bridge_session_id
   # Armed only for the attended, five-minute Spec 007 test. It remains idle
   # until the authenticated API start command supplies this same session id.
