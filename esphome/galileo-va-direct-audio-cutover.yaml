@@ -1,35 +1,7 @@
-# Spec 007 cutover candidate. Compile-only until an attended rollback test.
+# Spec 007 cutover candidate. Compile-only until attended rollback validation.
+# The complete no-Assist profile is static and SHA-pinned in the included file.
 packages:
-  golden_satellite: !include galileo-va-afe.yaml
-  runtime_controller: !include components/galileo_direct_runtime/runtime_controller/full_controller.yaml
-  voice_assistant_runtime_controls: !include components/galileo_direct_runtime/voice_assistant/runtime_controls.yaml
-  ota_maintenance: !include components/galileo_direct_runtime/ota/full_audio_maintenance.yaml
+  cutover: !include galileo-va-direct-audio-cutover-base.yaml
 
 esphome:
-  name: galileo-va-direct-audio-cutover
   build_path: build/galileo-va-direct-audio-cutover
-
-external_components:
-  - source:
-      type: local
-      path: components
-    components: [galileo_audio_tap]
-
-# Prevent the legacy Assist pipeline from consuming the same wake event.
-voice_assistant: !remove
-
-micro_wake_word:
-  on_wake_word_detected:
-    then:
-      - lambda: id(direct_audio_tap).start_capture_from_wake_word();
-      - delay: 10s
-      - lambda: id(direct_audio_tap).stop_capture_from_timeout();
-      - micro_wake_word.start:
-
-galileo_audio_tap:
-  id: direct_audio_tap
-  microphone: mic_main
-  host: 192.168.1.186
-  port: 19007
-  session_id: !secret galileo_audio_bridge_session_id
-  enabled: true

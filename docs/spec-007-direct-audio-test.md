@@ -42,3 +42,16 @@ Prima ripetere la parita' dopo l'ultimo OTA, poi integrare wake/fine parlato,
 STT/risposta/TTS e gestione errori/stati VoIP. Cutover solo dopo test ripetuti
 e rollback della versione candidata. Nessun listener o audio temporaneo resta
 attivo; il golden e lo stack VoIP non sono stati modificati.
+
+## Candidato Cutover
+
+`galileo-va-direct-audio-cutover.yaml` ora include il profilo statico
+`galileo-va-direct-audio-cutover-base.yaml`: rimuove Assist, conserva AFE,
+wake word, LED, pulsanti, player e `voip_stack`, e fissa tutte le dipendenze
+agli SHA del golden. Compilazione ESPHome 2026.9.1 riuscita: OTA 2.995.871
+byte, DIRAM 49,1%, flash 36,9%. Non e' stato installato.
+
+La parita' post-OTA del profilo test e' confermata dall'utente per Assist,
+VoIP e hang-up vocale, mute, Boot, LED e volume. Prima dell'OTA candidato
+manca ancora il runner automatico Core `wake -> PCM -> STT -> risposta -> TTS`
+e la successiva prova di rollback.

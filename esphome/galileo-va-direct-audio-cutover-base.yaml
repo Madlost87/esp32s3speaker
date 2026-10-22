@@ -94,12 +94,12 @@ substitutions:
   voip_ring_groups: "RG Casa,RG Tutti"
   voip_conference_groups: "CG Casa"
 
-  ext_components_source: "github://n-IA-hane/esphome-intercom@main"
-  voip_stack_components_source: "github://n-IA-hane/esphome-voip-stack@main"
-  audio_stack_components_source: "github://n-IA-hane/esphome-audio-stack@main"
-  runtime_controller_components_source: "github://n-IA-hane/esphome-runtime-controller@main"
+  ext_components_source: "github://n-IA-hane/esphome-intercom@6581cfea712d0e13bf88c5aff3fa97b9e27123ab"
+  voip_stack_components_source: "github://n-IA-hane/esphome-voip-stack@c693b4e75008afb5d2f584a09035aee2743a2210"
+  audio_stack_components_source: "github://n-IA-hane/esphome-audio-stack@0482d741a938378ef948e3b8f3dd31536f9f2cc9"
+  runtime_controller_components_source: "github://n-IA-hane/esphome-runtime-controller@9ab1a0e8a9d03c1252995827543a5c6ec14ac72c"
 
-  assets_base: "https://github.com/n-IA-hane/esphome-intercom/raw/main/"
+  assets_base: "https://github.com/n-IA-hane/esphome-intercom/raw/6581cfea712d0e13bf88c5aff3fa97b9e27123ab/"
 
   # Microphone ID for package mute switch
   mic_id: mic_main
@@ -131,22 +131,22 @@ packages:
   full_voice_voip_runtime: !include components/galileo_direct_runtime/presets/full_voice_voip_runtime.yaml
   runtime_controller: !include components/galileo_direct_runtime/runtime_controller/full_controller.yaml
   voice_assistant_runtime_controls: !include components/galileo_direct_runtime/voice_assistant/runtime_controls.yaml
-  call_settings: github://n-IA-hane/esphome-intercom/packages/voip/call_settings.yaml@main
-  ha_api: github://n-IA-hane/esphome-intercom/packages/runtime/ha_connectivity.yaml@main
-  voice_assistant_local_commands: github://n-IA-hane/esphome-intercom/packages/voice_assistant/local_commands.yaml@main
+  call_settings: github://n-IA-hane/esphome-intercom/packages/voip/call_settings.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  ha_api: github://n-IA-hane/esphome-intercom/packages/runtime/ha_connectivity.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  voice_assistant_local_commands: github://n-IA-hane/esphome-intercom/packages/voice_assistant/local_commands.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   ota_maintenance: !include components/galileo_direct_runtime/ota/full_audio_maintenance.yaml
-  voip_transport: github://n-IA-hane/esphome-intercom/packages/voip/transport.yaml@main
-  voip_debug: github://n-IA-hane/esphome-intercom/packages/voip/debug.yaml@main
-  s3_base: github://n-IA-hane/esphome-intercom/packages/platform/esp32s3_base.yaml@main
-  native_diagnostics: github://n-IA-hane/esphome-intercom/packages/diagnostics/native.yaml@main
-  status_led: github://n-IA-hane/esphome-intercom/packages/led/status_ws2812_ring.yaml@main
-  afe_entities: github://n-IA-hane/esphome-intercom/packages/esp_afe/dual_mic_entities.yaml@main
-  audio_stack_controls: github://n-IA-hane/esphome-intercom/packages/esp_audio_stack/controls.yaml@main
-  speaker_power: github://n-IA-hane/esphome-intercom/packages/esp_audio_stack/speaker_power_switch.yaml@main
-  speaker_mixer: github://n-IA-hane/esphome-intercom/packages/audio/shared_mono_mixer_48k.yaml@main
-  speaker_media_player: github://n-IA-hane/esphome-intercom/packages/media_player/runtime_controller_mono_media_player_48k.yaml@main
-  va_timers: github://n-IA-hane/esphome-intercom/packages/voice_assistant/timers_runtime.yaml@main
-  flac_codecs_psram: github://n-IA-hane/esphome-intercom/packages/audio/flac_codecs_psram.yaml@main
+  voip_transport: github://n-IA-hane/esphome-intercom/packages/voip/transport.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  voip_debug: github://n-IA-hane/esphome-intercom/packages/voip/debug.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  s3_base: github://n-IA-hane/esphome-intercom/packages/platform/esp32s3_base.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  native_diagnostics: github://n-IA-hane/esphome-intercom/packages/diagnostics/native.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  status_led: github://n-IA-hane/esphome-intercom/packages/led/status_ws2812_ring.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  afe_entities: github://n-IA-hane/esphome-intercom/packages/esp_afe/dual_mic_entities.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  audio_stack_controls: github://n-IA-hane/esphome-intercom/packages/esp_audio_stack/controls.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  speaker_power: github://n-IA-hane/esphome-intercom/packages/esp_audio_stack/speaker_power_switch.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  speaker_mixer: github://n-IA-hane/esphome-intercom/packages/audio/shared_mono_mixer_48k.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  speaker_media_player: github://n-IA-hane/esphome-intercom/packages/media_player/runtime_controller_mono_media_player_48k.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  va_timers: github://n-IA-hane/esphome-intercom/packages/voice_assistant/timers_runtime.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
+  flac_codecs_psram: github://n-IA-hane/esphome-intercom/packages/audio/flac_codecs_psram.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
 
 # =============================================================================
 # BOARD AND MEMORY
