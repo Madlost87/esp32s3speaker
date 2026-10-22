@@ -26,5 +26,8 @@ e non sostituisce la pipeline Assist. Non installare
 
 ## Prossimo Passo
 
-Provare STT locale su una cattura effimera e confrontare il transcript, senza
-collegare ancora wake word, risposta o stati VoIP al bridge.
+Il primo STT locale Vosk e' stato provato il 2026-10-22 su una nuova cattura
+effimera (19,25 s, zero frame mancanti). Ha riconosciuto la richiesta dell'ora,
+ma ha incluso wake word e duplicato nel transcript; il router ha restituito
+`unknown` e non ha eseguito alcuna azione. Il prossimo passo e' normalizzare
+wake word e duplicati, senza collegare ancora risposta o stati VoIP al bridge.
