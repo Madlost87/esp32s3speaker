@@ -32,6 +32,8 @@ Profilo corrente:
 - `listen-feedback-sound.md`: specifica del bip locale opzionale quando il
   satellite entra in ascolto.
 - `runtime-validation-20261008.md`: evidenza runtime della baseline full AFE.
+- `spec-007-direct-audio-test.md`: evidenza del test PCM reversibile verso
+  Galileo Core; non e' un profilo operativo o di cutover.
 
 ## Analisi E Piani
 
