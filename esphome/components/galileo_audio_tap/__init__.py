@@ -2,7 +2,7 @@
 
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import microphone
+from esphome.components import microphone, media_player
 from esphome.const import CONF_ID, CONF_MICROPHONE
 
 
@@ -12,6 +12,7 @@ CONF_HOST = "host"
 CONF_PORT = "port"
 CONF_SESSION_ID = "session_id"
 CONF_ENABLED = "enabled"
+CONF_MEDIA_PLAYER = "media_player"
 
 galileo_audio_tap_ns = cg.esphome_ns.namespace("galileo_audio_tap")
 GalileoAudioTap = galileo_audio_tap_ns.class_("GalileoAudioTap", cg.Component)
@@ -31,6 +32,7 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Required(CONF_PORT): cv.port,
         cv.Required(CONF_SESSION_ID): validate_session_id,
         cv.Optional(CONF_ENABLED, default=False): cv.boolean,
+        cv.Optional(CONF_MEDIA_PLAYER): cv.use_id(media_player.MediaPlayer),
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
@@ -44,3 +46,6 @@ async def to_code(config):
     cg.add(var.set_port(config[CONF_PORT]))
     cg.add(var.set_session_id(config[CONF_SESSION_ID]))
     cg.add(var.set_enabled(config[CONF_ENABLED]))
+    if CONF_MEDIA_PLAYER in config:
+        player = await cg.get_variable(config[CONF_MEDIA_PLAYER])
+        cg.add(var.set_media_player(player))

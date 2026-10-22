@@ -607,6 +607,7 @@ binary_sensor:
 galileo_audio_tap:
   id: direct_audio_tap
   microphone: mic_main
+  media_player: speaker_media_player
   host: 192.168.1.186
   port: 19007
   session_id: !secret galileo_audio_bridge_session_id

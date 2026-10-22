@@ -7,6 +7,7 @@
 
 #include "esphome/components/api/custom_api_device.h"
 #include "esphome/components/microphone/microphone.h"
+#include "esphome/components/media_player/media_player.h"
 #include "esphome/core/component.h"
 
 namespace esphome::galileo_audio_tap {
@@ -18,9 +19,12 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   void set_port(uint16_t port) { this->port_ = port; }
   void set_session_id(const std::string &session_id);
   void set_enabled(bool enabled) { this->armed_ = enabled; }
+  void set_media_player(media_player::MediaPlayer *media_player) { this->media_player_ = media_player; }
   // Used only by the dedicated cutover profile after a local wake-word event.
   void start_capture_from_wake_word();
   void stop_capture_from_timeout();
+  // Uses the announcement pipeline, separate from the active VoIP RX path.
+  void play_direct_tts(std::string url);
 
   void setup() override;
   void loop() override;
@@ -41,6 +45,7 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   void stop_capture(std::string session_id);
 
   microphone::Microphone *microphone_{nullptr};
+  media_player::MediaPlayer *media_player_{nullptr};
   std::string host_;
   std::array<uint8_t, 8> session_id_{};
   uint16_t port_{0};

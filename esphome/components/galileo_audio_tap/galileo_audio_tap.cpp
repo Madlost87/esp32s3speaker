@@ -45,6 +45,17 @@ void GalileoAudioTap::setup() {
   this->microphone_->add_data_callback([this](const std::vector<uint8_t> &data) { this->on_microphone_data_(data); });
   this->register_service(&GalileoAudioTap::start_capture, "galileo_audio_tap_start", {"session_id"});
   this->register_service(&GalileoAudioTap::stop_capture, "galileo_audio_tap_stop", {"session_id"});
+  if (this->media_player_ != nullptr)
+    this->register_service(&GalileoAudioTap::play_direct_tts, "galileo_direct_tts", {"url"});
+}
+
+void GalileoAudioTap::play_direct_tts(std::string url) {
+  if (!this->armed_ || this->media_player_ == nullptr || url.empty()) {
+    ESP_LOGW(TAG, "Rejected direct TTS request");
+    return;
+  }
+  this->media_player_->make_call().set_media_url(url).set_announcement(true).perform();
+  ESP_LOGI(TAG, "Started direct TTS announcement");
 }
 
 void GalileoAudioTap::dump_config() {
