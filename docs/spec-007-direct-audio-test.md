@@ -55,3 +55,14 @@ La parita' post-OTA del profilo test e' confermata dall'utente per Assist,
 VoIP e hang-up vocale, mute, Boot, LED e volume. Prima dell'OTA candidato
 manca ancora il runner automatico Core `wake -> PCM -> STT -> risposta -> TTS`
 e la successiva prova di rollback.
+
+## Ripresa del Goal
+
+Obiettivo: Galileo Core proprietario della voce; Home Assistant solo domotica;
+`voip_stack` invariato, incluso riaggancio vocale in chiamata.
+
+La cassa resta sul profilo test golden-based con Assist operativo. Il candidato
+no-Assist e' compilato ma mai installato; il golden OTA resta il rollback.
+Alla ripresa: runner Core disabilitato e testato, TTS diretto con URL monouso,
+fine-parlato affidabile nel candidato, OTA assistito, prova end-to-end e
+rollback golden verificato.
