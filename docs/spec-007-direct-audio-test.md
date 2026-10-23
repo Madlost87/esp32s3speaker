@@ -1,5 +1,25 @@
 # Spec 007: PCM Direct-Audio Test
 
+## Stato operativo 2026-10-23
+
+Il candidato `galileo-va-direct-audio-cutover.yaml` e' ora il profilo in
+prova operativa con Galileo Core su `.186`: dopo il wake invia PCM mono 16 kHz
+autenticato via UDP al Core, che esegue STT, routing, Home Assistant/LLM e
+TTS. Home Assistant resta il backend per domotica e VoIP.
+
+L'endpoint locale e' ibrido e validato con radio accesa:
+
+- durante i primi 200 ms post-wake stima il rumore di fondo;
+- considera parlato solo il segnale sopra `max(450, rumore x 1,70)`;
+- chiude dopo 800 ms sotto soglia;
+- se rumore continuo e voce sono indistinguibili, forza comunque `CLOSE` dopo
+  4,5 s dal wake.
+
+Il limite duro evita che musica o radio mantengano il turno aperto fino al
+precedente massimo di 15 s. Il risultato e' stato confermato dall'utente come
+molto migliore. Restano disponibili sia il firmware adattivo pre-limite sia
+il golden di recovery per rollback OTA immediato.
+
 ## Esito 2026-10-22
 
 Il profilo `esphome/galileo-va-direct-audio-test.yaml`, derivato dalla

@@ -613,8 +613,14 @@ galileo_audio_tap:
   session_id: !secret galileo_audio_bridge_session_id
   enabled: true
   silence_threshold: 450
+  # Trial: learn the radio/background level in the wake-word tail, then
+  # require 1.7x that level for speech. The fixed threshold remains a floor.
+  adaptive_noise_floor: true
+  noise_floor_ratio: 170
   silence_ms: 800
-  maximum_capture_ms: 15000
+  # Safety endpoint when radio or other continuous noise never falls below
+  # the adaptive threshold. This applies from the wake-word boundary.
+  maximum_capture_ms: 4500
   # These are the exact golden runtime-controller LED mappings.  The no-Assist
   # profile cannot register `va_*` runtime events, so apply the same ring
   # states directly and ask the controller to redraw its normal/VoIP state

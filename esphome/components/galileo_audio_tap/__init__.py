@@ -16,6 +16,8 @@ CONF_SESSION_ID = "session_id"
 CONF_ENABLED = "enabled"
 CONF_MEDIA_PLAYER = "media_player"
 CONF_SILENCE_THRESHOLD = "silence_threshold"
+CONF_ADAPTIVE_NOISE_FLOOR = "adaptive_noise_floor"
+CONF_NOISE_FLOOR_RATIO = "noise_floor_ratio"
 CONF_SILENCE_MS = "silence_ms"
 CONF_MAXIMUM_CAPTURE_MS = "maximum_capture_ms"
 CONF_ON_CAPTURE_STARTED = "on_capture_started"
@@ -52,6 +54,8 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_ENABLED, default=False): cv.boolean,
         cv.Optional(CONF_MEDIA_PLAYER): cv.use_id(media_player.MediaPlayer),
         cv.Optional(CONF_SILENCE_THRESHOLD, default=450): cv.int_range(min=1, max=32767),
+        cv.Optional(CONF_ADAPTIVE_NOISE_FLOOR, default=False): cv.boolean,
+        cv.Optional(CONF_NOISE_FLOOR_RATIO, default=170): cv.int_range(min=110, max=400),
         cv.Optional(CONF_SILENCE_MS, default=1200): cv.int_range(min=100, max=10000),
         cv.Optional(CONF_MAXIMUM_CAPTURE_MS, default=15000): cv.int_range(min=1000, max=30000),
         cv.Optional(CONF_ON_CAPTURE_STARTED): _automation_schema(),
@@ -74,6 +78,8 @@ async def to_code(config):
     cg.add(var.set_session_id(config[CONF_SESSION_ID]))
     cg.add(var.set_enabled(config[CONF_ENABLED]))
     cg.add(var.set_silence_threshold(config[CONF_SILENCE_THRESHOLD]))
+    cg.add(var.set_adaptive_noise_floor(config[CONF_ADAPTIVE_NOISE_FLOOR]))
+    cg.add(var.set_noise_floor_ratio(config[CONF_NOISE_FLOOR_RATIO]))
     cg.add(var.set_silence_ms(config[CONF_SILENCE_MS]))
     cg.add(var.set_maximum_capture_ms(config[CONF_MAXIMUM_CAPTURE_MS]))
     if CONF_MEDIA_PLAYER in config:

@@ -146,6 +146,7 @@ void GalileoAudioTap::reset_endpoint_detector_() {
   this->silence_samples_ = 0;
   this->speech_detected_ = false;
   this->endpoint_detected_ = false;
+  this->noise_floor_ = 0;
 }
 
 void GalileoAudioTap::close_capture_(const char *reason) {
@@ -270,7 +271,21 @@ void GalileoAudioTap::on_microphone_data_(const std::vector<uint8_t> &data) {
     const uint16_t magnitude = sample == INT16_MIN ? UINT16_MAX : static_cast<uint16_t>(std::abs(sample));
     total_magnitude += magnitude;
   }
-  const bool voiced = samples != 0 && total_magnitude / samples >= this->silence_threshold_;
+  const uint16_t magnitude = samples == 0 ? 0 : static_cast<uint16_t>(total_magnitude / samples);
+  // The first 200 ms after a wake word is discarded as wake-word tail. It is
+  // also a stable window to learn continuous background sound (for example a
+  // radio) before the user starts their command.
+  if (this->adaptive_noise_floor_ && this->captured_samples_ < 3200) {
+    this->noise_floor_ = this->noise_floor_ == 0
+                            ? magnitude
+                            : static_cast<uint16_t>((this->noise_floor_ * 3U + magnitude) / 4U);
+  }
+  const uint32_t adaptive_threshold = this->adaptive_noise_floor_
+                                          ? (static_cast<uint32_t>(this->noise_floor_) * this->noise_floor_ratio_percent_) / 100U
+                                          : 0;
+  const uint16_t endpoint_threshold = static_cast<uint16_t>(
+      std::min<uint32_t>(UINT16_MAX, std::max<uint32_t>(this->silence_threshold_, adaptive_threshold)));
+  const bool voiced = samples != 0 && magnitude >= endpoint_threshold;
   this->captured_samples_ += samples;
   if (voiced && this->captured_samples_ >= 3200) {  // Ignore the wake-word tail.
     this->speech_detected_ = true;

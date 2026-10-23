@@ -25,6 +25,8 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   void set_enabled(bool enabled) { this->armed_ = enabled; }
   void set_media_player(media_player::MediaPlayer *media_player) { this->media_player_ = media_player; }
   void set_silence_threshold(uint16_t threshold) { this->silence_threshold_ = threshold; }
+  void set_adaptive_noise_floor(bool enabled) { this->adaptive_noise_floor_ = enabled; }
+  void set_noise_floor_ratio(uint16_t ratio_percent) { this->noise_floor_ratio_percent_ = ratio_percent; }
   void set_silence_ms(uint16_t duration_ms) { this->silence_samples_limit_ = duration_ms * 16U; }
   void set_maximum_capture_ms(uint16_t duration_ms) { this->maximum_capture_samples_ = duration_ms * 16U; }
   // Used only by the dedicated cutover profile after a local wake-word event.
@@ -86,6 +88,9 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   uint32_t silence_samples_limit_{19200};  // 1.2 seconds at 16 kHz
   uint32_t maximum_capture_samples_{240000};  // 15 seconds at 16 kHz
   uint16_t silence_threshold_{450};
+  bool adaptive_noise_floor_{false};
+  uint16_t noise_floor_ratio_percent_{170};
+  uint16_t noise_floor_{0};
   bool speech_detected_{false};
   volatile bool endpoint_detected_{false};
   bool direct_tts_pending_{false};
