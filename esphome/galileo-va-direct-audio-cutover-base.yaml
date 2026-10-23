@@ -408,6 +408,30 @@ micro_wake_word:
   task_stack_in_psram: true
   on_wake_word_detected:
     then:
+      # A 120 ms, low-amplitude local acknowledgement. Use the hardware
+      # speaker directly rather than the media pipeline: it is a UI cue, not
+      # an announcement, and must stay short even while radio/TTS is idle.
+      - lambda: |-
+          constexpr uint32_t SAMPLE_RATE = 48000;
+          constexpr uint32_t DURATION_MS = 120;
+          constexpr uint32_t SAMPLES = SAMPLE_RATE * DURATION_MS / 1000;
+          constexpr uint32_t HALF_PERIOD_SAMPLES = 17;  // about 1.4 kHz
+          constexpr int16_t PEAK = 700;                 // deliberately soft
+          constexpr uint32_t RAMP_SAMPLES = 240;         // 5 ms anti-click ramp
+          std::vector<uint8_t> tone;
+          tone.reserve(SAMPLES * 2);
+          for (uint32_t sample_index = 0; sample_index < SAMPLES; sample_index++) {
+            const uint32_t edge = std::min(sample_index, SAMPLES - 1 - sample_index);
+            const int32_t amplitude = edge < RAMP_SAMPLES ? (PEAK * edge) / RAMP_SAMPLES : PEAK;
+            const int16_t sample = ((sample_index / HALF_PERIOD_SAMPLES) % 2 == 0) ? amplitude : -amplitude;
+            tone.push_back(static_cast<uint8_t>(sample & 0xff));
+            tone.push_back(static_cast<uint8_t>((sample >> 8) & 0xff));
+          }
+          id(hw_speaker).play(tone.data(), tone.size());
+      # Drain the short cue before opening direct PCM capture. The 40 ms guard
+      # leaves no audible tail in STT while preserving a near-immediate turn.
+      - delay: 160ms
+      - lambda: id(hw_speaker).finish();
       - lambda: id(direct_audio_tap).start_capture_from_wake_word();
       - micro_wake_word.start:
   models:
