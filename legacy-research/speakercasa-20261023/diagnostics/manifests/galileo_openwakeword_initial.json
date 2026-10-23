@@ -1,0 +1,492 @@
+{
+  "name": "galileo_openwakeword_initial",
+  "created": "2026-10-02",
+  "root": "/home/denny/galileo/dataset",
+  "counts": {
+    "positive": 33,
+    "negative": 10,
+    "noise": 10,
+    "total": 53,
+    "train": 42,
+    "validation": 11
+  },
+  "items": [
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144244-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144625-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144638-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144204-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144511-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144903-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144437-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144910-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144457-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144258-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145057-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144632-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144829-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144705-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144719-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145033-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144211-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144658-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144251-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144645-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144850-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-143913-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_gain_test_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145038-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144451-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144930-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145106-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144843-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145052-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144712-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144504-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144518-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144304-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145110-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144725-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145043-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144417-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144923-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145101-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-143926-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_gain_test_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144652-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144856-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144218-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144836-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145029-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144224-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144238-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144424-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144431-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144444-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/noise/20261002-145047-noise-room_noise.wav",
+      "class": "noise",
+      "label": "room_noise",
+      "distance": "none",
+      "environment": "quiet_room_dataset_c28_adc230",
+      "speaker": "none",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-143920-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_gain_test_c28_adc230",
+      "speaker": "denny",
+      "split": "validation"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/positive/galileo/20261002-144231-positive-galileo.wav",
+      "class": "positive",
+      "label": "galileo",
+      "distance": "30cm",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    },
+    {
+      "path": "/home/denny/galileo/dataset/negative/20261002-144916-negative-normal_speech.wav",
+      "class": "negative",
+      "label": "normal_speech",
+      "distance": "1m",
+      "environment": "quiet_led_guided_dataset_c28_adc230",
+      "speaker": "denny",
+      "split": "train"
+    }
+  ]
+}

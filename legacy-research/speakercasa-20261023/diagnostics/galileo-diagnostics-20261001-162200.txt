@@ -1,0 +1,544 @@
+
+===== System =====
+
+$ hostname
+galileo
+
+$ uname -a
+Linux galileo 6.12.25+rpt-rpi-v8 #1 SMP PREEMPT Debian 1:6.12.25-1+rpt1 (2025-04-30) aarch64 GNU/Linux
+
+$ cat /etc/os-release
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+VERSION_CODENAME=bookworm
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+
+$ uptime
+ 16:22:31 up 12 min,  0 user,  load average: 0.00, 0.01, 0.00
+
+===== Raspberry Identity =====
+
+$ grep -E ^(Hardware|Revision|Model|Serial|processor|model name) /proc/cpuinfo
+processor	: 0
+processor	: 1
+processor	: 2
+processor	: 3
+Revision	: 902120
+Serial		: <raspberry-serial>
+Model		: Raspberry Pi Zero 2 W Rev 1.0
+temperature_c=41.856
+
+$ vcgencmd get_throttled
+throttled=0x0
+
+===== Memory And Disk =====
+
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           416Mi       129Mi       231Mi       2.2Mi       108Mi       287Mi
+Swap:          511Mi          0B       511Mi
+
+$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+udev             73M     0   73M   0% /dev
+tmpfs            42M  2.3M   40M   6% /run
+/dev/mmcblk0p2  6.8G  2.2G  4.3G  34% /
+tmpfs           209M     0  209M   0% /dev/shm
+tmpfs           5.0M   12K  5.0M   1% /run/lock
+/dev/mmcblk0p1  510M   66M  445M  13% /boot/firmware
+tmpfs            42M     0   42M   0% /run/user/1000
+
+$ lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+mmcblk0     179:0    0  7.4G  0 disk 
+├─mmcblk0p1 179:1    0  512M  0 part /boot/firmware
+└─mmcblk0p2 179:2    0  6.9G  0 part /
+
+===== Network =====
+
+$ ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute 
+       valid_lft forever preferred_lft forever
+2: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether <raspberry-mac> brd ff:ff:ff:ff:ff:ff
+    inet <raspberry-ip>/24 brd <lan-broadcast> scope global dynamic noprefixroute wlan0
+       valid_lft 85667sec preferred_lft 85667sec
+    inet6 <raspberry-ipv6-link-local>/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+
+$ ip route
+default via <gateway-ip> dev wlan0 proto dhcp src <raspberry-ip> metric 600 
+<lan-subnet>/24 dev wlan0 proto kernel scope link src <raspberry-ip> metric 600 
+
+$ nmcli -t -f DEVICE,TYPE,STATE,CONNECTION dev
+wlan0:wifi:connected:preconfigured
+lo:loopback:connected (externally):lo
+p2p-dev-wlan0:wifi-p2p:disconnected:
+
+===== Systemd =====
+
+$ systemctl --failed --no-pager
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+
+===== Boot Config Audio Lines =====
+
+$ grep -nE ^(#)?dtparam=(audio|i2c_arm|i2s|spi)|^dtoverlay=|Galileo|wm8960|respeaker|seeed|keyestudio /boot/firmware/config.txt
+6:dtparam=i2c_arm=on
+7:dtparam=i2s=on
+8:#dtparam=spi=on
+11:dtparam=audio=on
+13:# Galileo ReSpeaker 2-Mic Pi HAT / WM8960 audio codec
+14:dtoverlay=wm8960-soundcard
+29:dtoverlay=vc4-kms-v3d
+52:dtoverlay=dwc2,dr_mode=host
+
+===== ALSA Devices =====
+
+$ aplay -l
+**** List of PLAYBACK Hardware Devices ****
+card 0: wm8960soundcard [wm8960-soundcard], device 0: bcm2835-i2s-wm8960-hifi wm8960-hifi-0 [bcm2835-i2s-wm8960-hifi wm8960-hifi-0]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 1: vc4hdmi [vc4-hdmi], device 0: MAI PCM i2s-hifi-0 [MAI PCM i2s-hifi-0]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+
+$ arecord -l
+**** List of CAPTURE Hardware Devices ****
+card 0: wm8960soundcard [wm8960-soundcard], device 0: bcm2835-i2s-wm8960-hifi wm8960-hifi-0 [bcm2835-i2s-wm8960-hifi wm8960-hifi-0]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+
+$ aplay -L
+null
+    Discard all samples (playback) or generate zero samples (capture)
+hw:CARD=wm8960soundcard,DEV=0
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Direct hardware device without any conversions
+plughw:CARD=wm8960soundcard,DEV=0
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Hardware device with all software conversions
+default:CARD=wm8960soundcard
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Default Audio Device
+sysdefault:CARD=wm8960soundcard
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Default Audio Device
+dmix:CARD=wm8960soundcard,DEV=0
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Direct sample mixing device
+hw:CARD=vc4hdmi,DEV=0
+    vc4-hdmi, MAI PCM i2s-hifi-0
+    Direct hardware device without any conversions
+plughw:CARD=vc4hdmi,DEV=0
+    vc4-hdmi, MAI PCM i2s-hifi-0
+    Hardware device with all software conversions
+default:CARD=vc4hdmi
+    vc4-hdmi, MAI PCM i2s-hifi-0
+    Default Audio Device
+sysdefault:CARD=vc4hdmi
+    vc4-hdmi, MAI PCM i2s-hifi-0
+    Default Audio Device
+hdmi:CARD=vc4hdmi,DEV=0
+    vc4-hdmi, MAI PCM i2s-hifi-0
+    HDMI Audio Output
+dmix:CARD=vc4hdmi,DEV=0
+    vc4-hdmi, MAI PCM i2s-hifi-0
+    Direct sample mixing device
+
+$ arecord -L
+null
+    Discard all samples (playback) or generate zero samples (capture)
+hw:CARD=wm8960soundcard,DEV=0
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Direct hardware device without any conversions
+plughw:CARD=wm8960soundcard,DEV=0
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Hardware device with all software conversions
+default:CARD=wm8960soundcard
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Default Audio Device
+sysdefault:CARD=wm8960soundcard
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Default Audio Device
+dsnoop:CARD=wm8960soundcard,DEV=0
+    wm8960-soundcard, bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+    Direct sample snooping device
+
+===== ALSA Cards =====
+
+$ cat /proc/asound/cards
+ 0 [wm8960soundcard]: simple-card - wm8960-soundcard
+                      wm8960-soundcard
+ 1 [vc4hdmi        ]: vc4-hdmi - vc4-hdmi
+                      vc4-hdmi
+
+$ find /proc/asound -maxdepth 3 -type f -name info -print -exec cat {} ;
+/proc/asound/card0/pcm0c/info
+card: 0
+device: 0
+subdevice: 0
+stream: CAPTURE
+id: bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+name: bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+subname: subdevice #0
+class: 0
+subclass: 0
+subdevices_count: 1
+subdevices_avail: 1
+/proc/asound/card0/pcm0p/info
+card: 0
+device: 0
+subdevice: 0
+stream: PLAYBACK
+id: bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+name: bcm2835-i2s-wm8960-hifi wm8960-hifi-0
+subname: subdevice #0
+class: 0
+subclass: 0
+subdevices_count: 1
+subdevices_avail: 1
+/proc/asound/card1/pcm0p/info
+card: 1
+device: 0
+subdevice: 0
+stream: PLAYBACK
+id: MAI PCM i2s-hifi-0
+name: MAI PCM i2s-hifi-0
+subname: subdevice #0
+class: 0
+subclass: 0
+subdevices_count: 1
+subdevices_avail: 1
+
+===== WM8960 Mixer Summary =====
+
+$ amixer -c 0 scontents
+Simple mixer control 'Headphone',0
+  Capabilities: pvolume
+  Playback channels: Front Left - Front Right
+  Limits: Playback 0 - 127
+  Mono:
+  Front Left: Playback 101 [80%] [-20.00dB]
+  Front Right: Playback 101 [80%] [-20.00dB]
+Simple mixer control 'Headphone Playback ZC',0
+  Capabilities: pswitch
+  Playback channels: Front Left - Front Right
+  Mono:
+  Front Left: Playback [off]
+  Front Right: Playback [off]
+Simple mixer control 'Speaker',0
+  Capabilities: pvolume
+  Playback channels: Front Left - Front Right
+  Limits: Playback 0 - 127
+  Mono:
+  Front Left: Playback 101 [80%] [-20.00dB]
+  Front Right: Playback 101 [80%] [-20.00dB]
+Simple mixer control 'Speaker AC',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 5
+  Mono: 0 [0%]
+Simple mixer control 'Speaker DC',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 5
+  Mono: 0 [0%]
+Simple mixer control 'Speaker Playback ZC',0
+  Capabilities: pswitch
+  Playback channels: Front Left - Front Right
+  Mono:
+  Front Left: Playback [off]
+  Front Right: Playback [off]
+Simple mixer control 'PCM Playback -6dB',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Mono Output Mixer Left',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Mono Output Mixer Right',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Playback',0
+  Capabilities: volume
+  Playback channels: Front Left - Front Right
+  Capture channels: Front Left - Front Right
+  Limits: 0 - 255
+  Front Left: 215 [84%] [-20.00dB]
+  Front Right: 215 [84%] [-20.00dB]
+Simple mixer control 'Capture',0
+  Capabilities: cvolume cswitch
+  Capture channels: Front Left - Front Right
+  Limits: Capture 0 - 63
+  Front Left: Capture 39 [62%] [12.00dB] [on]
+  Front Right: Capture 39 [62%] [12.00dB] [on]
+Simple mixer control 'Capture Volume ZC',0
+  Capabilities: pswitch
+  Playback channels: Front Left - Front Right
+  Mono:
+  Front Left: Playback [off]
+  Front Right: Playback [off]
+Simple mixer control '3D',0
+  Capabilities: volume volume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 15
+  Mono: 0 [0%] Playback [off]
+Simple mixer control '3D Filter Lower Cut-Off',0
+  Capabilities: enum
+  Items: 'Low' 'High'
+  Item0: 'Low'
+Simple mixer control '3D Filter Upper Cut-Off',0
+  Capabilities: enum
+  Items: 'High' 'Low'
+  Item0: 'High'
+Simple mixer control 'ADC Data Output Select',0
+  Capabilities: enum
+  Items: 'Left Data = Left ADC;  Right Data = Right ADC' 'Left Data = Left ADC;  Right Data = Left ADC' 'Left Data = Right ADC; Right Data = Right ADC' 'Left Data = Right ADC; Right Data = Left ADC'
+  Item0: 'Left Data = Left ADC;  Right Data = Right ADC'
+Simple mixer control 'ADC High Pass Filter',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'ADC PCM',0
+  Capabilities: cvolume
+  Capture channels: Front Left - Front Right
+  Limits: Capture 0 - 255
+  Front Left: Capture 195 [76%] [0.00dB]
+  Front Right: Capture 195 [76%] [0.00dB]
+Simple mixer control 'ADC Polarity',0
+  Capabilities: enum
+  Items: 'No Inversion' 'Left Inverted' 'Right Inverted' 'Stereo Inversion'
+  Item0: 'No Inversion'
+Simple mixer control 'ALC Attack',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 15
+  Mono: 2 [13%]
+Simple mixer control 'ALC Decay',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 15
+  Mono: 3 [20%]
+Simple mixer control 'ALC Function',0
+  Capabilities: enum
+  Items: 'Off' 'Right' 'Left' 'Stereo'
+  Item0: 'Off'
+Simple mixer control 'ALC Hold Time',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 15
+  Mono: 0 [0%]
+Simple mixer control 'ALC Max Gain',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 7 [100%]
+Simple mixer control 'ALC Min Gain',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 0 [0%]
+Simple mixer control 'ALC Mode',0
+  Capabilities: enum
+  Items: 'ALC' 'Limiter'
+  Item0: 'ALC'
+Simple mixer control 'ALC Target',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 15
+  Mono: 4 [27%]
+Simple mixer control 'DAC Deemphasis',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'DAC Filter Characteristics',0
+  Capabilities: enum
+  Items: 'Normal' 'Sloping'
+  Item0: 'Normal'
+Simple mixer control 'DAC Mono Mix',0
+  Capabilities: enum
+  Items: 'Stereo' 'Mono'
+  Item0: 'Stereo'
+Simple mixer control 'DAC Polarity',0
+  Capabilities: enum
+  Items: 'No Inversion' 'Left Inverted' 'Right Inverted' 'Stereo Inversion'
+  Item0: 'No Inversion'
+Simple mixer control 'Left Boost Mixer LINPUT1',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [on]
+Simple mixer control 'Left Boost Mixer LINPUT2',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Left Boost Mixer LINPUT3',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Left Input Boost Mixer LINPUT1',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 3
+  Mono: 0 [0%] [0.00dB]
+Simple mixer control 'Left Input Boost Mixer LINPUT2',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 0 [0%] [-99999.99dB]
+Simple mixer control 'Left Input Boost Mixer LINPUT3',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 0 [0%] [-99999.99dB]
+Simple mixer control 'Left Input Mixer Boost',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Left Output Mixer Boost Bypass',0
+  Capabilities: volume volume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 2 [29%] [-15.00dB] Playback [off]
+Simple mixer control 'Left Output Mixer LINPUT3',0
+  Capabilities: volume volume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 2 [29%] [-15.00dB] Playback [off]
+Simple mixer control 'Left Output Mixer PCM',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Noise Gate',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Noise Gate Threshold',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 31
+  Mono: 0 [0%]
+Simple mixer control 'Right Boost Mixer RINPUT1',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [on]
+Simple mixer control 'Right Boost Mixer RINPUT2',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Right Boost Mixer RINPUT3',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Right Input Boost Mixer RINPUT1',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 3
+  Mono: 0 [0%] [0.00dB]
+Simple mixer control 'Right Input Boost Mixer RINPUT2',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 0 [0%] [-99999.99dB]
+Simple mixer control 'Right Input Boost Mixer RINPUT3',0
+  Capabilities: volume volume-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 0 [0%] [-99999.99dB]
+Simple mixer control 'Right Input Mixer Boost',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Right Output Mixer Boost Bypass',0
+  Capabilities: volume volume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 2 [29%] [-15.00dB] Playback [off]
+Simple mixer control 'Right Output Mixer PCM',0
+  Capabilities: pswitch pswitch-joined
+  Playback channels: Mono
+  Mono: Playback [off]
+Simple mixer control 'Right Output Mixer RINPUT3',0
+  Capabilities: volume volume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Capture channels: Mono
+  Limits: 0 - 7
+  Mono: 2 [29%] [-15.00dB] Playback [off]
+
+===== Kernel Modules =====
+
+$ sh -c lsmod | grep -Ei 'wm8960|snd|i2c|i2s|spi|regmap|gpio' || true
+snd_soc_hdmi_codec     20480  1
+snd_soc_wm8960         45056  1
+regmap_i2c             12288  1 snd_soc_wm8960
+snd_soc_simple_card    16384  0
+snd_soc_simple_card_utils    28672  1 snd_soc_simple_card
+snd_soc_bcm2835_i2s    16384  2
+snd_soc_core          290816  6 snd_soc_bcm2835_i2s,vc4,snd_soc_hdmi_codec,snd_soc_simple_card_utils,snd_soc_simple_card,snd_soc_wm8960
+snd_compress           20480  1 snd_soc_core
+snd_bcm2835            24576  0
+snd_pcm_dmaengine      16384  1 snd_soc_core
+snd_pcm               143360  8 snd_soc_bcm2835_i2s,snd_bcm2835,snd_soc_hdmi_codec,snd_compress,snd_soc_simple_card_utils,snd_soc_core,snd_soc_wm8960,snd_pcm_dmaengine
+snd_timer              36864  1 snd_pcm
+snd                   110592  7 snd_bcm2835,snd_soc_hdmi_codec,snd_timer,snd_compress,snd_soc_core,snd_pcm,snd_soc_wm8960
+raspberrypi_gpiomem    12288  0
+i2c_bcm2835            16384  0
+
+===== Device Nodes =====
+
+$ sh -c ls -l /dev/i2c* /dev/spidev* /dev/gpiochip* 2>/dev/null || true
+crw-rw---- 1 root gpio 254, 0 Oct  1 16:10 /dev/gpiochip0
+lrwxrwxrwx 1 root root      9 Oct  1 16:10 /dev/gpiochip4 -> gpiochip0
+
+===== Relevant Kernel Log =====
+
+$ sh -c dmesg | grep -Ei 'wm8960|asoc|sound|snd|alsa|i2c|i2s|codec|respeaker|seeed|keyestudio|failed|error|undervoltage|voltage|thrott' | tail -240 || true
+[    0.000000] Kernel command line: coherent_pool=1M 8250.nr_uarts=0 snd_bcm2835.enable_headphones=0 cgroup_disable=memory snd_bcm2835.enable_hdmi=1 snd_bcm2835.enable_hdmi=0  smsc95xx.macaddr=<kernel-derived-mac> vc_mem.mem_base=0x1ec00000 vc_mem.mem_size=0x20000000  console=ttyS0,115200 console=tty1 root=PARTUUID=65dd71d8-02 rootfstype=ext4 fsck.repair=yes rootwait cfg80211.ieee80211_regdom=IT
+[    7.023722] snd_bcm2835: module is from the staging directory, the quality is unknown, you have been warned.
+[    7.247806] bcm2835_codec: module is from the staging directory, the quality is unknown, you have been warned.
+[    7.261014] bcm2835-codec bcm2835-codec: Device registered as /dev/video10
+[    7.261064] bcm2835-codec bcm2835-codec: Loaded V4L2 decode
+[    7.276485] bcm2835-codec bcm2835-codec: Device registered as /dev/video11
+[    7.276532] bcm2835-codec bcm2835-codec: Loaded V4L2 encode
+[    7.284016] bcm2835-codec bcm2835-codec: Device registered as /dev/video12
+[    7.284064] bcm2835-codec bcm2835-codec: Loaded V4L2 isp
+[    7.286319] bcm2835-codec bcm2835-codec: Device registered as /dev/video18
+[    7.286364] bcm2835-codec bcm2835-codec: Loaded V4L2 image_fx
+[    7.290994] bcm2835-codec bcm2835-codec: Device registered as /dev/video31
+[    7.291048] bcm2835-codec bcm2835-codec: Loaded V4L2 encode_image
+[    7.557465] wm8960 1-001a: supply DCVDD not found, using dummy regulator
+[    7.568808] wm8960 1-001a: supply DBVDD not found, using dummy regulator
+[    7.569096] wm8960 1-001a: supply SPKVDD1 not found, using dummy regulator
+[    7.569159] wm8960 1-001a: supply SPKVDD2 not found, using dummy regulator
+[    8.068421] input: vc4-hdmi HDMI Jack as /devices/platform/soc/3f902000.hdmi/sound/card1/input1

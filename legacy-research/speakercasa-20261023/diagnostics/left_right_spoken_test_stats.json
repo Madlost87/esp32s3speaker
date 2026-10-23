@@ -1,0 +1,35 @@
+{
+  "path": "/tmp/left_right_spoken_test.wav",
+  "size_bytes": 768044,
+  "duration_seconds": 12.0,
+  "sample_rate_hz": 16000,
+  "bit_depth": 16,
+  "channels": 2,
+  "frames": 192000,
+  "channel_stats": [
+    {
+      "channel": 0,
+      "samples": 192000,
+      "rms": 14.453450964792689,
+      "rms_dbfs": -67.10956763134934,
+      "peak": 280,
+      "peak_dbfs": -41.36583807234997,
+      "dc_offset_samples": 2.267890625,
+      "dc_offset_percent_fullscale": 0.006921052932739259,
+      "clipped_samples": 0,
+      "clipped_percent": 0.0
+    },
+    {
+      "channel": 1,
+      "samples": 192000,
+      "rms": 11.94042110857067,
+      "rms_dbfs": -68.76860582848056,
+      "peak": 230,
+      "peak_dbfs": -43.0744419788425,
+      "dc_offset_samples": 1.9099479166666666,
+      "dc_offset_percent_fullscale": 0.005828698476155599,
+      "clipped_samples": 0,
+      "clipped_percent": 0.0
+    }
+  ]
+}

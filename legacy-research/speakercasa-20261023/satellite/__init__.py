@@ -1,0 +1,2 @@
+"""Galileo voice satellite package."""
+

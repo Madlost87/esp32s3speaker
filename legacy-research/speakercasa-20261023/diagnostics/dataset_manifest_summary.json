@@ -1,0 +1,53 @@
+{
+  "root": "/home/denny/galileo/dataset",
+  "categories": {
+    "positive/galileo": {
+      "count": 43,
+      "clipped": 0,
+      "level_range_dbfs": [
+        -62.51,
+        -33.82
+      ],
+      "by_distance": {
+        "30cm": 33,
+        "1m": 10
+      },
+      "by_environment": {
+        "quiet": 5,
+        "quiet_led_guided": 5,
+        "quiet_led_guided_gain_test_c28_adc230": 3,
+        "quiet_led_guided_dataset_c28_adc230": 30
+      }
+    },
+    "negative": {
+      "count": 10,
+      "clipped": 0,
+      "level_range_dbfs": [
+        -47.54,
+        -41.67
+      ],
+      "by_distance": {
+        "1m": 10
+      },
+      "by_environment": {
+        "quiet_led_guided_dataset_c28_adc230": 10
+      }
+    },
+    "noise": {
+      "count": 11,
+      "clipped": 1,
+      "level_range_dbfs": [
+        -52.31,
+        -10.47
+      ],
+      "by_distance": {
+        "none": 11
+      },
+      "by_environment": {
+        "boot_check": 1,
+        "quiet_room_dataset_c28_adc230": 10
+      }
+    }
+  },
+  "total_wav": 64
+}

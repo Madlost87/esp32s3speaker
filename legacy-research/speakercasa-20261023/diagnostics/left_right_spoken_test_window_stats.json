@@ -1,0 +1,53 @@
+{
+  "path": "/tmp/left_right_spoken_test.wav",
+  "sample_rate_hz": 16000,
+  "channels": 2,
+  "windows": [
+    {
+      "start_seconds": 0,
+      "end_seconds": 6,
+      "channel_stats": [
+        {
+          "channel": 0,
+          "rms": 20.4112497065548,
+          "rms_dbfs": -64.11160678317242,
+          "peak": 280,
+          "peak_dbfs": -41.36583807234997,
+          "clipped_samples": 0
+        },
+        {
+          "channel": 1,
+          "rms": 16.85413710339393,
+          "rms_dbfs": -65.77486825007298,
+          "peak": 230,
+          "peak_dbfs": -43.0744419788425,
+          "clipped_samples": 0
+        }
+      ],
+      "rms_ch0_over_ch1_db": 1.663261466900571
+    },
+    {
+      "start_seconds": 6,
+      "end_seconds": 12,
+      "channel_stats": [
+        {
+          "channel": 0,
+          "rms": 1.0887492824337475,
+          "rms_dbfs": -89.57044106352137,
+          "peak": 5,
+          "peak_dbfs": -76.32959861247399,
+          "clipped_samples": 0
+        },
+        {
+          "channel": 1,
+          "rms": 1.0418133230094535,
+          "rms_dbfs": -89.95320055888699,
+          "peak": 4,
+          "peak_dbfs": -78.26779887263511,
+          "clipped_samples": 0
+        }
+      ],
+      "rms_ch0_over_ch1_db": 0.38275949536562986
+    }
+  ]
+}
