@@ -5,3 +5,20 @@ packages:
 
 esphome:
   build_path: build/galileo-va-direct-audio-cutover
+
+# Piper PCM16 mono at 22050 Hz needs 11025 bytes for 250 ms. Keep the
+# resampler input larger than the HTTP decoder's 8192-byte output chunk;
+# oversized ring writes can fail immediately instead of applying backpressure.
+speaker:
+  - id: !extend tts_speaker_input
+    buffer_duration: 250ms
+
+# Attended watchdog investigation: preserve decoder/sink state transitions.
+logger:
+  level: DEBUG
+  logs:
+    audio_http_media_source: DEBUG
+    speaker_source_media_player: DEBUG
+    resampler_speaker: DEBUG
+    speaker_mixer: DEBUG
+    galileo_audio_tap: DEBUG

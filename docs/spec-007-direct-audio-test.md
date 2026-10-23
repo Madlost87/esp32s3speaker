@@ -26,10 +26,10 @@ Servizio nativo `galileo_direct_tts` verificato dopo il riavvio, stato VoIP
 trasferimento riuscito e ascolto confermato dall'utente. Ripetere i test Assist/TTS/VoIP
 e hang-up vocale prima di attestare nuovamente la parita'. Golden invariato.
 
-Il tap e' inattivo fino a un comando API autenticato: non riceve attivazioni
-automatiche da wake word, Assist o VoIP. Il test non modifica il percorso TTS
-quotidiano e non sostituisce la pipeline Assist. Non installare
-`galileo-va-direct-audio-cutover.yaml`: rimane un candidato solo da compilare.
+Il profilo di test resta inattivo fino a un comando API autenticato. Il profilo
+cutover era stato installato in OTA assistito e apre/chiude il tap
+automaticamente dopo wake word e fine parlato, ma rimuove Assist dal percorso
+voce: non e' percio' adatto all'uso quotidiano con il Core diretto disabilitato.
 
 ## Prossimo Passo
 
@@ -38,18 +38,25 @@ cattura, 1,46 s dopo taglio silenzi, zero frame mancanti). Il codice Core ora
 gestisce `local.time`; la risposta e' stata sintetizzata e ascoltata in un
 test separato. Non esiste ancora un turno automatico completo.
 
-Prima ripetere la parita' dopo l'ultimo OTA, poi integrare wake/fine parlato,
-STT/risposta/TTS e gestione errori/stati VoIP. Cutover solo dopo test ripetuti
-e rollback della versione candidata. Nessun listener o audio temporaneo resta
-attivo; il golden e lo stack VoIP non sono stati modificati.
+Il 2026-10-22 il candidato ha completato il primo turno automatico: wake ->
+505 frame PCM senza perdite -> STT -> `local.time` -> Piper -> TTS. Il
+satellite ha prelevato l'asset monouso con HTTP 200. Il Core e' stato subito
+riportato alla compose ordinaria, con runner disabilitato e HTTP su loopback.
+Il rollback OTA al golden verificato e' stato eseguito e l'utente ha confermato
+il ritorno di Assist e delle animazioni LED originali. Seguono prove di
+errori/timeout, wake durante VoIP e una soluzione LED validata sul candidato.
 
 ## Candidato Cutover
 
 `galileo-va-direct-audio-cutover.yaml` ora include il profilo statico
 `galileo-va-direct-audio-cutover-base.yaml`: rimuove Assist, conserva AFE,
 wake word, LED, pulsanti, player e `voip_stack`, e fissa tutte le dipendenze
-agli SHA del golden. Compilazione ESPHome 2026.9.1 riuscita: OTA 2.995.871
-byte, DIRAM 49,1%, flash 36,9%. Non e' stato installato.
+agli SHA del golden. Compilazione ESPHome 2026.9.1 riuscita: OTA 2.996.048
+byte, DIRAM 49,1%, flash 36,9%. Il tap chiude dopo 1,2 s di silenzio rilevato,
+con limite massimo di sicurezza di 15 s. Il candidato e' stato installato in
+OTA assistito per il test, poi rimosso con rollback golden. Micro Wake Word e'
+avviato esplicitamente al boot. Hash della prima OTA candidata:
+`56730239b6e75506edd32909da54b80998bd21aec0537f8c890e1a8898cc589f`.
 
 La parita' post-OTA del profilo test e' confermata dall'utente per Assist,
 VoIP e hang-up vocale, mute, Boot, LED e volume. Prima dell'OTA candidato
@@ -61,8 +68,7 @@ e la successiva prova di rollback.
 Obiettivo: Galileo Core proprietario della voce; Home Assistant solo domotica;
 `voip_stack` invariato, incluso riaggancio vocale in chiamata.
 
-La cassa resta sul profilo test golden-based con Assist operativo. Il candidato
-no-Assist e' compilato ma mai installato; il golden OTA resta il rollback.
-Alla ripresa: runner Core disabilitato e testato, TTS diretto con URL monouso,
-fine-parlato affidabile nel candidato, OTA assistito, prova end-to-end e
-rollback golden verificato.
+La cassa ora esegue il golden con Assist operativo; il runner Core e'
+disabilitato in configurazione ordinaria. Alla ripresa: progettare e validare
+la parita' LED senza dipendere da eventi `voice_assistant`, poi ritestare
+errori, timeout e VoIP reale prima di un nuovo OTA candidato.
