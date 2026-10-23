@@ -65,6 +65,33 @@ e la successiva prova di rollback.
 
 ## Ripresa del Goal
 
+## Finestra assistita 2026-10-23 — rollback obbligatorio
+
+Il candidato con il runner Core, timeout espliciti e segnalazione UDP
+autenticata di errore e' stato compilato e caricato in OTA assistito. Il Core
+e' stato avviato temporaneamente con receiver UDP autenticato e server HTTP
+LAN per il WAV monouso. Al primo wake l'utente ha osservato LED rosso bloccato
+e un breve lampeggio arancione, senza risposta vocale.
+
+Il receiver avviato localmente non ha ricevuto `OPEN` o frame PCM, ma era
+stato erroneamente associato all'IP `.173`, che non e' l'orchestratore. La
+configurazione corretta resta `.186`. I log del Core reale hanno poi
+confermato piu' turni completi `wake -> PCM -> Vosk -> Piper -> WAV`, con
+frame completi e prelievo HTTP dell'asset da parte della cassa.
+
+Il LED arancione persistente e' riproducibile quando il router produce
+`unknown` o `llm.ask` senza testo da pronunciare: il Core tornava idle solo
+internamente e non inviava alcun comando al firmware. La correzione Core
+segnala in quel ramo l'attivita' UDP autenticata `error`; il candidato gia'
+prevede rosso per due secondi e poi idle. Non e' stata eseguita una nuova OTA:
+il golden e' stato verificato con `sha256sum -c` e ricaricato
+(`eaf02581fdd00b615965fe12d8ed4537c1b533802de189243e3bf6e67036d52b`), e
+l'utente ha confermato il ritorno di Assist e dell'anello LED normale.
+
+Prima di un nuovo candidato: distribuire prima il Core corretto su `.186`,
+acquisire un log continuo del wake e provare sia una risposta locale sia una
+richiesta senza risposta; conservare ELF/bin corrispondenti.
+
 Obiettivo: Galileo Core proprietario della voce; Home Assistant solo domotica;
 `voip_stack` invariato, incluso riaggancio vocale in chiamata.
 
