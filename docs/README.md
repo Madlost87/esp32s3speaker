@@ -1,13 +1,17 @@
 # Documentation Index
 
 Questo indice separa i documenti operativi attuali dai documenti storici di
-bring-up. La fonte di verita' per il firmware operativo e':
+bring-up. Il profilo previsto per la voce e':
 
 ```text
-esphome/galileo-va-afe.yaml
+esphome/galileo-va-direct-audio-cutover.yaml
 ```
 
-Profilo corrente:
+La baseline AFE/golden resta disponibile esclusivamente per il rollback.
+Il manifest di release dichiara lo stato verificato e cio' che resta da
+registrare a ogni OTA.
+
+Profilo direct-audio previsto:
 
 - device ESPHome: `galileo-va`;
 - friendly name: `Satellite Taverna`;
@@ -26,6 +30,8 @@ Profilo corrente:
   audio, endpoint e regole operative del satellite.
 - `golden-firmware-recovery.md`: procedura di recovery verso lo stato
   funzionante salvato localmente.
+- `satellite-release-manifest.md`: identita' del satellite, profilo operativo,
+  golden di rollback e dati da registrare a ogni OTA.
 - `wake-word-models.md`: stato corrente dei modelli `micro_wake_word` e
   profili di test.
 - `led-ring-theme.md`: tema del ring LED, effetti custom e rollback.
