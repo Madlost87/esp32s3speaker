@@ -1,0 +1,39 @@
+# Second production satellite. It overrides only identity and transport; all
+# hardware, audio, wake-word and VoIP behaviour remains in the tested shared
+# full voice/VoIP profile.
+substitutions:
+  name: galileo-sala
+  friendly_name: Satellite Sala
+  voip_extension: "102"
+  voip_ring_groups: "RG Casa,RG Tutti"
+  voip_conference_groups: "CG Casa"
+  direct_audio_host: "192.168.1.186"
+  direct_audio_port: "19009"
+  direct_audio_control_port: "19010"
+  # Defined locally in ignored secrets.yaml; never reuse Taverna's session.
+  direct_audio_session_id: !secret galileo_audio_bridge_session_id_sala
+
+packages:
+  full_voice_voip: !include galileo-va-direct-audio-cutover-base.yaml
+
+esphome:
+  build_path: build/galileo-sala
+
+wifi:
+  manual_ip:
+    static_ip: 192.168.1.172
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    dns1: 192.168.1.1
+
+# Keep the announcement resampler ahead of Piper's 22.05 kHz PCM chunks.
+# Taverna's deployed cutover profile uses 250 ms; Sala previously inherited
+# the 100 ms default, which starved the HTTP/TTS path and triggered Task WDT.
+speaker:
+  - id: !extend tts_speaker_input
+    buffer_duration: 250ms
+
+# Keep the same quiet production log policy as Taverna. Diagnostics are
+# enabled by an explicit maintenance profile, not on normal operation.
+logger:
+  level: INFO
