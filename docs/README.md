@@ -24,6 +24,15 @@ Profilo direct-audio previsto:
 - VoIP: interno `101`, SIP `5060/udp`, RTP base `40000`;
 - feedback ascolto: switch per-device `Listen Feedback Sound`.
 
+Secondo satellite in esercizio:
+
+- device ESPHome: `galileo-sala` / `Satellite Sala`;
+- IP: `192.168.1.172`;
+- direct audio/control: `19009/19010`, con sessione distinta da Taverna;
+- VoIP: interno `102`, gruppi `RG Casa`, `RG Tutti`, `CG Casa`;
+- TTS: resampler a `250ms`, allineato al profilo Taverna dopo il fix del
+  watchdog durante le risposte Piper HTTP.
+
 ## Operativi
 
 - `voip-centralino-esp32.md`: guida principale per deploy, VoIP, tasti,
@@ -32,6 +41,8 @@ Profilo direct-audio previsto:
   funzionante salvato localmente.
 - `satellite-release-manifest.md`: identita' del satellite, profilo operativo,
   golden di rollback e dati da registrare a ogni OTA.
+- `satellite-sala-release-manifest.md`: identita', hash e checklist dell'OTA
+  del secondo satellite.
 - `wake-word-models.md`: stato corrente dei modelli `micro_wake_word` e
   profili di test.
 - `led-ring-theme.md`: tema del ring LED, effetti custom e rollback.

@@ -21,6 +21,7 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 | LED ring theme | OTA pass | Palette rosso/viola/blu con `Talk Glow Color` su wake/listening; validazione visiva da fare sul ring |
 | Listen feedback sound | Pass | Switch per-device `Listen Feedback Sound`, LED solo oppure LED + bip locale |
 | Golden firmware | Fatto | Recovery locale in `backups/golden-esp-voip-20261010/`, documentata in `docs/golden-firmware-recovery.md` |
+| Satellite Sala | OTA pass | `galileo-sala` su `192.168.1.172`, interno `102`, audio/control UDP `19009/19010`; validazione vocale e VoIP finale ancora richiesta |
 
 ## Hardware Rilevato
 

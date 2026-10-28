@@ -93,6 +93,12 @@ substitutions:
   voip_extension: "101"
   voip_ring_groups: "RG Casa,RG Tutti"
   voip_conference_groups: "CG Casa"
+  direct_audio_host: "192.168.1.186"
+  direct_audio_port: "19007"
+  direct_audio_control_port: "19008"
+  # The default is Taverna. Satellite profiles override the resolved value,
+  # never the name of an ESPHome !secret (which cannot be templated).
+  direct_audio_session_id: !secret galileo_audio_bridge_session_id
 
   ext_components_source: "github://n-IA-hane/esphome-intercom@6581cfea712d0e13bf88c5aff3fa97b9e27123ab"
   voip_stack_components_source: "github://n-IA-hane/esphome-voip-stack@c693b4e75008afb5d2f584a09035aee2743a2210"
@@ -631,10 +637,10 @@ galileo_audio_tap:
   id: direct_audio_tap
   microphone: mic_main
   media_player: speaker_media_player
-  host: 192.168.1.186
-  port: 19007
-  control_port: 19008
-  session_id: !secret galileo_audio_bridge_session_id
+  host: ${direct_audio_host}
+  port: ${direct_audio_port}
+  control_port: ${direct_audio_control_port}
+  session_id: ${direct_audio_session_id}
   enabled: true
   silence_threshold: 450
   # Trial: learn the radio/background level in the wake-word tail, then

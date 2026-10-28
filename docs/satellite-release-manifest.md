@@ -38,21 +38,22 @@ del binario installato.
 
 ## Identificativo binario installato
 
-Lo SHA-256 dell'OTA attualmente installata **non e' ancora registrato**. Non
-va dedotto dal commit sorgente: compilazioni diverse possono produrre binari
-diversi. Alla prossima OTA registrare qui:
+L'OTA corrente e' stata compilata e installata con successo il 2026-10-24.
 
 ```text
-Data e ora OTA:
-SHA-256 OTA:
-Dimensione OTA:
-Comando/profilo usato:
-Esito test wake -> STT -> TTS:
-Esito test VoIP:
+Data e ora OTA: 2026-10-24 10:14:55 +02:00
+SHA-256 OTA: 2d41348900e9649556a1f09a3457aafddb9b3f7f6ae2ad4413c1a18b5e61bdd6
+Dimensione OTA: 3.024.944 byte
+Comando/profilo usato: galileo-va-direct-audio-cutover.yaml
+Esito upload OTA: OK (ESPHome OTA v2)
+Contenuto: ring VoIP via player annunci, poi pausa silenziosa di 3 s
+Esito test wake -> STT -> TTS: da riconfermare dopo l'OTA
+Esito test VoIP/ring: da confermare dopo l'OTA
 ```
 
 Conservare il file `.ota.bin` fuori da Git: puo' contenere credenziali
-compilate. Il manifest e l'hash, invece, restano versionati.
+compilate. Il manifest e l'hash, invece, restano versionati. Per ogni OTA
+successiva sostituire i dati qui sopra, senza dedurre l'hash dal commit.
 
 ## Golden di recovery
 

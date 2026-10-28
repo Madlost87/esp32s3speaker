@@ -36,6 +36,8 @@ script:
               - voip_stack.is_ringing:
               - lambda: 'return !id(g_ota_in_progress);'
           then:
+            # The ringtone must use the announcement player: it owns the
+            # mixer, amplifier power and media source during an incoming call.
             - media_player.play_media:
                 id: speaker_media_player
                 media_url: "audio-file://voip_ringing_sound"
@@ -55,6 +57,8 @@ script:
                         return id(announcement_file_source).get_state() ==
                                media_source::MediaSourceState::IDLE;
                 timeout: 5s
+            # Keep this pause quiet: it is the voice-answer window.
+            - delay: 3s
       - script.execute: voip_stop_ringtone
 
   - id: voip_stop_ringtone
