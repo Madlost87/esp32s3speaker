@@ -14,10 +14,79 @@
 # short measurement run; the stable baseline remains `galileo-va-afe.yaml`.
 
 packages:
-  base: !include galileo-va-afe.yaml
+  # Reproducible AFE baseline: the rolling `main` component sources may change
+  # independently while this diagnostic firmware is being evaluated.
+  base: !include galileo-va-afe-pinned-20261010.yaml
 
 substitutions:
-  friendly_name: Galileo Voice AFE Slot Diagnostics
+  # Keep this measurement device isolated from Taverna and Sala: the base AFE
+  # profile defaults to their production identity and VoIP extension.
+  name: satellite-lab
+  friendly_name: Satellite Lab AFE Slot Diagnostics
+  voip_extension: "103"
+  voip_ring_groups: "RG Lab"
+  voip_conference_groups: "CG Lab"
+  # Lab-only, authenticated UDP sink for short post-AFE PCM measurements.
+  lab_capture_host: "192.168.1.173"
+  lab_capture_port: "19011"
+  lab_capture_control_port: "19012"
+  lab_capture_session_id: "4a3f19c27db865e0"
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [galileo_audio_tap]
+
+galileo_audio_tap:
+  id: lab_post_afe_tap
+  microphone: mic_main
+  host: ${lab_capture_host}
+  port: ${lab_capture_port}
+  control_port: ${lab_capture_control_port}
+  session_id: ${lab_capture_session_id}
+  enabled: true
+  adaptive_noise_floor: false
+  silence_threshold: 1
+  silence_ms: 10000
+  maximum_capture_ms: 10000
+
+# Experimental, Lab-only barge-in.  The existing runtime-controller action
+# stops only the current Assist announcement and starts a fresh Assist turn.
+# It is deliberately opt-in: VAD is not a user-intent classifier and must never
+# be allowed to interrupt ordinary media or VoIP by default.
+switch:
+  - platform: template
+    id: lab_vad_barge_in
+    name: Lab VAD Barge-in
+    icon: mdi:message-badge-outline
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+
+binary_sensor:
+  - platform: esp_afe
+    esp_afe_id: afe_processor
+    vad:
+      id: lab_vad_barge_in_listener
+      internal: true
+      on_press:
+        - if:
+            condition:
+              and:
+                - switch.is_on: lab_vad_barge_in
+                - switch.is_on: aec_switch
+                - media_player.is_announcing: speaker_media_player
+                - runtime_controller.is_active:
+                    id: runtime
+                    activity: va_responding
+            then:
+              - logger.log:
+                  level: INFO
+                  tag: barge_in
+                  format: "Lab VAD barge-in: stopping Assist response and opening a new turn"
+              - runtime_controller.request_action:
+                  id: runtime
+                  action: voice_cancel_response
 
 sensor:
   - platform: esp_audio_stack

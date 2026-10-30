@@ -1,0 +1,36 @@
+# Third satellite: the same direct multi-satellite pipeline as Sala/Taverna,
+# with the AFE/AEC hardware path verified during the Lab study.
+
+substitutions:
+  name: satellite-garage
+  friendly_name: Satellite Garage Hybrid
+  voip_extension: "103"
+  voip_ring_groups: "RG Casa,RG Tutti"
+  voip_conference_groups: "CG Casa"
+  direct_audio_host: "192.168.1.186"
+  direct_audio_port: "19011"
+  direct_audio_control_port: "19012"
+  direct_audio_session_id: !secret galileo_audio_bridge_session_id_garage
+
+packages:
+  direct_voice_voip: !include galileo-va-direct-audio-cutover-base.yaml
+
+esphome:
+  build_path: build/satellite-garage
+
+# The Lab board currently owns this DHCP lease. Reserve its MAC address in the
+# router before putting the device in Garage, then this explicit address follows
+# the same provisioning pattern as Sala.
+wifi:
+  manual_ip:
+    static_ip: 192.168.1.133
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    dns1: 192.168.1.1
+
+# Same announcement/TTS buffering proven on Sala. It prevents the HTTP/Piper
+# stream from starving the speaker pipeline during longer direct replies.
+speaker:
+  - id: !extend tts_speaker_input
+    buffer_duration: 250ms
+
