@@ -23,6 +23,7 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   void set_control_port(uint16_t port) { this->control_port_ = port; }
   void set_session_id(const std::string &session_id);
   void set_enabled(bool enabled) { this->armed_ = enabled; }
+  void set_dialogue_enabled(bool enabled) { this->dialogue_enabled_ = enabled; }
   void set_media_player(media_player::MediaPlayer *media_player) { this->media_player_ = media_player; }
   void set_silence_threshold(uint16_t threshold) { this->silence_threshold_ = threshold; }
   void set_adaptive_noise_floor(bool enabled) { this->adaptive_noise_floor_ = enabled; }
@@ -31,6 +32,7 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   void set_maximum_capture_ms(uint16_t duration_ms) { this->maximum_capture_samples_ = duration_ms * 16U; }
   // Used only by the dedicated cutover profile after a local wake-word event.
   void start_capture_from_wake_word();
+  void start_capture_from_dialogue_vad();
   void stop_capture_from_timeout();
   // Uses the announcement pipeline, separate from the active VoIP RX path.
   void play_direct_tts(std::string url);
@@ -56,11 +58,14 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   static constexpr uint8_t PACKET_CLOSE = 3;
   static constexpr uint8_t PACKET_TTS = 4;
   static constexpr uint8_t PACKET_ACTIVITY = 5;
+  static constexpr uint8_t PACKET_DIALOGUE = 6;
+  static constexpr uint8_t PACKET_LIFECYCLE = 7;
   static constexpr size_t MAX_CONTROL_BYTES = 512;
 
   void on_microphone_data_(const std::vector<uint8_t> &data);
   bool open_socket_();
   bool send_control_(uint8_t packet_type);
+  bool send_lifecycle_(const char *event);
   void poll_control_commands_();
   void apply_remote_activity_(const std::string &activity);
   bool session_matches_(const std::string &provided) const;
@@ -69,6 +74,9 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   void reset_endpoint_detector_();
   void close_capture_(const char *reason);
   void finish_direct_tts_();
+  void start_direct_tts_(std::string url, std::string response_id = "");
+  void start_direct_tts_when_idle_(std::string url, std::string response_id, uint8_t retries);
+  void arm_dialogue_(uint16_t seconds, const std::string &response_id);
   static void trigger_all_(const std::vector<GalileoAudioTapTrigger *> &triggers);
 
   microphone::Microphone *microphone_{nullptr};
@@ -78,6 +86,14 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   uint16_t port_{0};
   uint16_t control_port_{19008};
   bool armed_{false};
+  bool dialogue_enabled_{false};
+  bool dialogue_pending_{false};
+  bool dialogue_active_{false};
+  uint16_t dialogue_seconds_{0};
+  std::string dialogue_response_id_;
+  std::string direct_tts_response_id_;
+  std::string last_completed_response_id_;
+  std::string capture_response_id_;
   bool capture_active_{false};
   int socket_{-1};
   uint32_t sequence_{0};
@@ -95,6 +111,7 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   volatile bool endpoint_detected_{false};
   bool direct_tts_pending_{false};
   bool direct_tts_announcing_{false};
+  uint32_t direct_tts_started_at_{0};
   std::array<uint8_t, MAX_PCM_BYTES> pending_pcm_{};
   size_t pending_size_{0};
   portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;

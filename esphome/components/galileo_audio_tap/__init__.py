@@ -14,6 +14,7 @@ CONF_PORT = "port"
 CONF_CONTROL_PORT = "control_port"
 CONF_SESSION_ID = "session_id"
 CONF_ENABLED = "enabled"
+CONF_DIALOGUE_ENABLED = "dialogue_enabled"
 CONF_MEDIA_PLAYER = "media_player"
 CONF_SILENCE_THRESHOLD = "silence_threshold"
 CONF_ADAPTIVE_NOISE_FLOOR = "adaptive_noise_floor"
@@ -52,6 +53,7 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_CONTROL_PORT, default=19008): cv.port,
         cv.Required(CONF_SESSION_ID): validate_session_id,
         cv.Optional(CONF_ENABLED, default=False): cv.boolean,
+        cv.Optional(CONF_DIALOGUE_ENABLED, default=False): cv.boolean,
         cv.Optional(CONF_MEDIA_PLAYER): cv.use_id(media_player.MediaPlayer),
         cv.Optional(CONF_SILENCE_THRESHOLD, default=450): cv.int_range(min=1, max=32767),
         cv.Optional(CONF_ADAPTIVE_NOISE_FLOOR, default=False): cv.boolean,
@@ -77,6 +79,7 @@ async def to_code(config):
     cg.add(var.set_control_port(config[CONF_CONTROL_PORT]))
     cg.add(var.set_session_id(config[CONF_SESSION_ID]))
     cg.add(var.set_enabled(config[CONF_ENABLED]))
+    cg.add(var.set_dialogue_enabled(config[CONF_DIALOGUE_ENABLED]))
     cg.add(var.set_silence_threshold(config[CONF_SILENCE_THRESHOLD]))
     cg.add(var.set_adaptive_noise_floor(config[CONF_ADAPTIVE_NOISE_FLOOR]))
     cg.add(var.set_noise_floor_ratio(config[CONF_NOISE_FLOOR_RATIO]))

@@ -96,6 +96,7 @@ substitutions:
   direct_audio_host: "192.168.1.186"
   direct_audio_port: "19007"
   direct_audio_control_port: "19008"
+  direct_dialogue_enabled: "false"
   # The default is Taverna. Satellite profiles override the resolved value,
   # never the name of an ESPHome !secret (which cannot be templated).
   direct_audio_session_id: !secret galileo_audio_bridge_session_id
@@ -534,6 +535,13 @@ voip_stack:
 # =============================================================================
 
 binary_sensor:
+  - platform: esp_afe
+    esp_afe_id: afe_processor
+    vad:
+      id: direct_dialogue_vad
+      internal: true
+      on_press:
+        - lambda: id(direct_audio_tap).start_capture_from_dialogue_vad();
   # BOOT button (GPIO0), multi-click
   - platform: gpio
     name: Boot Button
@@ -642,6 +650,7 @@ galileo_audio_tap:
   control_port: ${direct_audio_control_port}
   session_id: ${direct_audio_session_id}
   enabled: true
+  dialogue_enabled: ${direct_dialogue_enabled}
   silence_threshold: 450
   # Trial: learn the radio/background level in the wake-word tail, then
   # require 1.7x that level for speech. The fixed threshold remains a floor.

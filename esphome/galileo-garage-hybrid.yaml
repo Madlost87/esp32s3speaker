@@ -10,6 +10,8 @@ substitutions:
   direct_audio_host: "192.168.1.186"
   direct_audio_port: "19011"
   direct_audio_control_port: "19012"
+  # Pilot closed: retain AFE/AEC, but match Sala/Taverna voice behaviour.
+  direct_dialogue_enabled: "false"
   direct_audio_session_id: !secret galileo_audio_bridge_session_id_garage
 
 packages:

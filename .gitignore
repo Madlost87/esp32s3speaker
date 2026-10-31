@@ -8,6 +8,7 @@ esphome/secrets.yaml
 # ESPHome caches, virtualenvs, and generated firmware
 **/.esphome/
 **/.venv/
+esphome/.cache/
 build-test/
 *.bin
 *.elf
