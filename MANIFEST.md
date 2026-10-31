@@ -10,7 +10,10 @@ Assist and local VoIP endpoint `101`.
 
 - `README.md`: public ESP32-S3 Audio project summary.
 - `AUDIT_HARDWARE.md`: current hardware/firmware audit and intervention plan.
-- `docs/`: operational guides, historical bring-up notes, runtime validation, recovery, wake-word notes, feature specs, and references.
+- `docs/`: operational guides, historical bring-up notes, runtime validation, recovery, wake-word notes, feature specs, and references. Include
+  `docs/spec-011-firmware-modularity-and-transport-hardening.md` for the
+  staged firmware refactor and its deployment safeguards; use
+  `docs/specs-index.md` as the resumption point and work order.
 - `diagnostics/`: sanitized hardware, USB, security, factory string, and partition diagnostics.
 - `esphome/`: current full AFE ESPHome config, historical stock config, overlays, and secrets template.
 - `handoff/micro_wake_word_request/`: documentation, template files, one example `.tflite`, and a tarball package for a future ESPHome microWakeWord custom model.
