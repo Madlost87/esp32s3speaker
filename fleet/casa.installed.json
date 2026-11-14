@@ -1,12 +1,17 @@
 {
   "garage": {
-    "release": "pre-2026.11.1",
-    "firmware": "026f0c7",
-    "build_time": "2026-10-31 10:49:45 +0100",
-    "installed_at": "2026-11-14 11:45",
-    "sha256_16": "b85f6e3a8effac6f",
-    "artifact": "/home/denny/esp-firmware-builds/casa/pre-2026.11.1/garage.ota.bin",
+    "release": "2026.11.1",
+    "firmware": "efdae64",
+    "build_time": "2026-11-14 14:19:43 +0100",
+    "installed_at": "2026-11-14 14:29",
+    "sha256_16": "7f8af196bc31d09f",
+    "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.1/garage.ota.bin",
     "history": [
+      {
+        "release": "pre-2026.11.1",
+        "sha256_16": "b85f6e3a8effac6f",
+        "artifact": "/home/denny/esp-firmware-builds/casa/pre-2026.11.1/garage.ota.bin"
+      },
       {
         "release": "pre-026f0c7 (stesso binario)",
         "sha256_16": "b85f6e3a8effac6f",
