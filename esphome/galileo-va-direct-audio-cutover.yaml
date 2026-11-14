@@ -1,10 +1,21 @@
-# Spec 007 cutover candidate. Compile-only until attended rollback validation.
-# The complete no-Assist profile is static and SHA-pinned in the included file.
+# Satellite Taverna - production profile (direct audio to Galileo Core).
+# Identity, VoIP extension 101 and direct-audio ports 19007/19008 are the
+# defaults of the shared base; this file only adds what is Taverna-specific.
 packages:
   cutover: !include galileo-va-direct-audio-cutover-base.yaml
 
 esphome:
   build_path: build/galileo-va-direct-audio-cutover
+
+# Galileo Core addresses this satellite at a fixed IP (direct voice source and
+# TTS command target), so it must not depend on a DHCP lease. Same provisioning
+# pattern as Sala (.172) and Garage (.133).
+wifi:
+  manual_ip:
+    static_ip: 192.168.1.171
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    dns1: 192.168.1.1
 
 # Piper PCM16 mono at 22050 Hz needs 11025 bytes for 250 ms. Keep the
 # resampler input larger than the HTTP decoder's 8192-byte output chunk;
@@ -13,12 +24,7 @@ speaker:
   - id: !extend tts_speaker_input
     buffer_duration: 250ms
 
-# Attended watchdog investigation: preserve decoder/sink state transitions.
+# Same quiet production log policy as Sala and Garage. For an attended
+# investigation, temporarily raise galileo_audio_tap / speaker_* to DEBUG.
 logger:
-  level: DEBUG
-  logs:
-    audio_http_media_source: DEBUG
-    speaker_source_media_player: DEBUG
-    resampler_speaker: DEBUG
-    speaker_mixer: DEBUG
-    galileo_audio_tap: DEBUG
+  level: INFO

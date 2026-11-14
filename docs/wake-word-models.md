@@ -1,6 +1,6 @@
 # Wake Word Models
 
-Il profilo operativo `esphome/galileo-va-afe.yaml` usa ESPHome
+I profili in produzione (base `esphome/galileo-va-direct-audio-cutover-base.yaml`, vedi `satellites.md`) usano ESPHome
 `micro_wake_word` con modelli v2.
 
 ## Stato Attuale
@@ -14,12 +14,12 @@ Modelli caricati nel firmware:
 Comportamento al boot:
 
 ```text
-alexa      disabilitata
+alexa      abilitata
 okay_nabu  abilitata
-hey_jarvis abilitata
+hey_jarvis disabilitata
 ```
 
-`Alexa` resta disponibile ma non attiva. Home Assistant puo' mostrare le
+`Hey Jarvis` resta disponibile ma non attiva (vedi `on_boot` nella base). Home Assistant puo' mostrare le
 tendine `Wake word` come `No wake word`, ma il firmware forza direttamente lo
 stato dei tre modelli al boot.
 

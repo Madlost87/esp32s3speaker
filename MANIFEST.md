@@ -2,9 +2,10 @@
 
 This folder is a clean documentation bundle for the Galileo ESP32-S3 Audio / ESPHome track.
 
-Current operational baseline: `esphome/galileo-va-afe.yaml`, friendly name
-`Satellite Taverna`, ESPHome 2026.9.1, full AFE audio path, Home Assistant
-Assist and local VoIP endpoint `101`.
+Production: three satellites (Taverna, Sala, Garage) on the shared base
+`esphome/galileo-va-direct-audio-cutover-base.yaml`, ESPHome 2026.9.1, full AFE
+audio path, direct audio to Galileo Core and VoIP endpoints `101`-`103`.
+See `docs/satellites.md`. `esphome/galileo-va-afe.yaml` is the recovery golden.
 
 ## Included
 

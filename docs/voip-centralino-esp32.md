@@ -2,12 +2,16 @@
 
 Data: 2026-10-08.
 
-Questo repository contiene il firmware del satellite `Satellite Taverna`.
-La configurazione VoIP e' nel profilo operativo `esphome/galileo-va-afe.yaml`.
+> Aggiornamento 2026-11-14: in produzione ci sono tre satelliti (Taverna 101,
+> Sala 102, Garage 103) sulla base `esphome/galileo-va-direct-audio-cutover-base.yaml`.
+> Profili, IP e comandi OTA correnti: [satellites.md](satellites.md). I comandi
+> con `galileo-va-afe.yaml` in questa guida valgono per il golden di recovery.
+
+Questo documento nasce per il primo satellite, `Satellite Taverna`.
 
 Questa guida copre solo il lato ESP32-S3. La rubrica centrale, la dashboard,
 gli interni e il provisioning Home Assistant sono documentati nell'altro repo:
-`/home/denny/progerttidenny/galileovianicolini/homeassistant/docs/voip-centralino.md`.
+`/home/denny/progerttidenny/galileovianicolini/homeassistant/docs/operations/voip-centralino.md`.
 
 ## Ruolo del dispositivo
 
@@ -89,7 +93,7 @@ TDM verificato su questa board:
 | --- | --- |
 | ESPHome | `2026.9.1` |
 | ESP-IDF | `5.5.5` |
-| Profilo operativo | `esphome/galileo-va-afe.yaml` |
+| Profilo operativo | `esphome/galileo-va-direct-audio-cutover.yaml` (vedi `satellites.md`) |
 | Nome tecnico | `galileo-va` |
 | Nome umano | `Satellite Taverna` |
 | IP attuale | `192.168.1.171` |

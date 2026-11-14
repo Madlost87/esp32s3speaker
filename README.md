@@ -68,13 +68,20 @@ flusso voce usato da ESPHome `micro_wake_word`, Assist e VoIP TX.
 
 ## Firmware
 
-Entrypoint ESPHome operativo:
+Tre satelliti in produzione (Taverna, Sala, Garage) con la stessa base
+`esphome/galileo-va-direct-audio-cutover-base.yaml` e un profilo ciascuno:
 
 ```text
-esphome/galileo-va-afe.yaml
+esphome/galileo-va-direct-audio-cutover.yaml   Satellite Taverna  .171  int. 101
+esphome/galileo-sala.yaml                      Satellite Sala     .172  int. 102
+esphome/galileo-garage-hybrid.yaml             Satellite Garage   .133  int. 103
 ```
 
-Questo e' il profilo stabile attuale del satellite `Satellite Taverna`. Usa componenti esterni AFE/audio/VoIP per sfruttare la board come il firmware factory: TDM 48 kHz, due microfoni fisici, reference hardware per AEC, speaker ES8311, LED ring e tasti fisici.
+Parametri, build installate e procedura OTA: [docs/satellites.md](docs/satellites.md).
+
+La base usa componenti esterni AFE/audio/VoIP per sfruttare la board come il firmware factory: TDM 48 kHz, due microfoni fisici, reference hardware per AEC, speaker ES8311, LED ring e tasti fisici.
+
+`esphome/galileo-va-afe.yaml` e' il golden di recovery (vedi `docs/golden-firmware-recovery.md`), non il profilo in produzione.
 
 Il vecchio profilo stock ESPHome resta nel repository come riferimento storico e fallback di confronto:
 
@@ -161,7 +168,9 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 
 - `docs/README.md` - indice della documentazione e distinzione tra documenti operativi e storici.
 - `AUDIT_HARDWARE.md` - audit aggiornato di hardware, firmware attuale, gap e piano interventi.
-- `esphome/galileo-va-afe.yaml` - firmware operativo attuale per `Satellite Taverna`.
+- `docs/satellites.md` - profili, IP, interni, porte e build installate dei tre satelliti.
+- `esphome/galileo-va-direct-audio-cutover-base.yaml` - base comune dei satelliti in produzione.
+- `esphome/galileo-va-afe.yaml` - golden di recovery del Satellite Taverna.
 - `esphome/galileo-va.yaml` - vecchio profilo stock, conservato come riferimento storico/fallback.
 - `docs/initial_board_audit.md` - audit non distruttivo iniziale, factory firmware, partizioni e backup.
 - `docs/compatibility_audit.md` - compatibilita' ESPHome/Home Assistant, pinout e stato test.
