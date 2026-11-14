@@ -1,0 +1,14 @@
+# Sito "casa" (via Nicolini): valori di rete e di casa condivisi da tutte le casse.
+# Un'altra installazione usa un proprio file sites/<sito>.yaml con gli stessi
+# nomi di sostituzione e i propri segreti; il firmware resta identico.
+substitutions:
+  direct_audio_host: "192.168.1.186"   # Galileo Core (Raspberry)
+  net_gateway: 192.168.1.1
+  net_subnet: 255.255.255.0
+  net_dns: 192.168.1.1
+  voip_ring_groups: "RG Casa,RG Tutti"
+  voip_conference_groups: "CG Casa"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password

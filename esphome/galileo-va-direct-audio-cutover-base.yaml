@@ -86,20 +86,10 @@
 
 substitutions:
   runtime_controller_debug: "false"
-  # Hardware-shared identity: all Waveshare S3 firmware variants share the same
-  # name so HA reuses the device entity and ESPHome reuses the build cache.
-  name: galileo-va
-  friendly_name: Satellite Taverna
-  voip_extension: "101"
-  voip_ring_groups: "RG Casa,RG Tutti"
-  voip_conference_groups: "CG Casa"
-  direct_audio_host: "192.168.1.186"
-  direct_audio_port: "19007"
-  direct_audio_control_port: "19008"
+  # Identity (name, friendly_name, static_ip, voip_extension, direct_audio_*
+  # ports and session) comes from the device file; network values and groups
+  # from sites/<site>.yaml. See docs/fleet.md. Only behaviour defaults live here.
   direct_dialogue_enabled: "false"
-  # The default is Taverna. Satellite profiles override the resolved value,
-  # never the name of an ESPHome !secret (which cannot be templated).
-  direct_audio_session_id: !secret galileo_audio_bridge_session_id
 
   ext_components_source: "github://n-IA-hane/esphome-intercom@6581cfea712d0e13bf88c5aff3fa97b9e27123ab"
   voip_stack_components_source: "github://n-IA-hane/esphome-voip-stack@c693b4e75008afb5d2f584a09035aee2743a2210"
@@ -247,11 +237,17 @@ network:
 # reliable HA API reconnects.
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  # ssid/password come from sites/<site>.yaml.
   # Full audio + API needs deterministic Wi-Fi latency; ESP32 LIGHT power save
   # can make the device appear associated while HA can no longer ARP it.
   power_save_mode: NONE
+  # Galileo Core addresses every satellite at a fixed IP (direct voice source
+  # and TTS command target), so none may depend on a DHCP lease.
+  manual_ip:
+    static_ip: ${static_ip}
+    gateway: ${net_gateway}
+    subnet: ${net_subnet}
+    dns1: ${net_dns}
 
 # Home Assistant native API for entities, service actions and phonebook sync.
 
@@ -404,6 +400,11 @@ speaker:
     # final hardware sink for 500 ms. Mixer transfers 50 ms chunks every 25 ms;
     # keep the hardware backlog short so backpressure reaches media/TTS quickly.
     buffer_duration: 128ms
+  # Piper PCM16 mono at 22050 Hz needs 11025 bytes for 250 ms. Keep the TTS
+  # resampler input larger than the HTTP decoder's 8192-byte output chunk;
+  # with the 100 ms default Sala starved the HTTP/TTS path and hit Task WDT.
+  - id: !extend tts_speaker_input
+    buffer_duration: 250ms
 
 # =============================================================================
 # MEDIA, ASSIST AND VOIP
