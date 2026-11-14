@@ -51,7 +51,7 @@ credenziali.
 <!-- Generata da tools/fleet.py dal file fleet/casa.installed.json: non modificare a mano. -->
 | Cassa | Release | Firmware | Build (`build_time`) | Installata | SHA-256 OTA (16) |
 | --- | --- | --- | --- | --- | --- |
-| Satellite Garage Hybrid | 2026.11.1 | efdae64 | 2026-11-14 14:19:43 +0100 | 2026-11-14 14:29 | `7f8af196bc31d09f` |
+| Satellite Garage | 2026.11.2 | c3e7a71 | 2026-11-14 18:19:14 +0100 | 2026-11-14 18:24 | `9a3cf856b0e5fb0c` |
 | Satellite Sala | pre-2026.11.1 | 026f0c7 | 2026-11-14 11:16:28 +0100 | 2026-11-14 11:26 | `0161ec7b085d55b4` |
 | Satellite Taverna | pre-2026.11.1 | 026f0c7 + IP statico e log INFO | 2026-11-14 11:17:37 +0100 | 2026-11-14 11:52 | `d2d7c494c9ea437f` |
 <!-- fleet:installed:end -->
