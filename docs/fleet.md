@@ -206,12 +206,17 @@ Restano a mano, nell'ordine:
 4. **Home Assistant:**
    - adottare il dispositivo ESPHome e assegnarlo all'area;
    - aggiungerlo alle dashboard Casa, Voce e Sistema;
+   - aggiungere il suo pulsante "Test voce" in
+     `ha_config/packages/satelliti/satelliti_test_voce.yaml`: premuto, la cassa
+     dice nome e stanza, e conferma cosi' che l'area sia giusta;
    - copiare la rubrica aggiornata sul Raspberry. Il roster VoIP live si
      costruisce da solo dai dispositivi ESPHome; `phonebook.json` serve come
      documentazione e provisioning.
 5. **Verifica:**
    - `tools/fleet status cucina` deve mostrare la release corrente, VoIP `idle`
      e wake word `on`;
+   - il pulsante Test voce in Home Assistant fa dire alla cassa il suo nome e
+     la stanza giusta;
    - provare a voce e con una chiamata da un'altra cassa.
 6. **Commit** dei due repository, firmware e Home Assistant.
 
