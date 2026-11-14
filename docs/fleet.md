@@ -177,8 +177,10 @@ tools/fleet new cucina --ip 192.168.1.173 --area "Cucina 1" --phonebook
 
 Lo script fa da solo queste cose:
 
-- assegna l'interno successivo (oggi `104`) e le porte UDP successive (oggi
-  `19013`/`19014`: due per cassa, in sequenza da `19007`);
+- assegna l'interno successivo (oggi `104`) e le porte UDP successive (due
+  per cassa, in sequenza da `19007`). Salta `19013`, riservata in Galileo Core
+  alla discovery delle casse (Spec 017), quindi la prossima coppia e'
+  `19015`/`19016`;
 - crea `esphome/satellite-cucina.yaml` dal modello;
 - genera il segreto di sessione in `esphome/secrets.yaml` (non versionato);
 - aggiunge la cassa in fondo a `fleet/casa.yaml`;
@@ -196,8 +198,11 @@ Restano a mano, nell'ordine:
    come in [first_flash_checklist.md](first_flash_checklist.md).
 3. **Galileo Core:** aggiungere la riga stampata dallo script a
    `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul
-   Raspberry. Il `session_id` va copiato da `secrets.yaml`. Poi riavviare il
-   container.
+   Raspberry. Il `session_id` va copiato da `secrets.yaml`. `ha_entity` e'
+   l'entita' `assist_satellite.*` della cassa in Home Assistant, nota dopo il
+   punto 4: da' a Core la stanza della cassa, che comandera' per default i
+   dispositivi di quell'area ([comandi per stanza](../../../homeassistant/docs/operations/comandi-vocali-stanze.md)
+   nel repository Home Assistant). Poi riavviare il container.
 4. **Home Assistant:**
    - adottare il dispositivo ESPHome e assegnarlo all'area;
    - aggiungerlo alle dashboard Casa, Voce e Sistema;

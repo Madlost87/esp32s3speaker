@@ -38,6 +38,9 @@ ESPHOME_BIN = Path(os.environ.get("ESPHOME_BIN", Path(sys.executable).with_name(
 API_PORT = 6053
 REBOOT_TIMEOUT_S = 240
 COMPILE_TIMEOUT_S = 1800
+# UDP ports Galileo Core already uses for something else: 19013 is the
+# satellite discovery listener (Spec 017), so audio/control pairs skip it.
+RESERVED_CORE_UDP = {19013}
 DOCS_START = "<!-- fleet:installed:start -->"
 DOCS_END = "<!-- fleet:installed:end -->"
 
@@ -391,6 +394,8 @@ def cmd_new(fleet: Fleet, args) -> int:
     friendly = args.friendly or f"Satellite {args.id.capitalize()}"
     ext = str(max(int(d["subs"]["voip_extension"]) for d in devs) + 1)
     audio = max(int(d["subs"]["direct_audio_port"]) for d in devs) + 2
+    while audio in RESERVED_CORE_UDP or audio + 1 in RESERVED_CORE_UDP:
+        audio += 2
     secret_key = f"galileo_audio_bridge_session_id_{args.id}"
     cfg = ESPHOME_DIR / f"{name}.yaml"
     if cfg.exists():
@@ -429,7 +434,9 @@ def cmd_new(fleet: Fleet, args) -> int:
 
     core_entry = {"id": f"satellite_{args.id}", "source": f"satellite_{args.id}",
                   "session_id": f"<valore di {secret_key} in esphome/secrets.yaml>",
-                  "audio_port": audio, "control_port": audio + 1, "host": args.ip, "source_ip": args.ip}
+                  "audio_port": audio, "control_port": audio + 1, "host": args.ip, "source_ip": args.ip,
+                  "ha_entity": f"assist_satellite.<entita' della cassa in HA, es. {name.replace('-', '_')}_assist_satellite>",
+                  "area": args.area}
     print(f"""
 Creata {friendly}: {cfg.relative_to(REPO)}
   nome ESPHome {name}, IP {args.ip}, interno {ext}, UDP {audio}/{audio + 1}, area {args.area}
@@ -441,7 +448,9 @@ Passi rimanenti (docs/fleet.md, "Aggiungere una cassa"):
   3. Galileo Core: aggiungere a GALILEO_DIRECT_VOICE_SATELLITES_JSON nel .env sul Raspberry
      {json.dumps(core_entry, ensure_ascii=False)}
      e riavviare galileo-core.
-  4. Home Assistant: adottare il dispositivo ESPHome, assegnarlo all'area {args.area},
+     Il campo ha_entity va completato dopo il punto 4: da' a Core la stanza della cassa.
+  4. Home Assistant: adottare il dispositivo ESPHome, assegnarlo all'area {args.area}
+     (la cassa comandera' per default i dispositivi di quell'area),
      aggiungerlo alle dashboard Casa / Voce / Sistema.{'' if args.phonebook else '''
   5. Rubrica: rilanciare con --phonebook oppure aggiornare voip/phonebook.json a mano.'''}
   6. Committare i due repository e verificare con `tools/fleet.py status`.""")
