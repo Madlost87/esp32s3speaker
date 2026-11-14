@@ -1,9 +1,9 @@
-# Satellite Garage Hybrid (area Garage). Solo identita': il comportamento e'
+# Satellite Garage (area Garage). Solo identita': il comportamento e'
 # nella base comune, rete e gruppi in sites/casa.yaml. Vedi docs/fleet.md.
 # Indirizzo .133: riservare il MAC nel router (DHCP) per evitare conflitti.
 substitutions:
   name: satellite-garage
-  friendly_name: Satellite Garage Hybrid
+  friendly_name: Satellite Garage
   static_ip: 192.168.1.133
   voip_extension: "103"
   direct_audio_port: "19011"

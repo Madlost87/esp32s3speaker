@@ -74,7 +74,7 @@ Tre satelliti in produzione (Taverna, Sala, Garage) con la stessa base
 ```text
 esphome/galileo-va-direct-audio-cutover.yaml   Satellite Taverna  .171  int. 101
 esphome/galileo-sala.yaml                      Satellite Sala     .172  int. 102
-esphome/galileo-garage-hybrid.yaml             Satellite Garage   .133  int. 103
+esphome/galileo-garage.yaml                    Satellite Garage   .133  int. 103
 ```
 
 Parametri, build installate e procedura OTA: [docs/satellites.md](docs/satellites.md).
@@ -150,7 +150,7 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 |   |-- galileo-va-direct-audio-cutover-base.yaml   firmware comune (release)
 |   |-- galileo-va-direct-audio-cutover.yaml        Taverna
 |   |-- galileo-sala.yaml                           Sala
-|   |-- galileo-garage-hybrid.yaml                  Garage
+|   |-- galileo-garage.yaml                         Garage
 |   |-- sites/casa.yaml                             rete e valori della casa
 |   |-- galileo-va-afe.yaml                         golden di recovery
 |   |-- galileo-va.yaml

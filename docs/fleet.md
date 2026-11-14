@@ -83,7 +83,7 @@ tools/fleet new cucina --ip 192.168.1.173 --area "Cucina 1" --phonebook
    una cassa sola, senza toccare le altre:
    ```bash
    cd esphome
-   esphome run galileo-garage-hybrid.yaml --device 192.168.1.133
+   esphome run galileo-garage.yaml --device 192.168.1.133
    ```
    Si possono fare tutte le prove necessarie. La cassa dichiarera' ancora la
    release precedente perche' il numero non e' stato cambiato, ma

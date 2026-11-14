@@ -248,7 +248,7 @@ locale disponibili:
 ```bash
 esphome compile esphome/galileo-va-direct-audio-cutover.yaml
 esphome compile esphome/galileo-sala.yaml
-esphome compile esphome/galileo-garage-hybrid.yaml
+esphome compile esphome/galileo-garage.yaml
 ```
 
 I test host-side devono compilare le funzioni pure fuori da ESPHome; socket,

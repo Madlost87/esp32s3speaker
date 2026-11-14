@@ -16,7 +16,7 @@ state_file: fleet/casa.installed.json
 # per il test manuale prima di proseguire con le altre.
 devices:
   - id: garage
-    config: esphome/galileo-garage-hybrid.yaml
+    config: esphome/galileo-garage.yaml
     area: Garage
     canary: true
   - id: sala

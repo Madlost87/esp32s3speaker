@@ -13,9 +13,9 @@ solo l'identita'. Come si aggiorna la flotta e come si aggiunge una cassa:
 
 | | Taverna | Sala | Garage |
 | --- | --- | --- | --- |
-| Profilo | `galileo-va-direct-audio-cutover.yaml` | `galileo-sala.yaml` | `galileo-garage-hybrid.yaml` |
+| Profilo | `galileo-va-direct-audio-cutover.yaml` | `galileo-sala.yaml` | `galileo-garage.yaml` |
 | Nome ESPHome | `galileo-va` | `galileo-sala` | `satellite-garage` |
-| Nome visibile | Satellite Taverna | Satellite Sala | Satellite Garage Hybrid |
+| Nome visibile | Satellite Taverna | Satellite Sala | Satellite Garage |
 | Area Home Assistant | Taverna | Salotto 1 | Garage |
 | IP (statico) | `192.168.1.171` | `192.168.1.172` | `192.168.1.133` |
 | Interno VoIP | `101` | `102` | `103` |
