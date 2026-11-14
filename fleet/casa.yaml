@@ -1,0 +1,27 @@
+# Inventario flotta del sito "casa". Elenca quali casse esistono, in che ordine
+# si aggiornano e chi fa da canarino. I valori del firmware (nome, IP, interno,
+# porte) NON si ripetono qui: tools/fleet.py li legge dal file del dispositivo.
+# Guida: docs/fleet.md
+site: casa
+site_file: esphome/sites/casa.yaml
+firmware_base: esphome/galileo-va-direct-audio-cutover-base.yaml
+# Rubrica nel repository Home Assistant, aggiornata da `fleet.py new --phonebook`.
+phonebook: ../../homeassistant/voip/phonebook.json
+# Archivio dei binari compilati (fuori da Git: contengono le credenziali Wi-Fi).
+artifacts_dir: ~/esp-firmware-builds/casa
+# Stato installato (committato, niente segreti): release e hash per cassa.
+state_file: fleet/casa.installed.json
+
+# Ordine di rollout = ordine della lista. Il canarino va per primo e si ferma
+# per il test manuale prima di proseguire con le altre.
+devices:
+  - id: garage
+    config: esphome/galileo-garage-hybrid.yaml
+    area: Garage
+    canary: true
+  - id: sala
+    config: esphome/galileo-sala.yaml
+    area: Salotto 1
+  - id: taverna
+    config: esphome/galileo-va-direct-audio-cutover.yaml
+    area: Taverna

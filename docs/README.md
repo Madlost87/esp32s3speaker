@@ -12,6 +12,7 @@ Il manifest di release dichiara lo stato verificato e cio' che resta da
 registrare a ogni OTA.
 
 Satelliti in produzione (Taverna, Sala, Garage): vedi [satellites.md](satellites.md).
+Aggiornare tutte le casse, aggiungerne una o replicare il sistema altrove: vedi [fleet.md](fleet.md).
 
 Profilo direct-audio del primo satellite:
 

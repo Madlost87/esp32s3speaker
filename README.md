@@ -79,6 +79,13 @@ esphome/galileo-garage-hybrid.yaml             Satellite Garage   .133  int. 103
 
 Parametri, build installate e procedura OTA: [docs/satellites.md](docs/satellites.md).
 
+La configurazione ha tre livelli: firmware (la base comune), sito
+(`esphome/sites/casa.yaml`: rete, Galileo Core, Wi-Fi, gruppi VoIP) e
+dispositivo (solo identita'). Un fix si fa una volta nella base e si distribuisce
+a tutte le casse con `tools/fleet` (release numerata, canarino, controllo dopo
+ogni OTA, rollback). Una cassa nuova si aggiunge con `tools/fleet new`. Guida:
+[docs/fleet.md](docs/fleet.md).
+
 La base usa componenti esterni AFE/audio/VoIP per sfruttare la board come il firmware factory: TDM 48 kHz, due microfoni fisici, reference hardware per AEC, speaker ES8311, LED ring e tasti fisici.
 
 `esphome/galileo-va-afe.yaml` e' il golden di recovery (vedi `docs/golden-firmware-recovery.md`), non il profilo in produzione.
@@ -140,11 +147,23 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 |-- MANIFEST.md
 |-- AUDIT_HARDWARE.md
 |-- esphome/
-|   |-- galileo-va-afe.yaml
+|   |-- galileo-va-direct-audio-cutover-base.yaml   firmware comune (release)
+|   |-- galileo-va-direct-audio-cutover.yaml        Taverna
+|   |-- galileo-sala.yaml                           Sala
+|   |-- galileo-garage-hybrid.yaml                  Garage
+|   |-- sites/casa.yaml                             rete e valori della casa
+|   |-- galileo-va-afe.yaml                         golden di recovery
 |   |-- galileo-va.yaml
 |   `-- secrets.example.yaml
+|-- fleet/
+|   |-- casa.yaml                                   inventario e ordine di rollout
+|   `-- casa.installed.json                         release e hash installati
+|-- tools/
+|   `-- fleet, fleet.py                             build, rollout, rollback, nuove casse
 |-- docs/
 |   |-- README.md
+|   |-- satellites.md
+|   |-- fleet.md
 |   |-- initial_board_audit.md
 |   |-- compatibility_audit.md
 |   |-- first_flash_checklist.md
@@ -169,6 +188,7 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 - `docs/README.md` - indice della documentazione e distinzione tra documenti operativi e storici.
 - `AUDIT_HARDWARE.md` - audit aggiornato di hardware, firmware attuale, gap e piano interventi.
 - `docs/satellites.md` - profili, IP, interni, porte e build installate dei tre satelliti.
+- `docs/fleet.md` - gestione della flotta: release, build, rollout con canarino, rollback, nuove casse, nuovo sito.
 - `esphome/galileo-va-direct-audio-cutover-base.yaml` - base comune dei satelliti in produzione.
 - `esphome/galileo-va-afe.yaml` - golden di recovery del Satellite Taverna.
 - `esphome/galileo-va.yaml` - vecchio profilo stock, conservato come riferimento storico/fallback.

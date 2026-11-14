@@ -1,0 +1,3 @@
+#!/bin/sh
+# Wrapper: lancia tools/fleet.py con il Python del toolchain ESPHome.
+exec "${ESPHOME_VENV:-/home/denny/esphome/.venv-2026.9.1}/bin/python" "$(dirname "$0")/fleet.py" "$@"

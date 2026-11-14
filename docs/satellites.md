@@ -5,10 +5,11 @@ quale build e' installata. Aggiornare questa pagina a ogni OTA.
 
 ## Profili
 
-Tutti e tre usano la stessa base `esphome/galileo-va-direct-audio-cutover-base.yaml`
-(full AFE/AEC, wake word locale, audio diretto verso Galileo Core, VoIP Stack).
-I componenti esterni sono fissati per SHA nella base: due build dello stesso
-commit sono equivalenti. Ogni profilo cambia solo identita' e trasporto.
+Tutte le casse compilano la stessa base `esphome/galileo-va-direct-audio-cutover-base.yaml`
+(full AFE/AEC, wake word locale, audio diretto verso Galileo Core, VoIP Stack),
+con i valori di casa in `esphome/sites/casa.yaml`. Il file di ogni cassa contiene
+solo l'identita'. Come si aggiorna la flotta e come si aggiunge una cassa:
+[fleet.md](fleet.md).
 
 | | Taverna | Sala | Garage |
 | --- | --- | --- | --- |
@@ -18,7 +19,7 @@ commit sono equivalenti. Ogni profilo cambia solo identita' e trasporto.
 | Area Home Assistant | Taverna | Salotto 1 | Garage |
 | IP (statico) | `192.168.1.171` | `192.168.1.172` | `192.168.1.133` |
 | Interno VoIP | `101` | `102` | `103` |
-| Gruppi | RG Casa, RG Tutti, CG Casa | uguale | uguale |
+| Gruppi (dal sito) | RG Casa, RG Tutti, CG Casa | uguale | uguale |
 | Audio / controllo diretto | UDP `19007` / `19008` | `19009` / `19010` | `19011` / `19012` |
 | Segreto sessione | `galileo_audio_bridge_session_id` | `..._sala` | `..._garage` |
 | Dialogo diretto | off | off | off |
@@ -42,32 +43,39 @@ Le sessioni dirette devono coincidere con
 
 ## Build installate
 
-Aggiornare a ogni OTA. L'hash identifica l'artefatto; i `.bin` non vanno in Git
-(contengono credenziali).
+Tabella generata da `tools/fleet docs` dopo ogni rollout o rollback. L'hash
+identifica l'artefatto; i `.bin` non vanno in Git perche' contengono le
+credenziali.
 
-| Cassa | Build (`build_time`) | OTA installata | Firmware | SHA-256 OTA (16) |
-| --- | --- | --- | --- | --- |
-| Taverna | 2026-11-14 11:17 | 2026-11-14 11:52 | `026f0c7` + IP statico e log INFO | `d2d7c494c9ea437f` |
-| Sala | 2026-11-14 11:16 | 2026-11-14 11:26 | `026f0c7` | `0161ec7b085d55b4` |
-| Garage | 2026-10-31 10:49 | 2026-11-14 11:45 (stesso binario) | `026f0c7` | `b85f6e3a8effac6f` |
+<!-- fleet:installed:start -->
+<!-- Generata da tools/fleet.py dal file fleet/casa.installed.json: non modificare a mano. -->
+| Cassa | Release | Firmware | Build (`build_time`) | Installata | SHA-256 OTA (16) |
+| --- | --- | --- | --- | --- | --- |
+| Satellite Garage Hybrid | pre-2026.11.1 | 026f0c7 | 2026-10-31 10:49:45 +0100 | 2026-11-14 11:45 | `b85f6e3a8effac6f` |
+| Satellite Sala | pre-2026.11.1 | 026f0c7 | 2026-11-14 11:16:28 +0100 | 2026-11-14 11:26 | `0161ec7b085d55b4` |
+| Satellite Taverna | pre-2026.11.1 | 026f0c7 + IP statico e log INFO | 2026-11-14 11:17:37 +0100 | 2026-11-14 11:52 | `d2d7c494c9ea437f` |
+<!-- fleet:installed:end -->
 
-La build Garage del 31/10 conteneva gia' il codice finale di `026f0c7`: la
-ricompilazione del 14/11 ha prodotto un binario identico (stesso hash).
-ESPHome aggiorna `build_time` solo se cambia la configurazione YAML, quindi la
-data mostrata in Home Assistant non basta: fa fede l'hash.
+`pre-2026.11.1` indica le build installate prima del sistema flotta: non
+dichiarano la release. La build Garage del 31/10 conteneva gia' il codice finale
+di `026f0c7`, e la ricompilazione del 14/11 ha prodotto un binario identico
+(stesso hash). ESPHome aggiorna `build_time` solo se cambia la configurazione
+YAML, quindi la data mostrata in Home Assistant non basta: fa fede l'hash.
 
-Build precedenti (rollback) in `/home/denny/esp-firmware-backups/20261114-pre-026f0c7/`:
-Taverna `2d41348900e96495` (24/10), Sala `8e5865675c960abe` (28/10).
+Archivio dei binari:
+
+| Cartella | Contenuto |
+| --- | --- |
+| `~/esp-firmware-builds/casa/<release>/` | build di ogni release (quelle installate il 14/11 sono in `pre-2026.11.1/`) |
+| `/home/denny/esp-firmware-backups/20261114-pre-026f0c7/` | build ancora precedenti: Taverna `2d41348900e96495` (24/10), Sala `8e5865675c960abe` (28/10) |
 
 ## Build e OTA
 
+Si usa lo script della flotta (dettagli in [fleet.md](fleet.md)):
+
 ```bash
-cd esphome
-esphome compile galileo-sala.yaml
-esphome upload galileo-sala.yaml --device 192.168.1.172
+tools/fleet status      # stato live
+tools/fleet build       # compila e archivia la release corrente
+tools/fleet rollout     # canarino (Garage), test a voce, poi Sala e Taverna
+tools/fleet rollback <cassa>
 ```
-
-Ordine consigliato per un aggiornamento comune: Sala, poi Taverna, poi Garage,
-con test vocale (wake word, "che ore sono", chiamata VoIP) dopo ciascuna.
-
-Rollback: `esphome upload <profilo> --file /home/denny/esp-firmware-backups/<data>/<nome>.ota.bin --device <ip>`.

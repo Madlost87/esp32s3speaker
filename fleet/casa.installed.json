@@ -1,0 +1,47 @@
+{
+  "garage": {
+    "release": "pre-2026.11.1",
+    "firmware": "026f0c7",
+    "build_time": "2026-10-31 10:49:45 +0100",
+    "installed_at": "2026-11-14 11:45",
+    "sha256_16": "b85f6e3a8effac6f",
+    "artifact": "/home/denny/esp-firmware-builds/casa/pre-2026.11.1/garage.ota.bin",
+    "history": [
+      {
+        "release": "pre-026f0c7 (stesso binario)",
+        "sha256_16": "b85f6e3a8effac6f",
+        "artifact": "/home/denny/esp-firmware-backups/20261114-pre-026f0c7/satellite-garage.ota.bin"
+      }
+    ]
+  },
+  "sala": {
+    "release": "pre-2026.11.1",
+    "firmware": "026f0c7",
+    "build_time": "2026-11-14 11:16:28 +0100",
+    "installed_at": "2026-11-14 11:26",
+    "sha256_16": "0161ec7b085d55b4",
+    "artifact": "/home/denny/esp-firmware-builds/casa/pre-2026.11.1/sala.ota.bin",
+    "history": [
+      {
+        "release": "pre-026f0c7",
+        "sha256_16": "8e5865675c960abe",
+        "artifact": "/home/denny/esp-firmware-backups/20261114-pre-026f0c7/galileo-sala.ota.bin"
+      }
+    ]
+  },
+  "taverna": {
+    "release": "pre-2026.11.1",
+    "firmware": "026f0c7 + IP statico e log INFO",
+    "build_time": "2026-11-14 11:17:37 +0100",
+    "installed_at": "2026-11-14 11:52",
+    "sha256_16": "d2d7c494c9ea437f",
+    "artifact": "/home/denny/esp-firmware-builds/casa/pre-2026.11.1/taverna.ota.bin",
+    "history": [
+      {
+        "release": "pre-026f0c7",
+        "sha256_16": "2d41348900e96495",
+        "artifact": "/home/denny/esp-firmware-backups/20261114-pre-026f0c7/galileo-va-direct-audio-cutover.ota.bin"
+      }
+    ]
+  }
+}

@@ -85,6 +85,10 @@
 # =============================================================================
 
 substitutions:
+  # Fleet release: one number for the whole satellite fleet. Bump it only with
+  # `tools/fleet.py release <version>` (see docs/fleet.md); every device built
+  # from this base reports it to Home Assistant and to `fleet.py status`.
+  firmware_release: "2026.11.1"
   runtime_controller_debug: "false"
   # Identity (name, friendly_name, static_ip, voip_extension, direct_audio_*
   # ports and session) comes from the device file; network values and groups
@@ -154,6 +158,9 @@ esphome:
   min_version: 2026.9.0
   name: ${name}
   friendly_name: ${friendly_name}
+  project:
+    name: galileo.speaker-satellite
+    version: ${firmware_release}
   on_boot:
     - priority: -90
       then:
@@ -824,3 +831,14 @@ select:
                             format: "AFE mode switch did not complete cleanly; audio restart skipped"
       - lambda: |-
           id(aec_mode_select).publish_state(id(afe_processor).get_mode_name());
+
+# Fleet release visible as a diagnostic entity in Home Assistant, so the
+# Sistema dashboard can show which release each satellite runs.
+text_sensor:
+  - platform: template
+    id: firmware_release_text
+    name: Firmware Release
+    icon: mdi:package-variant-closed
+    entity_category: diagnostic
+    update_interval: 60s
+    lambda: 'return std::string("${firmware_release}");'
