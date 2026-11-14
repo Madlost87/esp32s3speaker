@@ -24,10 +24,18 @@ solo l'identita'. Come si aggiorna la flotta e come si aggiunge una cassa:
 | Segreto sessione | `galileo_audio_bridge_session_id` | `..._sala` | `..._garage` |
 | Dialogo diretto | off | off | off |
 | Log | INFO | INFO | INFO |
+| Guadagno microfono | +18 dB | +18 dB | +18 dB |
 
 Nomi ESPHome diversi (`galileo-va`, `galileo-sala`, `satellite-garage`) sono
 storici: cambiarli crea un nuovo dispositivo in Home Assistant e richiede di
 aggiornare Galileo Core, rubrica e dashboard. Non rinominare senza un piano.
+
+Il guadagno del microfono (`number.*_mic_gain`, da -20 a +30 dB) si regola da
+Home Assistant e resta salvato nella cassa anche dopo riavvii e OTA; il
+firmware parte da 0 dB solo su una cassa nuova o dopo un flash completo. A
+0 dB la voce arrivava a circa -31 dBFS e Vosk dava trascrizioni vuote oltre
+30-50 cm; a +18 dB arriva a circa -23 dBFS (misure sul Garage, 14/11/2026).
+Su una cassa nuova va impostato a +18 dB dopo il primo avvio.
 
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.
@@ -52,8 +60,8 @@ credenziali.
 | Cassa | Release | Firmware | Build (`build_time`) | Installata | SHA-256 OTA (16) |
 | --- | --- | --- | --- | --- | --- |
 | Satellite Garage | 2026.11.2 | c3e7a71 | 2026-11-14 18:19:14 +0100 | 2026-11-14 18:24 | `9a3cf856b0e5fb0c` |
-| Satellite Sala | pre-2026.11.1 | 026f0c7 | 2026-11-14 11:16:28 +0100 | 2026-11-14 11:26 | `0161ec7b085d55b4` |
-| Satellite Taverna | pre-2026.11.1 | 026f0c7 + IP statico e log INFO | 2026-11-14 11:17:37 +0100 | 2026-11-14 11:52 | `d2d7c494c9ea437f` |
+| Satellite Sala | 2026.11.2 | c3e7a71 | 2026-11-14 18:21:45 +0100 | 2026-11-14 18:54 | `8e1100996f4a55c1` |
+| Satellite Taverna | 2026.11.2 | c3e7a71 | 2026-11-14 18:23:08 +0100 | 2026-11-14 18:54 | `35f9d2dbee145720` |
 <!-- fleet:installed:end -->
 
 Release nel repository: `2026.11.1` (tag `fw-2026.11.1`), compilata il

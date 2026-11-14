@@ -205,6 +205,12 @@ Restano a mano, nell'ordine:
    nel repository Home Assistant). Poi riavviare il container.
 4. **Home Assistant:**
    - adottare il dispositivo ESPHome e assegnarlo all'area;
+   - portare il guadagno del microfono (`number.<cassa>_mic_gain`) a +18 dB:
+     il firmware parte da 0 dB, troppo poco per parlare oltre mezzo metro
+     ([satellites.md](satellites.md));
+   - aggiungere il contatto in `galileo-core/config/contacts.example.json`
+     del repository Home Assistant (sul Raspberry e' la rubrica attiva di
+     Core), cosi' "chiama <stanza>" funziona dalle altre casse;
    - aggiungerlo alle dashboard Casa, Voce e Sistema;
    - aggiungere il suo pulsante "Test voce" in
      `ha_config/packages/satelliti/satelliti_test_voce.yaml`: premuto, la cassa
