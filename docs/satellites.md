@@ -56,6 +56,12 @@ credenziali.
 | Satellite Taverna | pre-2026.11.1 | 026f0c7 + IP statico e log INFO | 2026-11-14 11:17:37 +0100 | 2026-11-14 11:52 | `d2d7c494c9ea437f` |
 <!-- fleet:installed:end -->
 
+Release nel repository: `2026.11.1` (tag `fw-2026.11.1`), compilata il
+14/11/2026 e archiviata in `~/esp-firmware-builds/casa/2026.11.1/` (Garage
+`7f8af196bc31d09f`, Sala `517fd20dc2928890`, Taverna `9436cb496f28907e`).
+Rollout non ancora eseguito: rispetto alle build installate aggiunge solo
+l'entita' *Firmware Release* e la versione di progetto.
+
 `pre-2026.11.1` indica le build installate prima del sistema flotta: non
 dichiarano la release. La build Garage del 31/10 conteneva gia' il codice finale
 di `026f0c7`, e la ricompilazione del 14/11 ha prodotto un binario identico
