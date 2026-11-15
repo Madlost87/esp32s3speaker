@@ -32,3 +32,8 @@ switch:
       - runtime_controller.event:
           id: runtime
           event: mic_unmuted
+      # La wake word parte solo a microfono attivo (avvio, fine conversazione).
+      # Una cassa avviata con il microfono spento restava sorda anche dopo
+      # averlo riattivato: lo script e' idempotente e rispetta gli stessi
+      # controlli (wake word abilitata, nessun OTA, non gia' in esecuzione).
+      - script.execute: start_mww_when_ready
