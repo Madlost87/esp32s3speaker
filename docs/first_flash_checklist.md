@@ -2,9 +2,8 @@
 
 > Stato: documento storico del primo flash stock.
 >
-> Per compilare, caricare o recuperare il firmware operativo corrente usare
-> `esphome/galileo-va-afe.yaml`, `docs/voip-centralino-esp32.md` e
-> `docs/golden-firmware-recovery.md`.
+> Per compilare e caricare il firmware operativo corrente usare `tools/fleet`
+> (`docs/fleet.md`); per il recovery `docs/golden-firmware-recovery.md`.
 
 Use only after confirming the factory backup exists and `galileo-va.yaml` compiles.
 

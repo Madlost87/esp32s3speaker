@@ -1,0 +1,215 @@
+# Pacchetto della base satellite (tasti, interruttori e selettori). Incluso da
+# ../../galileo-va-direct-audio-cutover-base.yaml dopo i pacchetti upstream:
+# l'ordine conta per `!extend` e per l'ordine delle entita'.
+
+binary_sensor:
+  # BOOT button (GPIO0), multi-click
+  - platform: gpio
+    name: Boot Button
+    id: boot_button
+    pin:
+      number: ${boot_button_pin}
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    on_multi_click:
+      # Single click: call toggle if VoIP call active, otherwise VA start/stop
+      - timing:
+          - ON for at most 500ms
+          - OFF for at least 400ms
+        then:
+          - if:
+              condition:
+                runtime_controller.is_active:
+                  id: runtime
+                  activity: timer_ringing
+              then:
+                - runtime_controller.event:
+                    id: runtime
+                    event: timer_stopped
+              else:
+                - if:
+                    condition:
+                      not:
+                        - voip_stack.is_idle:
+                    then:
+                      - voip_stack.call_toggle:
+                    else:
+                      - runtime_controller.event:
+                          id: runtime
+                          event: wake_word
+      # Double click: next contact
+      - timing:
+          - ON for 50ms to 500ms
+          - OFF for at most 300ms
+          - ON for 50ms to 500ms
+          - OFF for at least 400ms
+        then:
+          - voip_stack.next_contact:
+      # Long press (1-3s): toggle mute
+      - timing:
+          - ON for 1s to 3s
+          - OFF for at least 300ms
+        then:
+          - switch.toggle: mute
+
+  # KEY1 (TCA9555 EXIO9): Call/Answer/Hangup
+  - platform: gpio
+    name: Key 1
+    id: key1
+    internal: true
+    pin:
+      tca9555: io_expander
+      number: 9
+      inverted: true
+      mode:
+        input: true
+    on_press:
+      - voip_stack.call_toggle:
+
+  # KEY2 (TCA9555 EXIO10): Next contact
+  - platform: gpio
+    name: Key 2
+    id: key2
+    internal: true
+    pin:
+      tca9555: io_expander
+      number: 10
+      inverted: true
+      mode:
+        input: true
+    on_press:
+      - voip_stack.next_contact:
+
+  # KEY3 (TCA9555 EXIO11): Decline / Previous contact
+  - platform: gpio
+    name: Key 3
+    id: key3
+    internal: true
+    pin:
+      tca9555: io_expander
+      number: 11
+      inverted: true
+      mode:
+        input: true
+    on_press:
+      - if:
+          condition:
+            voip_stack.is_ringing:
+          then:
+            - voip_stack.decline_call:
+          else:
+            - voip_stack.prev_contact:
+
+switch:
+  # Speaker amplifier enable (TCA9555 EXIO8)
+  - platform: gpio
+    id: speaker_enable
+    internal: true
+    restore_mode: ALWAYS_OFF
+    pin:
+      tca9555: io_expander
+      number: 8
+      mode:
+        output: true
+
+  - platform: template
+    name: Speaker Mute
+    id: speaker_mute
+    icon: mdi:volume-off
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - logger.log:
+          level: INFO
+          tag: mute
+          format: "Speaker mute ON"
+      - speaker.mute_on: hw_speaker
+      - delay: 50ms
+      - switch.turn_off: speaker_enable
+    on_turn_off:
+      - logger.log:
+          level: INFO
+          tag: mute
+          format: "Speaker mute OFF"
+      - if:
+          condition:
+            speaker.is_playing: hw_speaker
+          then:
+            - switch.turn_on: speaker_enable
+            - delay: 50ms
+      - speaker.mute_off: hw_speaker
+
+  # VoIP switches
+
+select:
+  - platform: template
+    name: AEC Mode
+    id: aec_mode_select
+    icon: mdi:tune-vertical
+    # FD* is the esp-sr 2.4 full-audio stack pipeline (NLP baked in for two-way speech).
+    # Default on this board because dual-mic ES7210 TDM input enables AFE_TYPE_FD,
+    # which is the recommended type for boards with mic+ref on the same bus.
+    options:
+      - "fd_low_cost"
+      - "fd_high_perf"
+    initial_option: "fd_high_perf"
+    # Non-optimistic: template_select::control runs the set_action first
+    # and only auto-publishes `index` when optimistic=true, overwriting
+    # whatever we published. With optimistic=false, the final lambda
+    # publish_state drives HA state from the live esp_afe mode.
+    optimistic: false
+    restore_value: false
+    set_action:
+      - if:
+          condition:
+            lambda: |-
+              return !id(init_in_progress) && x != id(afe_processor).get_mode_name();
+          then:
+            - if:
+                condition:
+                  or:
+                    - voice_assistant.is_running:
+                    - not:
+                        voip_stack.is_idle:
+                then:
+                  - logger.log:
+                      level: WARN
+                      format: "Cannot switch AEC mode during active VA/VoIP"
+                else:
+                  - logger.log:
+                      format: "Switching AEC mode to %s"
+                      args: ['x.c_str()']
+                  - micro_wake_word.stop:
+                  - esp_audio_stack.stop:
+                  - wait_until:
+                      condition:
+                        esp_audio_stack.is_idle:
+                      timeout: 2s
+                  - esp_afe.set_mode:
+                      id: afe_processor
+                      mode: !lambda 'return x;'
+                  - wait_until:
+                      condition:
+                        lambda: 'return id(afe_processor).is_reconfigure_idle();'
+                      timeout: 20s
+                  - if:
+                      condition:
+                        lambda: 'return id(afe_processor).is_reconfigure_idle() && id(afe_processor).get_last_reconfigure_ok();'
+                      then:
+                        - esp_audio_stack.start:
+                        - delay: 300ms
+                        - if:
+                            condition:
+                              switch.is_off: mute
+                            then:
+                              - script.execute: start_mww_when_ready
+                      else:
+                        - logger.log:
+                            level: ERROR
+                            tag: main
+                            format: "AFE mode switch did not complete cleanly; audio restart skipped"
+      - lambda: |-
+          id(aec_mode_select).publish_state(id(afe_processor).get_mode_name());

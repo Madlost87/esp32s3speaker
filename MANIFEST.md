@@ -5,7 +5,7 @@ This folder is a clean documentation bundle for the Galileo ESP32-S3 Audio / ESP
 Production: three satellites (Taverna, Sala, Garage) on the shared base
 `esphome/galileo-va-direct-audio-cutover-base.yaml`, ESPHome 2026.9.1, full AFE
 audio path, direct audio to Galileo Core and VoIP endpoints `101`-`103`.
-See `docs/satellites.md` and, for releases and rollout, `docs/fleet.md` (`fleet/`, `tools/fleet.py`, `esphome/sites/`). `esphome/galileo-va-afe.yaml` is the recovery golden.
+See `docs/satellites.md` and, for releases and rollout, `docs/fleet.md` (`fleet/`, `tools/fleet.py`, `esphome/sites/`). Lab profiles and the recovery golden are in `esphome/archivio/`.
 
 ## Included
 

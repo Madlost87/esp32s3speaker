@@ -1,0 +1,83 @@
+# Pacchetto della base satellite (scheda, memoria e bus). Incluso da
+# ../../galileo-va-direct-audio-cutover-base.yaml dopo i pacchetti upstream:
+# l'ordine conta per `!extend` e per l'ordine delle entita'.
+#
+# BOARD, WIRING AND USER CONTROLS
+# -------------------------------
+#
+# Hardware:
+#   - ESP32-S3R8 (16MB Flash, 8MB PSRAM octal)
+#   - ES8311 Audio DAC (speaker) + ES7210 Audio ADC (dual mic array)
+#   - NS4150 3W mono Class-D speaker amp (via TCA9555 EXIO pin 8)
+#   - 7x WS2812 addressable RGB LEDs (GPIO38)
+#   - 3 user buttons via TCA9555 (EXIO 9/10/11) + BOOT button (GPIO0)
+#   - Battery: MX1.25 3.7V Li-ion connector + charging IC
+#
+# Pin Map:
+#   I2S: MCLK=GPIO12 BCLK=GPIO13 LRCLK=GPIO14 DIN=GPIO15 DOUT=GPIO16
+#   I2C: SDA=GPIO11 SCL=GPIO10 (ES8311@0x18, ES7210@0x40, TCA9555@0x20)
+#   LEDs: GPIO38 (WS2812 x7)
+#   BOOT: GPIO0
+#
+# Capture slot mapping (board-specific reference):
+#
+# Verified Waveshare ESP32-S3-AUDIO-Board slot map, board oriented with:
+#   - speaker at the bottom
+#   - GPIO/header connector at the top
+#
+# Empirical TDM mapping on this board:
+#   - slot 2 = left microphone  (left of the GPIO connector)
+#   - slot 0 = right microphone (right of the GPIO connector)
+#   - slot 1 = playback reference used by AEC
+#   - slot 3 = near-silent / unused on this board revision
+#
+
+# ESP32-S3 target and ESP-IDF tuning for the Waveshare S3 full AFE profile.
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    advanced:
+      compiler_optimization: PERF
+    sdkconfig_options:
+      # mbedtls extras (still inline pending benchmark vs tls_external_mem.yaml).
+      CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC: "y"
+      CONFIG_MBEDTLS_DYNAMIC_BUFFER: "y"
+      CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN: "16384"
+      # Keep AES in hardware for HTTPS media/TTS worst-case testing. The AFE
+      # bridge buffers below live in PSRAM to preserve contiguous DMA heap.
+      CONFIG_MBEDTLS_HARDWARE_AES: "y"
+      # Keep Wi-Fi buffering below ESPHome's streaming high-performance preset
+      # (64 dynamic RX + 64 dynamic TX + BA windows 32). That preset is useful
+      # for throughput, but this profile needs bounded media/TTS ingress so the
+      # audio graph sees backpressure before the final I2S sink saturates.
+      CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM: "10"
+      CONFIG_ESP_WIFI_DYNAMIC_RX_BUFFER_NUM: "32"
+      CONFIG_ESP_WIFI_DYNAMIC_TX_BUFFER_NUM: "32"
+      CONFIG_ESP_WIFI_TX_BA_WIN: "16"
+      CONFIG_ESP_WIFI_RX_BA_WIN: "16"
+
+# OPI PSRAM is required by AFE, media buffers, assets and VoIP task stacks.
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+# =============================================================================
+# BUSES
+# =============================================================================
+
+i2c:
+  - id: internal_i2c
+    sda: ${codec_i2c_sda_pin}
+    scl: ${codec_i2c_scl_pin}
+    scan: false
+
+# TCA9555 IO Expander (speaker amp, buttons)
+
+tca9555:
+  - id: io_expander
+    address: 0x20
+    i2c_id: internal_i2c

@@ -4,8 +4,8 @@
 >
 > La guida operativa corrente e' il README principale insieme a
 > `docs/voip-centralino-esp32.md`. Il firmware attivo oggi e'
-> `esphome/galileo-va-afe.yaml`, non il vecchio profilo stock
-> `esphome/galileo-va.yaml`.
+> `esphome/galileo-va-direct-audio-cutover-base.yaml`; i profili storici sono
+> in `esphome/archivio/`.
 
 ## Scope
 
@@ -27,8 +27,8 @@ Goal:
 
 ## Repository Areas
 
-- `esphome/galileo-va-afe.yaml`: current full AFE ESPHome config.
-- `esphome/galileo-va.yaml`: historical stock ESPHome config.
+- `esphome/galileo-va-direct-audio-cutover-base.yaml`: current firmware base.
+- `esphome/archivio/`: historical, lab and recovery ESPHome configs.
 - `esphome/secrets.example.yaml`: local secrets template.
 - `docs/`: audit, runtime validation, recovery, wake-word and feature notes.
 - `diagnostics/`: sanitized chip, flash, USB, and factory diagnostic outputs.

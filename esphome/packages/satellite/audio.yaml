@@ -1,0 +1,161 @@
+# Pacchetto della base satellite (catena audio). Incluso da
+# ../../galileo-va-direct-audio-cutover-base.yaml dopo i pacchetti upstream:
+# l'ordine conta per `!extend` e per l'ordine delle entita'.
+#
+# CAPTURE: hardware feedback and two physical microphones, 4-slot TDM.
+# [ES7210 slots 0 + 2: microphones] ──────┐
+# [ES7210 slot 1: ES8311 feedback REF] ───┤
+#                                         ▼
+#                          [audio_stack: 48 → 16 kHz]
+#                                         │
+#                                         ▼
+#                        [afe_processor: AEC + dual-mic SE]
+#                                         │
+#                                         ▼
+#                                    [mic_main] ─┬─► VA
+#                                                ├─► MWW (barge-in)
+#                                                └─► VoIP TX
+# Slot 3 is unused. The reference comes from the configured ADC TDM slot.
+#
+# PLAYBACK: speaker_media_player owns the media + announcement pipelines.
+#      [HTTP / Sendspin]          [VA TTS / HTTP / files]              [VoIP RX]
+#              │                             │                             │
+#              ▼                             ▼                             │
+#       [media_pipeline]          [announcement_pipeline]                  │
+#              │                             │                             │
+#              ▼                             ▼                             ▼
+#    [media_speaker_input]          [tts_speaker_input]           [voip_speaker_input]
+#          resampler                     resampler                     resampler
+#              │                             │                             │
+#              ▼                             ▼                             ▼
+#     [media_mixer_input]            [tts_mixer_input]             [voip_mixer_input]
+#              │                             │                             │
+#              └─────────────────────────────┼─────────────────────────────┘
+#                                            ▼
+#                             ┌─────────────────────────────┐
+#                             │   audio_mixer: 48 kHz mono  │
+#                             └──────────────┬──────────────┘
+#                                            ▼
+#                                       [hw_speaker]
+#                                            │
+#                                            ▼
+#                     [audio_stack I2S TX → ES8311 → NS4150 → speaker]
+#
+# The three *_speaker_input nodes are resamplers; *_mixer_input are mixer ports.
+# TTS, ringtone and timer files share the announcement pipeline, not VoIP RX.
+# Reference labels above describe configured signal sources, not extra I2S buses.
+
+# Hardware audio stack: ES7210/ES8311 codec control, 48 kHz TDM bus, AFE feed
+# and speaker output through the shared esp_audio_stack component.
+
+esp_audio_stack:
+  id: audio_stack
+  # WS3 full AFE profile:
+  # - qualified full-load layout: Audio Stack runs on Core 1 / priority 19.
+  #   AFE feed stays on Core 0 and fetch on Core 1; rates and queues stay unchanged.
+  # - audio_stack task stack in PSRAM saves ~8 KB internal heap.
+  # - component frame buffers in PSRAM preserve internal/DMA heap for Wi-Fi,
+  #   TLS, I2S DMA and esp-sr internals.
+  audio_task_stack_in_psram: true
+  buffers_in_psram: true
+  # WS3 ES8311/NS4150 path drops perceived loudness too aggressively with the
+  # codec-dev default ~-50 dB floor. Keep 0% as mute, but make 70% usable.
+  master_volume_min_db: -30.0
+  task_core: 1
+  task_priority: 19
+  task_stack_size: 8192
+  i2s_lrclk_pin: ${i2s_lrclk_pin}
+  i2s_bclk_pin: ${i2s_bclk_pin}
+  i2s_mclk_pin: ${i2s_mclk_pin}
+  i2s_din_pin: ${i2s_din_pin}
+  i2s_dout_pin: ${i2s_dout_pin}
+  sample_rate: 48000
+  output_sample_rate: 16000
+  processor_id: afe_processor
+  audio_effects:
+    rate_cvt_complexity: 3
+    rate_cvt_perf_type: speed
+  codec:
+    i2c_id: internal_i2c
+    input:
+      type: es7210
+      address: 0x40
+      mic_selected: 0x0F
+      gain_db: 24.0
+    output:
+      type: es8311
+      address: 0x18
+      use_mclk: true
+      no_dac_ref: true
+  use_tdm_reference: true
+  tdm_total_slots: 4
+  tdm_mic_slots: [0, 2]  # Verified right-side mic, left-side mic
+  tdm_ref_slot: 1        # Verified playback reference for AEC
+
+esp_afe:
+  id: afe_processor
+  type: fd
+  mode: high_perf
+  mic_num: 2
+  aec_filter_length: 4
+  aec_nlp_level: normal
+  memory_alloc_mode: more_psram
+  # Espressif layout:
+  # - SE/BSS worker preference stays on Core 1 at the official low priority.
+  # - GMF AFE manager feed/fetch tasks stay on different cores, as Espressif's
+  #   own GMF troubleshooting recommends for avoiding AFE task WDT.
+  task_core: 1
+  task_priority: 5
+  ringbuf_size: 8
+  feed_task_core: 0
+  feed_task_priority: 5
+  feed_task_stack_size: 3072
+  fetch_task_core: 1
+  fetch_task_priority: 5
+  fetch_task_stack_size: 3072
+  se_enabled: true
+  ns_enabled: true
+  vad_enabled: true
+  continuous_vad: true
+  # Dual-mic GMF follows Espressif's official element output path. Keep AEC on
+  # for normal audio quality; AEC-off on dual-mic BSS targets may sound metallic.
+  # WS3 keeps AGC out of the runtime profile. It can improve MWW sensitivity
+  # under playback, but on this target it causes TTS/media stutter and any
+  # runtime toggle requires a full AFE rebuild.
+  agc_enabled: false
+  # Worst-case HTTPS media/TTS + VoIP needs contiguous internal heap for
+  # ESPHome API frame reads, TLS and I2S. Keep AFE bridge buffers in PSRAM on
+  # this full profile; the small PSRAM latency cost is preferable to API
+  # bad_alloc crashes during Assist/TTS responses.
+  feed_buf_in_psram: true       # ~6 KB hot scratch on 2-mic + ref FD
+  feed_ring_in_psram: true      # ~24 KB staging ring on 2-mic + ref FD
+  fetch_ring_in_psram: true     # ~8 KB output ring
+
+microphone:
+  - platform: esp_audio_stack
+    id: mic_main
+
+speaker:
+  - platform: esp_audio_stack
+    id: hw_speaker
+    sample_rate: 48000
+    bits_per_sample: 16
+    timeout: 1s
+    # Full-duplex profiles must not let the upstream ESPHome mixer prefill the
+    # final hardware sink for 500 ms. Mixer transfers 50 ms chunks every 25 ms;
+    # keep the hardware backlog short so backpressure reaches media/TTS quickly.
+    buffer_duration: 128ms
+  # Piper PCM16 mono at 22050 Hz needs 11025 bytes for 250 ms. Keep the TTS
+  # resampler input larger than the HTTP decoder's 8192-byte output chunk;
+  # with the 100 ms default Sala starved the HTTP/TTS path and hit Task WDT.
+  - id: !extend tts_speaker_input
+    buffer_duration: 250ms
+
+# The shared media-player package defines these HTTP sources. On WS3, retain
+# their ring allocations across playback cycles so media, TTS and VoIP do not
+# repeatedly return large blocks to the heap under concurrent use.
+media_source:
+  - id: !extend media_http_source
+    persistent_ring_buffer: true
+  - id: !extend announcement_http_source
+    persistent_ring_buffer: true

@@ -103,6 +103,12 @@ Non contiene callback audio, logica LED, parser di pacchetti o workaround TTS.
 
 ### Pacchetti YAML
 
+> Stato 2026-11-15: fatto in `esphome/packages/satellite/` (`board`,
+> `connectivity`, `audio`, `wake_word`, `voip`, `direct_voice`, `controls`),
+> con configurazione risolta e C++ generato identici alla release 2026.11.2.
+> I LED del dialogo diretto restano nei callback di `direct_voice.yaml`; la
+> separazione in `presentation/` e il contratto a eventi sono ancora da fare.
+
 Il base viene diviso per responsabilità, senza cambiare i componenti ESPHome
 usati:
 

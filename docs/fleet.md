@@ -24,7 +24,7 @@ Stato attuale delle casse e build installate: [satellites.md](satellites.md).
 
 | Livello | File | Contiene | Cambia quando |
 | --- | --- | --- | --- |
-| Firmware | `esphome/galileo-va-direct-audio-cutover-base.yaml` | hardware, audio, AFE, wake word, VoIP, versioni dei componenti esterni, `firmware_release` | si fa un fix o un upgrade |
+| Firmware | `esphome/galileo-va-direct-audio-cutover-base.yaml` + `esphome/packages/satellite/` | la base: identita', `firmware_release`, versioni dei componenti esterni, pin; i pacchetti: scheda, rete, audio e AFE, wake word, VoIP, voce diretta, tasti | si fa un fix o un upgrade |
 | Sito | `esphome/sites/casa.yaml` | IP di Galileo Core, gateway, DNS, Wi-Fi (`!secret`), gruppi VoIP | cambia la rete o la casa |
 | Dispositivo | `esphome/galileo-sala.yaml` (uno per cassa) | nome, nome visibile, IP statico, interno, porte UDP, segreto di sessione | si aggiunge o si sposta una cassa |
 
@@ -39,8 +39,7 @@ storici (`galileo-va-direct-audio-cutover.yaml` e' Taverna) e non vanno
 rinominati senza un piano: il nome ESPHome definisce il dispositivo in Home
 Assistant.
 
-Gli altri profili in `esphome/` (`galileo-va-afe*.yaml`, `galileo-va.yaml`,
-`galileo-va-direct-audio-test.yaml`) sono di laboratorio o di recovery: non
+I profili di laboratorio e di recovery sono in `esphome/archivio/`: non
 fanno parte della flotta e lo script non li tocca.
 
 ## Strumenti

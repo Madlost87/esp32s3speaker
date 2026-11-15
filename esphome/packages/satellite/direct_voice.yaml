@@ -1,0 +1,83 @@
+# Pacchetto della base satellite (voce diretta verso Galileo Core). Incluso da
+# ../../galileo-va-direct-audio-cutover-base.yaml dopo i pacchetti upstream:
+# l'ordine conta per `!extend` e per l'ordine delle entita'.
+
+binary_sensor:
+  - platform: esp_afe
+    esp_afe_id: afe_processor
+    vad:
+      id: direct_dialogue_vad
+      internal: true
+      on_press:
+        - lambda: id(direct_audio_tap).start_capture_from_dialogue_vad();
+
+galileo_audio_tap:
+  id: direct_audio_tap
+  microphone: mic_main
+  media_player: speaker_media_player
+  host: ${direct_audio_host}
+  port: ${direct_audio_port}
+  control_port: ${direct_audio_control_port}
+  session_id: ${direct_audio_session_id}
+  enabled: true
+  dialogue_enabled: ${direct_dialogue_enabled}
+  silence_threshold: 450
+  # Trial: learn the radio/background level in the wake-word tail, then
+  # require 1.7x that level for speech. The fixed threshold remains a floor.
+  adaptive_noise_floor: true
+  noise_floor_ratio: 170
+  silence_ms: 800
+  # Safety endpoint when radio or other continuous noise never falls below
+  # the adaptive threshold. This applies from the wake-word boundary.
+  maximum_capture_ms: 4500
+  # These are the exact golden runtime-controller LED mappings.  The no-Assist
+  # profile cannot register `va_*` runtime events, so apply the same ring
+  # states directly and ask the controller to redraw its normal/VoIP state
+  # after the direct turn is complete.
+  on_capture_started:
+    - light.turn_on:
+        id: status_led
+        red: 100%
+        green: 0%
+        blue: 0%
+        brightness: 70%
+        effect: Spin
+  on_capture_finished:
+    - light.turn_on:
+        id: status_led
+        red: 100%
+        green: 100%
+        blue: 0%
+        brightness: 70%
+        effect: Spin
+  on_tts_started:
+    # The player first publishes its generic `announcement` state, whose
+    # legacy observer renders the media ring. Apply the direct response state
+    # on the following scheduler turn so blue remains visible for the whole
+    # spoken reply rather than being immediately replaced by media green.
+    - delay: 250ms
+    - light.turn_on:
+        id: status_led
+        red: 0%
+        green: 0%
+        blue: 100%
+        brightness: 100%
+        effect: None
+  on_tts_finished:
+    - light.turn_off: status_led
+    - runtime_controller.event:
+        id: runtime
+        event: idle
+  on_error:
+    - light.turn_on:
+        id: status_led
+        red: 100%
+        green: 0%
+        blue: 0%
+        brightness: 100%
+        effect: None
+    - delay: 2s
+    - light.turn_off: status_led
+    - runtime_controller.event:
+        id: runtime
+        event: idle

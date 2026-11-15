@@ -1,0 +1,59 @@
+# Pacchetto della base satellite (rete, API e log). Incluso da
+# ../../galileo-va-direct-audio-cutover-base.yaml dopo i pacchetti upstream:
+# l'ordine conta per `!extend` e per l'ordine delle entita'.
+
+# Conservative network profile: bound ingress and memory use before audio sinks
+# saturate.
+
+network:
+  # The speaker media player requests high-performance networking by default,
+  # which expands lwIP to 65KB TCP windows and 64-entry mailboxes. On this
+  # full-duplex audio profile that creates bursty HTTP/TTS ingress and memory
+  # pressure in front of the mixer, while I2S can only drain 96 KB/s.
+  enable_high_performance: false
+
+# Normal Wi-Fi client mode. Power save is disabled for full audio stability and
+# reliable HA API reconnects.
+
+wifi:
+  # ssid/password come from sites/<site>.yaml.
+  # Full audio + API needs deterministic Wi-Fi latency; ESP32 LIGHT power save
+  # can make the device appear associated while HA can no longer ARP it.
+  power_save_mode: NONE
+  # Galileo Core addresses every satellite at a fixed IP (direct voice source
+  # and TTS command target), so none may depend on a DHCP lease.
+  manual_ip:
+    static_ip: ${static_ip}
+    gateway: ${net_gateway}
+    subnet: ${net_subnet}
+    dns1: ${net_dns}
+
+# Home Assistant native API for entities, service actions and phonebook sync.
+
+api:
+  custom_services: true
+  # `start_call(dest)` actions come from the runtime HA API package.
+
+# USB logger. VoIP/audio domains stay visible at INFO; noisy entity domains stay
+# WARN for normal field use.
+
+logger:
+  # DEBUG keeps SIP signaling + AEC/AFE/i2s lifecycle visible.
+  # Mute chatty ESPHome built-ins below; project components stay at DEBUG.
+  level: INFO
+  logs:
+    voip_stack: INFO
+    voip_stack.fsm: INFO
+    voip_stack.tcp: INFO
+    voip_stack.udp: INFO
+    voip_stack.audio: INFO
+    voip_stack.settings: INFO
+    sensor: WARN
+    text_sensor: WARN
+    binary_sensor: WARN
+    switch: WARN
+    number: WARN
+    button: WARN
+    api: WARN
+    api.connection: WARN
+    component: WARN

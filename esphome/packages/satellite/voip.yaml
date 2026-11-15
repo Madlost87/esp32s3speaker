@@ -1,0 +1,75 @@
+# Pacchetto della base satellite (runtime controller e VoIP). Incluso da
+# ../../galileo-va-direct-audio-cutover-base.yaml dopo i pacchetti upstream:
+# l'ordine conta per `!extend` e per l'ordine delle entita'.
+
+runtime_controller:
+  storage_in_psram: true
+
+voip_stack:
+  extension: ${voip_extension}
+  use_ha_as_first_contact: true
+  task_stacks_in_psram: true   # save ~28KB internal heap on S3 PSRAM builds by placing task stacks in PSRAM
+  signaling_buffers_in_psram: true
+  # Preserve internal/DMA heap for Wi-Fi/lwIP. The custom PCM backend owns two
+  # 12 KB realtime workers; S3 octal PSRAM supports their explicit task stacks.
+  audio_task_stacks_in_psram: true
+  buffers_in_psram: true # VoIP staging buffers in PSRAM; AEC/AFE buffers live in esp_audio_stack
+  conference_groups: ${voip_conference_groups}
+  conference_ring: false
+  ring_groups: ${voip_ring_groups}
+  static_contacts:
+    # HA remains the central phonebook owner. These name-only entries are a
+    # local fallback so the hardware contact cycler still exposes the expected
+    # targets before HA has pushed sensor.voip_phonebook after a reboot.
+    - name: Casa
+    - name: RG Casa
+    - name: RG Tutti
+    - name: ESP Cucina
+    - name: Softphone 200
+  audio:
+    # SIP/RTP prefers the highest UDP-safe quality. TX is the AFE mic format,
+    # with a 10 ms reframe available for peers that can drive the speaker at
+    # 48 kHz/10 ms. RX is speaker-side audio through the resampler.
+    tx:
+      sample_rate: 16000
+      pcm_format: s16le
+      channels: 1
+      frame_ms: 16
+    tx_formats:
+      - sample_rate: 16000
+        pcm_format: s16le
+        channels: 1
+        frame_ms: 10
+    rx:
+      sample_rate: 48000
+      pcm_format: s16le
+      channels: 1
+      frame_ms: 10
+    # Additional accepted RX formats for direct ESP-to-ESP calls. These are valid
+    # only because speaker: voip_speaker_input points at the resampler; do
+    # not advertise additional formats when wiring voip_stack directly to a
+    # fixed-rate mixer input.
+    rx_formats:
+      - sample_rate: 32000
+        pcm_format: s16le
+        channels: 1
+        frame_ms: 16
+      - sample_rate: 16000
+        pcm_format: s16le
+        channels: 1
+        frame_ms: 10
+      - sample_rate: 16000
+        pcm_format: s16le
+        channels: 1
+        frame_ms: 16
+      - sample_rate: 16000
+        pcm_format: s16le
+        channels: 1
+        frame_ms: 32
+  microphone: mic_main
+  speaker: voip_speaker_input
+  ringing_timeout: 30s
+  # routing_mode default = device_independent (P2P). Override at runtime
+  # via the "SIP bridge" switch in the device-specific switch block below.
+  delete_contact_missing_from:
+    updates_number: 1

@@ -35,7 +35,7 @@ substitutions:
 external_components:
   - source:
       type: local
-      path: components
+      path: ../components
     components: [galileo_audio_tap]
 
 galileo_audio_tap:

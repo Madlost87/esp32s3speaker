@@ -88,15 +88,7 @@ ogni OTA, rollback). Una cassa nuova si aggiunge con `tools/fleet new`. Guida:
 
 La base usa componenti esterni AFE/audio/VoIP per sfruttare la board come il firmware factory: TDM 48 kHz, due microfoni fisici, reference hardware per AEC, speaker ES8311, LED ring e tasti fisici.
 
-`esphome/galileo-va-afe.yaml` e' il golden di recovery (vedi `docs/golden-firmware-recovery.md`), non il profilo in produzione.
-
-Il vecchio profilo stock ESPHome resta nel repository come riferimento storico e fallback di confronto:
-
-```text
-esphome/galileo-va.yaml
-```
-
-Non e' il profilo operativo corrente.
+I profili di laboratorio, il vecchio profilo stock e il golden di recovery sono in `esphome/archivio/` (vedi il suo README e `docs/golden-firmware-recovery.md`): non sono profili in produzione.
 
 Le credenziali Wi-Fi/API non sono versionate. Il template e':
 
@@ -147,13 +139,13 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 |-- MANIFEST.md
 |-- AUDIT_HARDWARE.md
 |-- esphome/
-|   |-- galileo-va-direct-audio-cutover-base.yaml   firmware comune (release)
+|   |-- galileo-va-direct-audio-cutover-base.yaml   firmware comune (release, pin, componenti)
+|   |-- packages/satellite/                         la base divisa per funzione (audio, voip, ...)
 |   |-- galileo-va-direct-audio-cutover.yaml        Taverna
 |   |-- galileo-sala.yaml                           Sala
 |   |-- galileo-garage.yaml                         Garage
 |   |-- sites/casa.yaml                             rete e valori della casa
-|   |-- galileo-va-afe.yaml                         golden di recovery
-|   |-- galileo-va.yaml
+|   |-- archivio/                                   profili di laboratorio e golden di recovery
 |   `-- secrets.example.yaml
 |-- fleet/
 |   |-- casa.yaml                                   inventario e ordine di rollout
@@ -190,8 +182,7 @@ handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical
 - `docs/satellites.md` - profili, IP, interni, porte e build installate dei tre satelliti.
 - `docs/fleet.md` - gestione della flotta: release, build, rollout con canarino, rollback, nuove casse, nuovo sito.
 - `esphome/galileo-va-direct-audio-cutover-base.yaml` - base comune dei satelliti in produzione.
-- `esphome/galileo-va-afe.yaml` - golden di recovery del Satellite Taverna.
-- `esphome/galileo-va.yaml` - vecchio profilo stock, conservato come riferimento storico/fallback.
+- `esphome/archivio/` - golden di recovery, vecchio profilo stock e profili di laboratorio.
 - `docs/initial_board_audit.md` - audit non distruttivo iniziale, factory firmware, partizioni e backup.
 - `docs/compatibility_audit.md` - compatibilita' ESPHome/Home Assistant, pinout e stato test.
 - `docs/first_flash_checklist.md` - checklist storica del primo flash stock.
