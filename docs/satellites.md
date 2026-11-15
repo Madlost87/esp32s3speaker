@@ -25,6 +25,7 @@ solo l'identita'. Come si aggiorna la flotta e come si aggiunge una cassa:
 | Dialogo diretto | off | off | off |
 | Log | INFO | INFO | INFO |
 | Guadagno microfono | +18 dB | +18 dB | +18 dB |
+| Pre-roll voce diretta | 500 ms | 500 ms | 500 ms |
 
 Nomi ESPHome diversi (`galileo-va`, `galileo-sala`, `satellite-garage`) sono
 storici: cambiarli crea un nuovo dispositivo in Home Assistant e richiede di
@@ -36,6 +37,17 @@ firmware parte da 0 dB solo su una cassa nuova o dopo un flash completo. A
 0 dB la voce arrivava a circa -31 dBFS e Vosk dava trascrizioni vuote oltre
 30-50 cm; a +18 dB arriva a circa -23 dBFS (misure sul Garage, 14/11/2026).
 Su una cassa nuova va impostato a +18 dB dopo il primo avvio.
+
+Dalla 2026.11.3 la cassa tiene in PSRAM gli ultimi 500 ms di audio mentre
+aspetta la wake word (`pre_roll_ms` in `packages/satellite/direct_voice.yaml`)
+e li manda al Core prima della registrazione. Senza, la prima parola detta
+subito dopo la wake word si perdeva: sulla Sala, il 15/11/2026, "che ore sono"
+non veniva capito in nessuno di 10 tentativi; con il pre-roll e' stato capito
+in 2 tentativi su 3.
+
+Dalla 2026.11.4, riattivando il microfono riparte anche la wake word. Prima,
+una cassa avviata con il microfono spento restava sorda a "Okay Nabu" anche
+dopo averlo riattivato, finche' non veniva riavviata.
 
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.
