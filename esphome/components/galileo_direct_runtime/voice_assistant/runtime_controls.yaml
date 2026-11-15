@@ -2,6 +2,7 @@
 #
 # Provides:
 #   switch: mute (wake-word controls are a separate package)
+#   script: ensure_mic_unmuted
 #
 switch:
   - platform: template
@@ -16,9 +17,9 @@ switch:
           level: INFO
           tag: mute
           format: "Mic mute ON"
-      - runtime_controller.event:
-          id: runtime
-          event: galileo_direct_stop
+      # Niente evento galileo_direct_stop qui: il runtime controller non lo
+      # conosce e lo scartava con un warning. Una cattura diretta in corso si
+      # chiude da sola: col muto arrivano solo zeri e scatta il silenzio.
       - microphone.mute: ${mic_id}
       - runtime_controller.event:
           id: runtime
@@ -29,6 +30,7 @@ switch:
           tag: mute
           format: "Mic mute OFF"
       - microphone.unmute: ${mic_id}
+      - script.execute: ensure_mic_unmuted
       - runtime_controller.event:
           id: runtime
           event: mic_unmuted
@@ -37,3 +39,30 @@ switch:
       # averlo riattivato: lo script e' idempotente e rispetta gli stessi
       # controlli (wake word abilitata, nessun OTA, non gia' in esecuzione).
       - script.execute: start_mww_when_ready
+
+script:
+  # Il task audio di esp_audio_stack (altro core), per ogni blocco ricevuto a
+  # microfono muto, spegne mute_state_ mentre consegna gli zeri e poi lo
+  # riaccende. Un unmute che cade in quella finestra viene sovrascritto: lo
+  # switch dice "acceso" ma il microfono resta muto e la wake word ascolta
+  # silenzio. Dopo l'unmute si verifica per 1 s e, se serve, si riapplica.
+  # La corsa avviene solo nel blocco in cui arriva l'unmute: dopo un blocco
+  # pulito il task non tocca piu' il flag.
+  - id: ensure_mic_unmuted
+    mode: restart
+    then:
+      - repeat:
+          count: 20
+          then:
+            - delay: 50ms
+            - if:
+                condition:
+                  and:
+                    - switch.is_off: mute
+                    - microphone.is_muted: ${mic_id}
+                then:
+                  - logger.log:
+                      level: WARN
+                      tag: mute
+                      format: "Mic still muted after unmute (audio task race): unmuting again"
+                  - microphone.unmute: ${mic_id}

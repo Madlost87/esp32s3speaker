@@ -45,9 +45,15 @@ subito dopo la wake word si perdeva: sulla Sala, il 15/11/2026, "che ore sono"
 non veniva capito in nessuno di 10 tentativi; con il pre-roll e' stato capito
 in 2 tentativi su 3.
 
-Dalla 2026.11.4, riattivando il microfono riparte anche la wake word. Prima,
-una cassa avviata con il microfono spento restava sorda a "Okay Nabu" anche
-dopo averlo riattivato, finche' non veniva riavviata.
+Dalla 2026.11.5, riattivando il microfono riparte davvero anche la wake word.
+La 2026.11.4 chiamava gia' `start_mww_when_ready` all'unmute, ma lo script
+non partiva mai: `init_in_progress` veniva azzerato solo dall'Assist di Home
+Assistant, che nel profilo a voce diretta non si collega. Ogni muto, cambio di
+modo AEC o OTA annullato lasciava la cassa sorda a "Okay Nabu" fino al
+riavvio. Ora l'avvio si chiude in `on_boot` (`packages/satellite/wake_word.yaml`);
+verificato sul Garage il 15/11/2026: dopo muto e unmute la wake word riparte
+in 2 s e "Okay Nabu" viene riconosciuto. Per lo stesso motivo il cambio del
+modo AEC da Home Assistant prima veniva ignorato e ora si applica.
 
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.

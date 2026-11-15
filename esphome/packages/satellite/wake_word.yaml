@@ -12,6 +12,18 @@ esphome:
             id(hey_jarvis).disable();
             ESP_LOGI("wake_word", "Forced active wake words: Alexa + Okay Nabu; Hey Jarvis disabled");
         - micro_wake_word.start:
+        # Fine dell'avvio. init_in_progress lo azzerava solo on_client_connected
+        # dell'Assist di Home Assistant, che nel profilo a voce diretta non c'e':
+        # restava true per sempre e start_mww_when_ready non riavviava mai la
+        # wake word. Dopo un muto, un cambio di modo AEC o un OTA annullato la
+        # cassa restava sorda fino al riavvio (anche col fix della 2026.11.4).
+        - globals.set:
+            id: init_in_progress
+            value: "false"
+        - logger.log:
+            level: INFO
+            tag: wake_word
+            format: "Boot complete: wake word restart guard released"
 
 micro_wake_word:
   id: mww
