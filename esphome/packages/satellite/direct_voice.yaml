@@ -30,6 +30,11 @@ galileo_audio_tap:
   # Safety endpoint when radio or other continuous noise never falls below
   # the adaptive threshold. This applies from the wake-word boundary.
   maximum_capture_ms: 4500
+  # Le parole dette subito dopo la wake word cadono mentre la cassa la sta
+  # ancora riconoscendo e suona il bip: senza pre-roll la prima ("che" in
+  # "che ore sono") non arrivava mai al Core. 500 ms bastano senza portarsi
+  # dietro tutta la wake word.
+  pre_roll_ms: 500
   # These are the exact golden runtime-controller LED mappings.  The no-Assist
   # profile cannot register `va_*` runtime events, so apply the same ring
   # states directly and ask the controller to redraw its normal/VoIP state

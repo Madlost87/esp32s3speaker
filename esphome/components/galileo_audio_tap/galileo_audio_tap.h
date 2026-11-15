@@ -30,6 +30,10 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   void set_noise_floor_ratio(uint16_t ratio_percent) { this->noise_floor_ratio_percent_ = ratio_percent; }
   void set_silence_ms(uint16_t duration_ms) { this->silence_samples_limit_ = duration_ms * 16U; }
   void set_maximum_capture_ms(uint16_t duration_ms) { this->maximum_capture_samples_ = duration_ms * 16U; }
+  // Audio kept from before the capture starts (16 kHz, 16-bit mono). The words
+  // said right after the wake word fall while it is still being detected and
+  // the cue plays; without this they never reach STT.
+  void set_pre_roll_ms(uint16_t duration_ms) { this->pre_roll_bytes_ = duration_ms * 32U; }
   // Used only by the dedicated cutover profile after a local wake-word event.
   void start_capture_from_wake_word();
   void start_capture_from_dialogue_vad();
@@ -63,6 +67,9 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   static constexpr size_t MAX_CONTROL_BYTES = 512;
 
   void on_microphone_data_(const std::vector<uint8_t> &data);
+  void remember_pre_roll_(const uint8_t *data, size_t size);
+  void send_pre_roll_();
+  bool send_pcm_(const uint8_t *data, size_t size);
   bool open_socket_();
   bool send_control_(uint8_t packet_type);
   bool send_lifecycle_(const char *event);
@@ -113,6 +120,11 @@ class GalileoAudioTap : public Component, public api::CustomAPIDevice {
   bool direct_tts_announcing_{false};
   uint32_t direct_tts_started_at_{0};
   std::array<uint8_t, MAX_PCM_BYTES> pending_pcm_{};
+  // Pre-roll ring buffer in PSRAM, written by the microphone task while idle.
+  uint8_t *pre_roll_{nullptr};
+  size_t pre_roll_bytes_{0};
+  size_t pre_roll_head_{0};
+  size_t pre_roll_fill_{0};
   size_t pending_size_{0};
   portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
   std::vector<GalileoAudioTapTrigger *> capture_started_triggers_;

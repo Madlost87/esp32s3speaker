@@ -21,6 +21,7 @@ CONF_ADAPTIVE_NOISE_FLOOR = "adaptive_noise_floor"
 CONF_NOISE_FLOOR_RATIO = "noise_floor_ratio"
 CONF_SILENCE_MS = "silence_ms"
 CONF_MAXIMUM_CAPTURE_MS = "maximum_capture_ms"
+CONF_PRE_ROLL_MS = "pre_roll_ms"
 CONF_ON_CAPTURE_STARTED = "on_capture_started"
 CONF_ON_CAPTURE_FINISHED = "on_capture_finished"
 CONF_ON_TTS_STARTED = "on_tts_started"
@@ -60,6 +61,8 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_NOISE_FLOOR_RATIO, default=170): cv.int_range(min=110, max=400),
         cv.Optional(CONF_SILENCE_MS, default=1200): cv.int_range(min=100, max=10000),
         cv.Optional(CONF_MAXIMUM_CAPTURE_MS, default=15000): cv.int_range(min=1000, max=30000),
+        # Audio from before the capture start, sent first (buffer in PSRAM).
+        cv.Optional(CONF_PRE_ROLL_MS, default=0): cv.int_range(min=0, max=1500),
         cv.Optional(CONF_ON_CAPTURE_STARTED): _automation_schema(),
         cv.Optional(CONF_ON_CAPTURE_FINISHED): _automation_schema(),
         cv.Optional(CONF_ON_TTS_STARTED): _automation_schema(),
@@ -85,6 +88,7 @@ async def to_code(config):
     cg.add(var.set_noise_floor_ratio(config[CONF_NOISE_FLOOR_RATIO]))
     cg.add(var.set_silence_ms(config[CONF_SILENCE_MS]))
     cg.add(var.set_maximum_capture_ms(config[CONF_MAXIMUM_CAPTURE_MS]))
+    cg.add(var.set_pre_roll_ms(config[CONF_PRE_ROLL_MS]))
     if CONF_MEDIA_PLAYER in config:
         player = await cg.get_variable(config[CONF_MEDIA_PLAYER])
         cg.add(var.set_media_player(player))

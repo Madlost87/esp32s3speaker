@@ -9,6 +9,7 @@
 #include <lwip/inet.h>
 #include <lwip/sockets.h>
 
+#include "esphome/core/helpers.h"
 #include "esphome/core/log.h"
 
 namespace esphome::galileo_audio_tap {
@@ -50,6 +51,14 @@ void GalileoAudioTap::setup() {
     ESP_LOGE(TAG, "microphone is required");
     this->mark_failed();
     return;
+  }
+  if (this->pre_roll_bytes_ != 0) {
+    RAMAllocator<uint8_t> allocator(RAMAllocator<uint8_t>::ALLOC_EXTERNAL);
+    this->pre_roll_ = allocator.allocate(this->pre_roll_bytes_);
+    if (this->pre_roll_ == nullptr) {
+      ESP_LOGW(TAG, "Pre-roll buffer unavailable; captures start at the wake-word cue");
+      this->pre_roll_bytes_ = 0;
+    }
   }
   this->microphone_->add_data_callback([this](const std::vector<uint8_t> &data) { this->on_microphone_data_(data); });
   // lwIP is not guaranteed to be ready while ESPHome invokes component
@@ -134,6 +143,7 @@ void GalileoAudioTap::dump_config() {
   ESP_LOGCONFIG(TAG, "Galileo Audio Tap:");
   ESP_LOGCONFIG(TAG, "  Destination: %s:%u", this->host_.c_str(), this->port_);
   ESP_LOGCONFIG(TAG, "  Armed: %s", YESNO(this->armed_));
+  ESP_LOGCONFIG(TAG, "  Pre-roll: %u ms", static_cast<unsigned>(this->pre_roll_bytes_ / 32U));
   ESP_LOGCONFIG(TAG, "  Mode: bounded PCM capture only; idle until authenticated API start");
 }
 
@@ -180,7 +190,13 @@ void GalileoAudioTap::start_capture_from_wake_word() {
   this->sequence_ = 0;
   this->sample_offset_ = 0;
   this->reset_endpoint_detector_();
+  // Stop filling the ring before reading it: from here the microphone task
+  // feeds the live capture instead.
+  portENTER_CRITICAL(&this->mutex_);
   this->capture_active_ = true;
+  this->pending_size_ = 0;
+  portEXIT_CRITICAL(&this->mutex_);
+  this->send_pre_roll_();
   this->trigger_all_(this->capture_started_triggers_);
   ESP_LOGI(TAG, "Audio-tap capture opened from wake word");
 }
@@ -397,9 +413,53 @@ void GalileoAudioTap::apply_remote_activity_(const std::string &activity) {
   ESP_LOGW(TAG, "Direct voice error reported by Core");
 }
 
-void GalileoAudioTap::on_microphone_data_(const std::vector<uint8_t> &data) {
-  if (!this->capture_active_ || data.empty())
+void GalileoAudioTap::remember_pre_roll_(const uint8_t *data, size_t size) {
+  // Called from the microphone task with mutex_ held.
+  if (size >= this->pre_roll_bytes_) {
+    std::memcpy(this->pre_roll_, data + size - this->pre_roll_bytes_, this->pre_roll_bytes_);
+    this->pre_roll_head_ = 0;
+    this->pre_roll_fill_ = this->pre_roll_bytes_;
     return;
+  }
+  const size_t first = std::min(size, this->pre_roll_bytes_ - this->pre_roll_head_);
+  std::memcpy(this->pre_roll_ + this->pre_roll_head_, data, first);
+  std::memcpy(this->pre_roll_, data + first, size - first);
+  this->pre_roll_head_ = (this->pre_roll_head_ + size) % this->pre_roll_bytes_;
+  this->pre_roll_fill_ = std::min(this->pre_roll_bytes_, this->pre_roll_fill_ + size);
+}
+
+void GalileoAudioTap::send_pre_roll_() {
+  // capture_active_ is already set, so the microphone task no longer writes
+  // the ring: it can be read without holding the mutex for the whole send.
+  if (this->pre_roll_ == nullptr || this->pre_roll_fill_ == 0)
+    return;
+  size_t position = (this->pre_roll_head_ + this->pre_roll_bytes_ - this->pre_roll_fill_) % this->pre_roll_bytes_;
+  size_t remaining = this->pre_roll_fill_ & ~static_cast<size_t>(1);  // whole samples only
+  std::array<uint8_t, MAX_PCM_BYTES> chunk{};
+  while (remaining != 0) {
+    const size_t size = std::min({remaining, MAX_PCM_BYTES, this->pre_roll_bytes_ - position});
+    std::memcpy(chunk.data(), this->pre_roll_ + position, size);
+    this->send_pcm_(chunk.data(), size);
+    position = (position + size) % this->pre_roll_bytes_;
+    remaining -= size;
+  }
+  ESP_LOGD(TAG, "Sent %u ms of pre-roll", static_cast<unsigned>(this->pre_roll_fill_ / 32U));
+  this->pre_roll_fill_ = 0;
+  this->pre_roll_head_ = 0;
+}
+
+void GalileoAudioTap::on_microphone_data_(const std::vector<uint8_t> &data) {
+  if (data.empty())
+    return;
+  if (!this->capture_active_) {
+    if (this->pre_roll_ != nullptr && this->armed_) {
+      portENTER_CRITICAL(&this->mutex_);
+      if (!this->capture_active_)
+        this->remember_pre_roll_(data.data(), data.size() & ~static_cast<size_t>(1));
+      portEXIT_CRITICAL(&this->mutex_);
+    }
+    return;
+  }
 
   const size_t frame_size = std::min(data.size(), MAX_PCM_BYTES);
   const size_t samples = frame_size / 2;
@@ -457,12 +517,12 @@ void GalileoAudioTap::loop() {
   if (!this->capture_active_)
     return;
 
-  std::array<uint8_t, HEADER_BYTES + MAX_PCM_BYTES> packet{};
+  std::array<uint8_t, MAX_PCM_BYTES> packet{};
   size_t frame_size = 0;
   portENTER_CRITICAL(&this->mutex_);
   frame_size = this->pending_size_;
   if (frame_size != 0) {
-    std::memcpy(packet.data() + HEADER_BYTES, this->pending_pcm_.data(), frame_size);
+    std::memcpy(packet.data(), this->pending_pcm_.data(), frame_size);
     this->pending_size_ = 0;
   }
   portEXIT_CRITICAL(&this->mutex_);
@@ -472,32 +532,41 @@ void GalileoAudioTap::loop() {
     return;
   }
 
+  this->send_pcm_(packet.data(), frame_size);
+  if (this->endpoint_detected_)
+    this->close_capture_(this->speech_detected_ ? "silence endpoint" : "maximum duration");
+}
+
+bool GalileoAudioTap::send_pcm_(const uint8_t *data, size_t size) {
+  std::array<uint8_t, HEADER_BYTES + MAX_PCM_BYTES> packet{};
+  size = std::min(size, MAX_PCM_BYTES);
   std::memcpy(packet.data(), "GLA1", 4);
   packet[4] = 1;
   packet[5] = PACKET_PCM;
   std::memcpy(packet.data() + 6, this->session_id_.data(), this->session_id_.size());
   const uint32_t sequence = htonl(this->sequence_++);
   const uint32_t sample_offset = htonl(this->sample_offset_);
-  const uint16_t payload_size = htons(static_cast<uint16_t>(frame_size));
+  const uint16_t payload_size = htons(static_cast<uint16_t>(size));
   std::memcpy(packet.data() + 14, &sequence, sizeof(sequence));
   std::memcpy(packet.data() + 18, &sample_offset, sizeof(sample_offset));
   std::memcpy(packet.data() + 22, &payload_size, sizeof(payload_size));
-  this->sample_offset_ += static_cast<uint32_t>(frame_size / 2);
+  std::memcpy(packet.data() + HEADER_BYTES, data, size);
+  this->sample_offset_ += static_cast<uint32_t>(size / 2);
 
   sockaddr_in destination{};
   destination.sin_family = AF_INET;
   destination.sin_port = htons(this->port_);
   if (inet_aton(this->host_.c_str(), &destination.sin_addr) == 0) {
     ESP_LOGW(TAG, "Invalid IPv4 destination");
-    return;
+    return false;
   }
-  const int sent = lwip_sendto(this->socket_, packet.data(), HEADER_BYTES + frame_size, 0,
+  const int sent = lwip_sendto(this->socket_, packet.data(), HEADER_BYTES + size, 0,
                                reinterpret_cast<sockaddr *>(&destination), sizeof(destination));
   if (sent < 0) {
     this->dropped_frames_++;
+    return false;
   }
-  if (this->endpoint_detected_)
-    this->close_capture_(this->speech_detected_ ? "silence endpoint" : "maximum duration");
+  return true;
 }
 
 }  // namespace esphome::galileo_audio_tap
