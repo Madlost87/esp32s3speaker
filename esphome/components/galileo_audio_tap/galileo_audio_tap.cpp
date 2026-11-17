@@ -52,6 +52,15 @@ void GalileoAudioTap::setup() {
     this->mark_failed();
     return;
   }
+  {
+    RAMAllocator<uint8_t> queue_allocator(RAMAllocator<uint8_t>::ALLOC_EXTERNAL);
+    this->queue_ = queue_allocator.allocate(QUEUE_SLOTS * MAX_PCM_BYTES);
+    if (this->queue_ == nullptr) {
+      ESP_LOGE(TAG, "Capture queue unavailable");
+      this->mark_failed();
+      return;
+    }
+  }
   if (this->pre_roll_bytes_ != 0) {
     RAMAllocator<uint8_t> allocator(RAMAllocator<uint8_t>::ALLOC_EXTERNAL);
     this->pre_roll_ = allocator.allocate(this->pre_roll_bytes_);
@@ -175,30 +184,75 @@ void GalileoAudioTap::start_capture(std::string session_id) {
   this->sequence_ = 0;
   this->sample_offset_ = 0;
   this->reset_endpoint_detector_();
+  this->capture_limit_samples_ = this->maximum_capture_samples_;
+  this->followup_capture_ = false;
   this->capture_active_ = true;
   this->trigger_all_(this->capture_started_triggers_);
   ESP_LOGI(TAG, "Audio-tap capture session opened");
 }
 
 void GalileoAudioTap::start_capture_from_wake_word() {
+  if (this->open_live_capture_(true, this->maximum_capture_samples_))
+    ESP_LOGI(TAG, "Audio-tap capture opened from wake word");
+}
+
+bool GalileoAudioTap::open_live_capture_(bool with_pre_roll, uint32_t limit_samples) {
   if (!this->armed_ || this->capture_active_)
-    return;
+    return false;
   if (!this->open_socket_() || !this->send_control_(PACKET_OPEN)) {
     ESP_LOGW(TAG, "Unable to open wake-word audio-tap session");
-    return;
+    return false;
   }
   this->sequence_ = 0;
   this->sample_offset_ = 0;
   this->reset_endpoint_detector_();
+  this->capture_limit_samples_ = limit_samples;
+  this->followup_capture_ = !with_pre_roll;
+  if (this->followup_capture_)
+    this->noise_floor_ = this->ambient_noise_floor_;
   // Stop filling the ring before reading it: from here the microphone task
   // feeds the live capture instead.
   portENTER_CRITICAL(&this->mutex_);
   this->capture_active_ = true;
-  this->pending_size_ = 0;
+  this->queue_count_ = 0;
+  this->queue_head_ = 0;
   portEXIT_CRITICAL(&this->mutex_);
-  this->send_pre_roll_();
+  if (with_pre_roll)
+    this->send_pre_roll_();
   this->trigger_all_(this->capture_started_triggers_);
-  ESP_LOGI(TAG, "Audio-tap capture opened from wake word");
+  return true;
+}
+
+void GalileoAudioTap::request_followup_(const std::string &response_id) {
+  // Only right after the matching reply finished playing: a late or replayed
+  // datagram cannot open the microphone at another moment.
+  if (!this->followup_enabled_ || !this->armed_ || this->capture_active_ || this->direct_tts_pending_ ||
+      !valid_response_id(response_id) || response_id != this->last_completed_response_id_ ||
+      millis() - this->last_completed_at_ > 5000) {
+    ESP_LOGW(TAG, "Rejected follow-up listen request");
+    return;
+  }
+  this->followup_pending_ = true;
+  this->followup_response_id_ = response_id;
+  // Fail closed if the cue automation never opens the capture.
+  this->set_timeout("direct-followup-cue", 2000, [this]() { this->followup_pending_ = false; });
+  if (this->followup_listen_triggers_.empty()) {
+    this->start_capture_for_followup();
+  } else {
+    this->trigger_all_(this->followup_listen_triggers_);
+  }
+}
+
+void GalileoAudioTap::start_capture_for_followup() {
+  if (!this->followup_pending_)
+    return;
+  this->followup_pending_ = false;
+  this->cancel_timeout("direct-followup-cue");
+  // No pre-roll: the ring holds the end of the speaker's own reply.
+  if (!this->open_live_capture_(false, this->followup_maximum_capture_samples_))
+    return;
+  this->capture_response_id_ = this->followup_response_id_;
+  ESP_LOGI(TAG, "Audio-tap capture opened for a follow-up answer");
 }
 
 void GalileoAudioTap::start_capture_from_dialogue_vad() {
@@ -222,6 +276,7 @@ void GalileoAudioTap::stop_capture(std::string session_id) {
 }
 
 void GalileoAudioTap::reset_endpoint_detector_() {
+  this->dropped_frames_ = 0;
   this->captured_samples_ = 0;
   this->silence_samples_ = 0;
   this->speech_detected_ = false;
@@ -238,7 +293,8 @@ void GalileoAudioTap::close_capture_(const char *reason) {
     this->capture_response_id_.clear();
   }
   this->capture_active_ = false;
-  this->pending_size_ = 0;
+  this->queue_count_ = 0;
+  this->queue_head_ = 0;
   this->trigger_all_(this->capture_finished_triggers_);
   ESP_LOGI(TAG, "Audio-tap capture closed (%s), dropped frames=%" PRIu32, reason, this->dropped_frames_);
 }
@@ -250,6 +306,7 @@ void GalileoAudioTap::finish_direct_tts_() {
   this->direct_tts_pending_ = false;
   this->direct_tts_announcing_ = false;
   this->last_completed_response_id_ = this->direct_tts_response_id_;
+  this->last_completed_at_ = millis();
   if (!this->direct_tts_response_id_.empty())
     this->send_lifecycle_("tts_finished");
   ESP_LOGI(TAG, "Direct TTS finished; player state=%d dialogue_pending=%s",
@@ -376,6 +433,10 @@ void GalileoAudioTap::poll_control_commands_() {
     ESP_LOGI(TAG, "Dialogue command received: %s", payload.c_str());
     return;
   }
+  if (packet[5] == PACKET_DIALOGUE && payload.rfind("listen:", 0) == 0) {
+    this->request_followup_(payload.substr(7));
+    return;
+  }
   if (packet[5] != PACKET_TTS)
     return;
   const size_t separator = payload.find('\n');
@@ -477,10 +538,11 @@ void GalileoAudioTap::on_microphone_data_(const std::vector<uint8_t> &data) {
   // The first 200 ms after a wake word is discarded as wake-word tail. It is
   // also a stable window to learn continuous background sound (for example a
   // radio) before the user starts their command.
-  if (this->adaptive_noise_floor_ && this->captured_samples_ < 3200) {
+  if (this->adaptive_noise_floor_ && !this->followup_capture_ && this->captured_samples_ < 3200) {
     this->noise_floor_ = this->noise_floor_ == 0
                             ? magnitude
                             : static_cast<uint16_t>((this->noise_floor_ * 3U + magnitude) / 4U);
+    this->ambient_noise_floor_ = this->noise_floor_;
   }
   const uint32_t adaptive_threshold = this->adaptive_noise_floor_
                                           ? (static_cast<uint32_t>(this->noise_floor_) * this->noise_floor_ratio_percent_) / 100U
@@ -495,16 +557,18 @@ void GalileoAudioTap::on_microphone_data_(const std::vector<uint8_t> &data) {
   } else if (this->speech_detected_) {
     this->silence_samples_ += samples;
   }
-  if (this->captured_samples_ >= this->maximum_capture_samples_ ||
+  if (this->captured_samples_ >= this->capture_limit_samples_ ||
       (this->speech_detected_ && this->silence_samples_ >= this->silence_samples_limit_)) {
     this->endpoint_detected_ = true;
   }
   portENTER_CRITICAL(&this->mutex_);
-  if (this->pending_size_ != 0) {
+  if (this->queue_count_ == QUEUE_SLOTS) {
     this->dropped_frames_++;
   } else {
-    std::memcpy(this->pending_pcm_.data(), data.data(), frame_size);
-    this->pending_size_ = frame_size;
+    const size_t slot = (this->queue_head_ + this->queue_count_) % QUEUE_SLOTS;
+    std::memcpy(this->queue_ + slot * MAX_PCM_BYTES, data.data(), frame_size);
+    this->queue_sizes_[slot] = static_cast<uint16_t>(frame_size);
+    this->queue_count_++;
   }
   portEXIT_CRITICAL(&this->mutex_);
 }
@@ -517,22 +581,22 @@ void GalileoAudioTap::loop() {
   if (!this->capture_active_)
     return;
 
+  // Send everything queued since the previous iteration, oldest first.
   std::array<uint8_t, MAX_PCM_BYTES> packet{};
-  size_t frame_size = 0;
-  portENTER_CRITICAL(&this->mutex_);
-  frame_size = this->pending_size_;
-  if (frame_size != 0) {
-    std::memcpy(packet.data(), this->pending_pcm_.data(), frame_size);
-    this->pending_size_ = 0;
+  for (size_t sent = 0; sent < QUEUE_SLOTS; sent++) {
+    size_t frame_size = 0;
+    portENTER_CRITICAL(&this->mutex_);
+    if (this->queue_count_ != 0) {
+      frame_size = this->queue_sizes_[this->queue_head_];
+      std::memcpy(packet.data(), this->queue_ + this->queue_head_ * MAX_PCM_BYTES, frame_size);
+      this->queue_head_ = (this->queue_head_ + 1) % QUEUE_SLOTS;
+      this->queue_count_--;
+    }
+    portEXIT_CRITICAL(&this->mutex_);
+    if (frame_size == 0)
+      break;
+    this->send_pcm_(packet.data(), frame_size);
   }
-  portEXIT_CRITICAL(&this->mutex_);
-  if (frame_size == 0) {
-    if (this->endpoint_detected_)
-      this->close_capture_(this->speech_detected_ ? "silence endpoint" : "maximum duration");
-    return;
-  }
-
-  this->send_pcm_(packet.data(), frame_size);
   if (this->endpoint_detected_)
     this->close_capture_(this->speech_detected_ ? "silence endpoint" : "maximum duration");
 }

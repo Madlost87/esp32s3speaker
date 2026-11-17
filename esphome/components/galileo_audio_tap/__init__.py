@@ -15,6 +15,9 @@ CONF_CONTROL_PORT = "control_port"
 CONF_SESSION_ID = "session_id"
 CONF_ENABLED = "enabled"
 CONF_DIALOGUE_ENABLED = "dialogue_enabled"
+CONF_FOLLOWUP_ENABLED = "followup_enabled"
+CONF_FOLLOWUP_MAXIMUM_CAPTURE_MS = "followup_maximum_capture_ms"
+CONF_ON_FOLLOWUP_LISTEN = "on_followup_listen"
 CONF_MEDIA_PLAYER = "media_player"
 CONF_SILENCE_THRESHOLD = "silence_threshold"
 CONF_ADAPTIVE_NOISE_FLOOR = "adaptive_noise_floor"
@@ -55,6 +58,8 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Required(CONF_SESSION_ID): validate_session_id,
         cv.Optional(CONF_ENABLED, default=False): cv.boolean,
         cv.Optional(CONF_DIALOGUE_ENABLED, default=False): cv.boolean,
+        cv.Optional(CONF_FOLLOWUP_ENABLED, default=False): cv.boolean,
+        cv.Optional(CONF_FOLLOWUP_MAXIMUM_CAPTURE_MS, default=7000): cv.int_range(min=1000, max=30000),
         cv.Optional(CONF_MEDIA_PLAYER): cv.use_id(media_player.MediaPlayer),
         cv.Optional(CONF_SILENCE_THRESHOLD, default=450): cv.int_range(min=1, max=32767),
         cv.Optional(CONF_ADAPTIVE_NOISE_FLOOR, default=False): cv.boolean,
@@ -68,6 +73,7 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_ON_TTS_STARTED): _automation_schema(),
         cv.Optional(CONF_ON_TTS_FINISHED): _automation_schema(),
         cv.Optional(CONF_ON_ERROR): _automation_schema(),
+        cv.Optional(CONF_ON_FOLLOWUP_LISTEN): _automation_schema(),
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
@@ -83,6 +89,8 @@ async def to_code(config):
     cg.add(var.set_session_id(config[CONF_SESSION_ID]))
     cg.add(var.set_enabled(config[CONF_ENABLED]))
     cg.add(var.set_dialogue_enabled(config[CONF_DIALOGUE_ENABLED]))
+    cg.add(var.set_followup_enabled(config[CONF_FOLLOWUP_ENABLED]))
+    cg.add(var.set_followup_maximum_capture_ms(config[CONF_FOLLOWUP_MAXIMUM_CAPTURE_MS]))
     cg.add(var.set_silence_threshold(config[CONF_SILENCE_THRESHOLD]))
     cg.add(var.set_adaptive_noise_floor(config[CONF_ADAPTIVE_NOISE_FLOOR]))
     cg.add(var.set_noise_floor_ratio(config[CONF_NOISE_FLOOR_RATIO]))
@@ -98,6 +106,7 @@ async def to_code(config):
         (CONF_ON_TTS_STARTED, "register_tts_started_trigger"),
         (CONF_ON_TTS_FINISHED, "register_tts_finished_trigger"),
         (CONF_ON_ERROR, "register_error_trigger"),
+        (CONF_ON_FOLLOWUP_LISTEN, "register_followup_listen_trigger"),
     ):
         for conf in config.get(key, []):
             trigger = cg.new_Pvariable(conf[CONF_TRIGGER_ID])
