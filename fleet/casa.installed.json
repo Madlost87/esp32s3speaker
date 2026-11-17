@@ -1,12 +1,17 @@
 {
   "garage": {
-    "release": "2026.11.6",
-    "firmware": "d2958b9",
-    "build_time": "2026-11-17 13:06:00 +0100",
-    "installed_at": "2026-11-17 13:17",
-    "sha256_16": "bfa8a8fc4f2b92ee",
-    "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.6/garage.ota.bin",
+    "release": "2026.11.7",
+    "firmware": "5545642",
+    "build_time": "2026-11-17 16:31:08 +0100",
+    "installed_at": "2026-11-17 16:35",
+    "sha256_16": "d2d70911fb397b5b",
+    "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.7/garage.ota.bin",
     "history": [
+      {
+        "release": "2026.11.6",
+        "sha256_16": "bfa8a8fc4f2b92ee",
+        "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.6/garage.ota.bin"
+      },
       {
         "release": "2026.11.5",
         "sha256_16": "8a8468ebe0747df1",
@@ -26,22 +31,22 @@
         "release": "2026.11.2",
         "sha256_16": "9a3cf856b0e5fb0c",
         "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.2/garage.ota.bin"
-      },
-      {
-        "release": "2026.11.1",
-        "sha256_16": "7f8af196bc31d09f",
-        "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.1/garage.ota.bin"
       }
     ]
   },
   "sala": {
-    "release": "2026.11.6",
-    "firmware": "d2958b9",
-    "build_time": "2026-11-17 13:07:10 +0100",
-    "installed_at": "2026-11-17 13:18",
-    "sha256_16": "826c35d2181f7af6",
-    "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.6/sala.ota.bin",
+    "release": "2026.11.7",
+    "firmware": "5545642",
+    "build_time": "2026-11-17 16:32:18 +0100",
+    "installed_at": "2026-11-17 16:35",
+    "sha256_16": "03402d5111615bab",
+    "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.7/sala.ota.bin",
     "history": [
+      {
+        "release": "2026.11.6",
+        "sha256_16": "826c35d2181f7af6",
+        "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.6/sala.ota.bin"
+      },
       {
         "release": "2026.11.5",
         "sha256_16": "a9cfe00350c34edc",
@@ -61,22 +66,22 @@
         "release": "2026.11.2",
         "sha256_16": "8e1100996f4a55c1",
         "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.2/sala.ota.bin"
-      },
-      {
-        "release": "pre-2026.11.1",
-        "sha256_16": "0161ec7b085d55b4",
-        "artifact": "/home/denny/esp-firmware-builds/casa/pre-2026.11.1/sala.ota.bin"
       }
     ]
   },
   "taverna": {
-    "release": "2026.11.6",
-    "firmware": "d2958b9",
-    "build_time": "2026-11-17 13:08:40 +0100",
-    "installed_at": "2026-11-17 13:18",
-    "sha256_16": "78b114500c304168",
-    "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.6/taverna.ota.bin",
+    "release": "2026.11.7",
+    "firmware": "5545642",
+    "build_time": "2026-11-17 16:33:43 +0100",
+    "installed_at": "2026-11-17 16:36",
+    "sha256_16": "54f14e15407dc107",
+    "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.7/taverna.ota.bin",
     "history": [
+      {
+        "release": "2026.11.6",
+        "sha256_16": "78b114500c304168",
+        "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.6/taverna.ota.bin"
+      },
       {
         "release": "2026.11.5",
         "sha256_16": "85e77151fe9903d3",
@@ -96,11 +101,6 @@
         "release": "2026.11.2",
         "sha256_16": "35f9d2dbee145720",
         "artifact": "/home/denny/esp-firmware-builds/casa/2026.11.2/taverna.ota.bin"
-      },
-      {
-        "release": "pre-2026.11.1",
-        "sha256_16": "d2d7c494c9ea437f",
-        "artifact": "/home/denny/esp-firmware-builds/casa/pre-2026.11.1/taverna.ota.bin"
       }
     ]
   }
