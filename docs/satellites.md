@@ -77,9 +77,9 @@ credenziali.
 <!-- Generata da tools/fleet.py dal file fleet/casa.installed.json: non modificare a mano. -->
 | Cassa | Release | Firmware | Build (`build_time`) | Installata | SHA-256 OTA (16) |
 | --- | --- | --- | --- | --- | --- |
-| Satellite Garage | 2026.11.5 | 57e4ca7 | 2026-11-15 19:03:47 +0100 | 2026-11-15 19:08 | `8a8468ebe0747df1` |
-| Satellite Sala | 2026.11.5 | 57e4ca7 | 2026-11-15 19:05:26 +0100 | 2026-11-15 19:10 | `a9cfe00350c34edc` |
-| Satellite Taverna | 2026.11.5 | 57e4ca7 | 2026-11-15 19:06:46 +0100 | 2026-11-15 19:10 | `85e77151fe9903d3` |
+| Satellite Garage | 2026.11.6 | d2958b9 | 2026-11-17 13:06:00 +0100 | 2026-11-17 13:17 | `bfa8a8fc4f2b92ee` |
+| Satellite Sala | 2026.11.6 | d2958b9 | 2026-11-17 13:07:10 +0100 | 2026-11-17 13:18 | `826c35d2181f7af6` |
+| Satellite Taverna | 2026.11.6 | d2958b9 | 2026-11-17 13:08:40 +0100 | 2026-11-17 13:18 | `78b114500c304168` |
 <!-- fleet:installed:end -->
 
 Release nel repository: `2026.11.1` (tag `fw-2026.11.1`), compilata il
