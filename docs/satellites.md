@@ -70,6 +70,10 @@ Dalla 2026.11.6:
   trascrizioni vuote (misure sul Garage, 17/11/2026). Il log della chiusura
   riporta i blocchi persi della singola cattura.
 
+Dalla 2026.11.7 l'unica parola di attivazione e' "Okay Nabu". "Alexa" e
+"Hey Jarvis" restano nel firmware ma spente all'avvio (vedi
+`wake-word-models.md` per riattivarle).
+
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.
 

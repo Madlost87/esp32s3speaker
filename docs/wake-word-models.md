@@ -14,12 +14,15 @@ Modelli caricati nel firmware:
 Comportamento al boot:
 
 ```text
-alexa      abilitata
+alexa      disabilitata
 okay_nabu  abilitata
 hey_jarvis disabilitata
 ```
 
-`Hey Jarvis` resta disponibile ma non attiva (vedi `on_boot` nella base). Home Assistant puo' mostrare le
+Dalla 2026.11.7 l'unica parola di attivazione e' `Okay Nabu`. `Alexa` e
+`Hey Jarvis` restano nel firmware, pronte: per riattivarne una basta
+`enable()` in `on_boot` di `packages/satellite/wake_word.yaml` e una nuova
+release. Home Assistant puo' mostrare le
 tendine `Wake word` come `No wake word`, ma il firmware forza direttamente lo
 stato dei tre modelli al boot.
 
@@ -28,9 +31,9 @@ stato dei tre modelli al boot.
 Nel profilo AFE il firmware forza lo stato dei modelli con:
 
 ```cpp
-id(alexa).disable();
 id(okay_nabu).enable();
-id(hey_jarvis).enable();
+id(alexa).disable();
+id(hey_jarvis).disable();
 ```
 
 La UI di Home Assistant espone controlli generati dal componente, ma oggi non e'

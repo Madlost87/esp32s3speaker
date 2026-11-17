@@ -86,7 +86,7 @@ Current wake-word model set:
 - `okay_nabu`
 - `hey_jarvis`
 
-At boot, `Okay Nabu + Hey Jarvis` are enabled. `Alexa` is loaded but disabled.
+At boot only `Okay Nabu` is enabled (since 2026.11.7). `Alexa` and `Hey Jarvis` are loaded but disabled.
 See `wake-word-models.md`.
 
 Important distinction:

@@ -6,11 +6,13 @@ esphome:
   on_boot:
     - priority: -90
       then:
+        # Solo "Okay Nabu" e' attiva. Alexa e Hey Jarvis restano nel firmware,
+        # pronte: per riattivarne una basta enable() qui e una nuova release.
         - lambda: |-
-            id(alexa).enable();
             id(okay_nabu).enable();
+            id(alexa).disable();
             id(hey_jarvis).disable();
-            ESP_LOGI("wake_word", "Forced active wake words: Alexa + Okay Nabu; Hey Jarvis disabled");
+            ESP_LOGI("wake_word", "Forced active wake words: Okay Nabu only; Alexa and Hey Jarvis disabled");
         - micro_wake_word.start:
         # Fine dell'avvio. init_in_progress lo azzerava solo on_client_connected
         # dell'Assist di Home Assistant, che nel profilo a voce diretta non c'e':

@@ -22,8 +22,8 @@ Profilo direct-audio del primo satellite:
 - ESPHome: `2026.9.1`;
 - audio: full AFE, TDM 48 kHz, dual mic, AEC/NS/SE, reference hardware;
 - wake word disponibili: `Alexa + Okay Nabu + Hey Jarvis`;
-- wake word attive al boot: `Alexa + Okay Nabu`;
-- `Hey Jarvis`: caricata ma disabilitata;
+- wake word attiva al boot: solo `Okay Nabu` (dalla 2026.11.7);
+- `Alexa` e `Hey Jarvis`: caricate ma disabilitate, pronte da riattivare;
 - VoIP: interno `101`, SIP `5060/udp`, RTP base `40000`;
 - feedback ascolto: switch per-device `Listen Feedback Sound`.
 

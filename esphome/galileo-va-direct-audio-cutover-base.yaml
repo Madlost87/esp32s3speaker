@@ -25,7 +25,7 @@ substitutions:
   # Fleet release: one number for the whole satellite fleet. Bump it only with
   # `tools/fleet.py release <version>` (see docs/fleet.md); every device built
   # from this base reports it to Home Assistant and to `fleet.py status`.
-  firmware_release: "2026.11.6"
+  firmware_release: "2026.11.7"
   runtime_controller_debug: "false"
   # Identity (name, friendly_name, static_ip, voip_extension, direct_audio_*
   # ports and session) comes from the device file; network values and groups
