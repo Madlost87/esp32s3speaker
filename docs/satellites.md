@@ -55,6 +55,21 @@ verificato sul Garage il 15/11/2026: dopo muto e unmute la wake word riparte
 in 2 s e "Okay Nabu" viene riconosciuto. Per lo stesso motivo il cambio del
 modo AEC da Home Assistant prima veniva ignorato e ora si applica.
 
+Dalla 2026.11.6:
+
+- dopo una domanda del Core ("A che ora ti sveglio?") la cassa fa il bip e
+  riapre il microfono per la risposta, senza wake word. Lo chiede il Core con
+  il comando `listen:<response_id>` subito dopo la fine della risposta; la
+  cassa lo accetta solo per la risposta appena finita, entro 5 secondi.
+  Cattura senza pre-roll (conterrebbe la voce della cassa), al massimo 7
+  secondi (`followup_maximum_capture_ms`), con il rumore di fondo misurato
+  all'ultimo "Okay Nabu". Guida: `homeassistant/docs/operations/risposte-senza-parola-di-attivazione.md`;
+- la cattura passa per una coda di 32 blocchi (circa mezzo secondo). Prima
+  c'era un solo blocco da 16 ms e ogni giro lento del loop ne perdeva uno:
+  il 10-13% dell'audio spariva, anche nei comandi con wake word, e Vosk dava
+  trascrizioni vuote (misure sul Garage, 17/11/2026). Il log della chiusura
+  riporta i blocchi persi della singola cattura.
+
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.
 
