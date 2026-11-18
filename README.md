@@ -89,21 +89,8 @@ Le credenziali Wi-Fi/API non sono versionate. Il template e' `esphome/secrets.ex
 
 ## Contenuto del repository
 
-| Cartella | Contenuto |
-| --- | --- |
-| `esphome/` | base comune, `packages/satellite/`, `sites/casa.yaml`, un file per cassa, componenti locali in `components/`, template dei segreti |
-| `esphome/archivio/` | profili di laboratorio, vecchio profilo stock, golden AFE; in `non-inclusi-2026-11-18/` i YAML che nessuna cassa include piu' |
-| `fleet/` | inventario della flotta (`casa.yaml`) e release/hash installati (`casa.installed.json`) |
-| `tools/` | `fleet` / `fleet.py`: status, check, build, rollout, rollback, release, new, docs |
-| `docs/` | documentazione: indice in [docs/README.md](docs/README.md); i documenti superati sono in `docs/history/` |
-| `diagnostics/` | diagnostica hardware ripulita: chip, USB, sicurezza, partizioni, stringhe del firmware factory |
-| `legacy-research/` | materiale di ricerca precedente, non usato dal firmware |
-| `AUDIT_HARDWARE.md` | audit hardware della board |
-
-Non sono inclusi: documentazione e script Raspberry/ReSpeaker, dataset e modelli
-openWakeWord, file dello stack Home Assistant/MQTT/Zigbee/Wyoming, cache di
-build, virtualenv, log, binari generati, backup flash e segreti reali (Wi-Fi,
-API, OTA, Home Assistant, SIP).
+Cosa contiene ogni cartella, dove finisce, fonti di verita', cosa resta fuori
+da Git e come si collega al repository `homeassistant`: [MANIFEST.md](MANIFEST.md).
 
 ## Wake Word Custom
 
@@ -129,13 +116,6 @@ Lavoro aperto e ordine dei lavori: [docs/specs-index.md](docs/specs-index.md).
 
 ## Dati Locali Non Versionati
 
-Sono esclusi da Git:
-
-- backup flash factory in `backups/`
-- build ESPHome e log pesanti in `build-test/`
-- cache `.esphome/`
-- virtualenv Python
-- `esphome/secrets.yaml`
-- binari generati
-
-Il backup factory resta deliberatamente locale: e' utile per recovery, ma non appartiene al repository pubblico.
+Segreti, binari compilati, backup della flash di fabbrica e cache di
+compilazione restano fuori da Git: l'elenco e dove stanno e' in
+[MANIFEST.md](MANIFEST.md#cosa-non-ce-e-dove-sta).
