@@ -25,7 +25,7 @@ substitutions:
   # Fleet release: one number for the whole satellite fleet. Bump it only with
   # `tools/fleet.py release <version>` (see docs/fleet.md); every device built
   # from this base reports it to Home Assistant and to `fleet.py status`.
-  firmware_release: "2026.11.8"
+  firmware_release: "2026.11.9"
   runtime_controller_debug: "false"
   # Identity (name, friendly_name, static_ip, voip_extension, direct_audio_*
   # ports and session) comes from the device file; network values and groups
@@ -71,10 +71,8 @@ packages:
   voice_assistant_runtime_controls: !include components/galileo_direct_runtime/voice_assistant/runtime_controls.yaml
   call_settings: github://n-IA-hane/esphome-intercom/packages/voip/call_settings.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   ha_api: github://n-IA-hane/esphome-intercom/packages/runtime/ha_connectivity.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
-  voice_assistant_local_commands: github://n-IA-hane/esphome-intercom/packages/voice_assistant/local_commands.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   ota_maintenance: !include components/galileo_direct_runtime/ota/full_audio_maintenance.yaml
   voip_transport: github://n-IA-hane/esphome-intercom/packages/voip/transport.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
-  voip_debug: github://n-IA-hane/esphome-intercom/packages/voip/debug.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   s3_base: github://n-IA-hane/esphome-intercom/packages/platform/esp32s3_base.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   native_diagnostics: github://n-IA-hane/esphome-intercom/packages/diagnostics/native.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   status_led: github://n-IA-hane/esphome-intercom/packages/led/status_ws2812_ring.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
@@ -83,7 +81,6 @@ packages:
   speaker_power: github://n-IA-hane/esphome-intercom/packages/esp_audio_stack/speaker_power_switch.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   speaker_mixer: github://n-IA-hane/esphome-intercom/packages/audio/shared_mono_mixer_48k.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   speaker_media_player: github://n-IA-hane/esphome-intercom/packages/media_player/runtime_controller_mono_media_player_48k.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
-  va_timers: github://n-IA-hane/esphome-intercom/packages/voice_assistant/timers_runtime.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   flac_codecs_psram: github://n-IA-hane/esphome-intercom/packages/audio/flac_codecs_psram.yaml@6581cfea712d0e13bf88c5aff3fa97b9e27123ab
   # Pacchetti locali per funzione: dopo quelli upstream, che estendono.
   board: !include packages/satellite/board.yaml

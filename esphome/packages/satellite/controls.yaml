@@ -19,26 +19,18 @@ binary_sensor:
           - ON for at most 500ms
           - OFF for at least 400ms
         then:
+          # Niente ramo "ferma timer": i timer di Assist sono stati tolti nella
+          # 2026.11.9 (timer e sveglie li gestisce Galileo Core).
           - if:
               condition:
-                runtime_controller.is_active:
-                  id: runtime
-                  activity: timer_ringing
+                not:
+                  - voip_stack.is_idle:
               then:
+                - voip_stack.call_toggle:
+              else:
                 - runtime_controller.event:
                     id: runtime
-                    event: timer_stopped
-              else:
-                - if:
-                    condition:
-                      not:
-                        - voip_stack.is_idle:
-                    then:
-                      - voip_stack.call_toggle:
-                    else:
-                      - runtime_controller.event:
-                          id: runtime
-                          event: wake_word
+                    event: wake_word
       # Double click: next contact
       - timing:
           - ON for 50ms to 500ms

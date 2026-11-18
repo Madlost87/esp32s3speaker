@@ -82,6 +82,25 @@ LED arancione. `Mic Mute` resta separato: silenziare l'ascolto non impedisce
 di sentire chiamate e sveglie. Verificato sul Garage il 18/11/2026: card e
 switch si seguono e con la card mutata il TTS non si sente.
 
+La 2026.11.9 e' solo pulizia, senza funzioni nuove. Toglie tre pacchetti
+upstream rimasti dall'era Assist che nessuno usava:
+
+- `voice_assistant/local_commands.yaml`: l'azione API `voice_quiet`, che non
+  era chiamata da Home Assistant, dal Core o dalle dashboard;
+- `voip/debug.yaml`: i sensori `VoIP Transport` e `VoIP SIP Snapshot`. Erano
+  6 entita' che nessuno leggeva e che riempivano la cronologia di HA. Per
+  una diagnosi SIP si rimette la riga `voip_debug` nella base;
+- `voice_assistant/timers_runtime.yaml`: suoneria e loop dei timer di Assist.
+  Con la voce diretta timer e sveglie li gestisce il Core e li fa suonare dal
+  media player, quindi l'attivita' `timer_ringing` non si accendeva piu'. E'
+  stata tolta anche la funzione `timers` del runtime controller (i binding
+  sono in archivio) e il ramo "ferma timer" del clic singolo sul tasto BOOT.
+
+Il clic singolo e' identico al vecchio ramo senza timer: con una chiamata in
+corso risponde o riaggancia, altrimenti avvia l'ascolto. Doppio clic e
+pressione lunga sono invariati. Verifica: la configurazione risolta delle tre
+casse cambia solo in questi punti e nel numero di release.
+
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.
 

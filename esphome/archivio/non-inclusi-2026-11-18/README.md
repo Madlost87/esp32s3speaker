@@ -25,5 +25,10 @@ Cosa contiene:
 - `packages/status_ws2812_ring_galileo.yaml`: tema LED del vecchio profilo
   `galileo-va-afe.yaml` (vedi `docs/history/led-ring-theme.md`).
 
+Aggiunto con la release 2026.11.9:
+`components/galileo_direct_runtime/runtime_controller/timers.yaml`. Sono i
+binding della funzione `timers` del runtime controller (suoneria dei timer di
+Assist), tolta insieme al pacchetto upstream `timers_runtime.yaml`.
+
 Per riusarne uno: riportarlo al suo percorso originale e correggere gli
 `!include` relativi, che da qui non si risolvono.
