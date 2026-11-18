@@ -129,6 +129,13 @@ switch:
       - speaker.mute_on: hw_speaker
       - delay: 50ms
       - switch.turn_off: speaker_enable
+      # Card media player di Home Assistant allineata a questo mute.
+      - if:
+          condition:
+            not:
+              media_player.is_muted: speaker_media_player
+          then:
+            - media_player.mute: speaker_media_player
     on_turn_off:
       - logger.log:
           level: INFO
@@ -141,8 +148,33 @@ switch:
             - switch.turn_on: speaker_enable
             - delay: 50ms
       - speaker.mute_off: hw_speaker
+      - if:
+          condition:
+            media_player.is_muted: speaker_media_player
+          then:
+            - media_player.unmute: speaker_media_player
 
   # VoIP switches
+
+# Il mute della card media player e' lo stesso mute: muta tutto lo speaker
+# (media, TTS, sveglie e VoIP), non solo le pipeline del media player.
+# Le condizioni evitano il ping-pong con lo switch qui sopra.
+media_player:
+  - id: !extend speaker_media_player
+    on_mute:
+      then:
+        - if:
+            condition:
+              switch.is_off: speaker_mute
+            then:
+              - switch.turn_on: speaker_mute
+    on_unmute:
+      then:
+        - if:
+            condition:
+              switch.is_on: speaker_mute
+            then:
+              - switch.turn_off: speaker_mute
 
 select:
   - platform: template

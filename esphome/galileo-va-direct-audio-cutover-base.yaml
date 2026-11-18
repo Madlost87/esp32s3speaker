@@ -15,7 +15,7 @@
 #   wake_word.yaml     micro_wake_word e wake word attive al boot
 #   voip.yaml          runtime controller e voip_stack
 #   direct_voice.yaml  cattura voce diretta verso Galileo Core
-#   controls.yaml      tasti fisici, mute speaker, modo AEC
+#   controls.yaml      tasti fisici, mute speaker (= mute della card), modo AEC
 
 # =============================================================================
 # PROJECT SETUP
@@ -25,7 +25,7 @@ substitutions:
   # Fleet release: one number for the whole satellite fleet. Bump it only with
   # `tools/fleet.py release <version>` (see docs/fleet.md); every device built
   # from this base reports it to Home Assistant and to `fleet.py status`.
-  firmware_release: "2026.11.7"
+  firmware_release: "2026.11.8"
   runtime_controller_debug: "false"
   # Identity (name, friendly_name, static_ip, voip_extension, direct_audio_*
   # ports and session) comes from the device file; network values and groups

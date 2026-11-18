@@ -74,6 +74,14 @@ Dalla 2026.11.7 l'unica parola di attivazione e' "Okay Nabu". "Alexa" e
 "Hey Jarvis" restano nel firmware ma spente all'avvio (vedi
 `wake-word-models.md` per riattivarle).
 
+Dalla 2026.11.8 il mute della card media player in Home Assistant e lo switch
+`Speaker Mute` sono lo stesso mute: attivarne uno attiva l'altro, in entrambe
+le direzioni (`packages/satellite/controls.yaml`). Prima il mute della card
+silenziava solo le pipeline media e TTS, non le chiamate, e non accendeva il
+LED arancione. `Mic Mute` resta separato: silenziare l'ascolto non impedisce
+di sentire chiamate e sveglie. Verificato sul Garage il 18/11/2026: card e
+switch si seguono e con la card mutata il TTS non si sente.
+
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.
 
