@@ -1,10 +1,14 @@
 # ESP32-S3 VoIP centralino
 
+> **Storico (ottobre 2026):** lo stato attuale e' in [satellites.md](../satellites.md)
+> e [fleet.md](../fleet.md). I comandi con `galileo-va-afe.yaml` si riferiscono al
+> profilo ora archiviato in `esphome/archivio/`.
+
 Data: 2026-10-08.
 
 > Aggiornamento 2026-11-14: in produzione ci sono tre satelliti (Taverna 101,
 > Sala 102, Garage 103) sulla base `esphome/galileo-va-direct-audio-cutover-base.yaml`.
-> Profili, IP e comandi OTA correnti: [satellites.md](satellites.md). I comandi
+> Profili, IP e comandi OTA correnti: [satellites.md](../satellites.md). I comandi
 > con `galileo-va-afe.yaml` in questa guida valgono per il golden di recovery.
 
 Questo documento nasce per il primo satellite, `Satellite Taverna`.
@@ -162,9 +166,9 @@ rubrica VoIP e nei test di chiamata. Anche se il SIP URI resta
 `sip:galileo-va@192.168.1.171;transport=udp`, la chiamata deve risultare verso
 `Satellite Taverna`.
 
-I vecchi profili sperimentali nella cartella `esphome/` possono ancora avere
-nomi `Galileo Voice...`: non sono il profilo operativo. Il profilo operativo e'
-solo `esphome/galileo-va-afe.yaml`.
+I vecchi profili sperimentali possono ancora avere nomi `Galileo Voice...`.
+Il profilo operativo di allora era `esphome/galileo-va-afe.yaml`, ora in
+`esphome/archivio/galileo-va-afe.yaml` (archiviato).
 
 ## Configurazione aggiunta
 
@@ -187,8 +191,8 @@ rubrica centrale di Home Assistant.
 
 ## Dove customizzare il lato ESP
 
-Le personalizzazioni operative stanno quasi tutte in
-`esphome/galileo-va-afe.yaml`, nel blocco `substitutions`.
+Le personalizzazioni operative stavano quasi tutte in
+`esphome/galileo-va-afe.yaml` (ora `esphome/archivio/`, archiviato), nel blocco `substitutions`.
 
 | Cosa vuoi cambiare | Dove | Serve OTA? | Note |
 | --- | --- | --- | --- |

@@ -144,7 +144,7 @@ Invalid audio packet type
 
 ### Presente Nel Nostro Profilo
 
-`esphome/galileo-va-afe.yaml` implementa:
+`esphome/archivio/galileo-va-afe.yaml` (archiviato, profilo AFE di ottobre 2026) implementa:
 
 ```text
 ES7210 input

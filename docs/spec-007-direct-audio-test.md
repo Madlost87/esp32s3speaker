@@ -22,7 +22,7 @@ il golden di recovery per rollback OTA immediato.
 
 ## Esito 2026-10-22
 
-Il profilo `esphome/galileo-va-direct-audio-test.yaml`, derivato dalla
+Il profilo `esphome/archivio/galileo-va-direct-audio-test.yaml` (archiviato), derivato dalla
 baseline golden e con riferimenti esterni fissati a SHA, e' stato compilato e
 installato con la stessa identita' ESPHome del golden (`galileo-va`).
 

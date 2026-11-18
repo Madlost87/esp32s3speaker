@@ -109,17 +109,13 @@ credenziali.
 | Satellite Taverna | 2026.11.8 | b925eb6 | 2026-11-18 12:03:33 +0100 | 2026-11-18 12:09 | `e5c79c59b3d25edb` |
 <!-- fleet:installed:end -->
 
-Release nel repository: `2026.11.1` (tag `fw-2026.11.1`), compilata il
-14/11/2026 e archiviata in `~/esp-firmware-builds/casa/2026.11.1/` (Garage
-`7f8af196bc31d09f`, Sala `517fd20dc2928890`, Taverna `9436cb496f28907e`).
-Rollout non ancora eseguito: rispetto alle build installate aggiunge solo
-l'entita' *Firmware Release* e la versione di progetto.
+Tutte e tre le casse sono sulla release `2026.11.8` dal 18/11/2026 (tag da
+`fw-2026.11.1` a `fw-2026.11.8`). Fa fede la tabella generata qui sopra.
 
-`pre-2026.11.1` indica le build installate prima del sistema flotta: non
-dichiarano la release. La build Garage del 31/10 conteneva gia' il codice finale
-di `026f0c7`, e la ricompilazione del 14/11 ha prodotto un binario identico
-(stesso hash). ESPHome aggiorna `build_time` solo se cambia la configurazione
-YAML, quindi la data mostrata in Home Assistant non basta: fa fede l'hash.
+ESPHome aggiorna `build_time` solo se cambia la configurazione YAML, quindi la
+data mostrata in Home Assistant non basta: fa fede l'hash. `pre-2026.11.1`
+indica le build installate prima del sistema flotta, che non dichiarano la
+release.
 
 Archivio dei binari:
 
@@ -130,11 +126,24 @@ Archivio dei binari:
 
 ## Build e OTA
 
-Si usa lo script della flotta (dettagli in [fleet.md](fleet.md)):
+Build, rollout, rollback e controlli si fanno con `tools/fleet`: vedi
+[fleet.md](fleet.md).
 
-```bash
-tools/fleet status      # stato live
-tools/fleet build       # compila e archivia la release corrente
-tools/fleet rollout     # canarino (Garage), test a voce, poi Sala e Taverna
-tools/fleet rollback <cassa>
-```
+## VoIP
+
+- Ogni cassa e' un peer SIP diretto del VoIP Stack dentro Home Assistant
+  (`192.168.1.186`): non registra un account SIP e non usa digest
+  authentication.
+- Interno in `voip_extension` del file della cassa; gruppi squillo e
+  conferenza in `esphome/sites/casa.yaml` (`voip_ring_groups`,
+  `voip_conference_groups`), usati da `packages/satellite/voip.yaml`.
+- La rubrica e' di Home Assistant, che la manda alla cassa come roster.
+  `static_contacts` in `packages/satellite/voip.yaml` (Casa, RG Casa, RG Tutti,
+  ESP Cucina, Softphone 200) sono solo nomi di riserva per i tasti finche' la
+  rubrica non arriva dopo un riavvio. Se cambiano i nomi nella rubrica HA,
+  aggiornare anche questa lista.
+- L'IP e' fisso: `wifi.manual_ip` in `packages/satellite/connectivity.yaml`,
+  con `static_ip` dal file della cassa. Conviene comunque riservarlo nel router.
+- Non esporre SIP/RTP della cassa su Internet; fuori casa usare la VPN.
+- Cronologia della prima messa in servizio (ottobre 2026):
+  [history/voip-centralino-esp32.md](history/voip-centralino-esp32.md).

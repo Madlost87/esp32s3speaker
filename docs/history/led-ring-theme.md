@@ -1,5 +1,7 @@
 # LED Ring Theme
 
+> Storico: funzione presente solo nel profilo archiviato galileo-va-afe.yaml; non nel firmware attuale.
+
 ## Obiettivo
 
 Personalizzare il comportamento visivo del ring WS2812 della cassa senza
@@ -19,13 +21,13 @@ il package LED diventa locale per rendere il rollback semplice.
 Firmware operativo:
 
 ```text
-esphome/galileo-va-afe.yaml
+esphome/archivio/galileo-va-afe.yaml
 ```
 
 Package LED locale:
 
 ```text
-esphome/packages/status_ws2812_ring_galileo.yaml
+esphome/archivio/non-inclusi-2026-11-18/packages/status_ws2812_ring_galileo.yaml
 ```
 
 Il package locale deriva dal package upstream `status_ws2812_ring.yaml`, ma
@@ -109,7 +111,7 @@ brightness.
 
 Rollback minimo:
 
-1. in `esphome/galileo-va-afe.yaml`, rimuovere gli override
+1. in `esphome/archivio/galileo-va-afe.yaml`, rimuovere gli override
    `runtime_controller.outputs.led.states`;
 2. riportare il package LED a:
 
@@ -130,8 +132,8 @@ poi compilare e caricare OTA.
 
 ## Test
 
-1. `esphome config esphome/galileo-va-afe.yaml`.
-2. `esphome compile esphome/galileo-va-afe.yaml`.
+1. `esphome config esphome/archivio/galileo-va-afe.yaml`.
+2. `esphome compile esphome/archivio/galileo-va-afe.yaml`.
 3. OTA solo se compila.
 4. Test wake word:
    - wake senza `listening`: nessun LED ascolto e nessun bip;

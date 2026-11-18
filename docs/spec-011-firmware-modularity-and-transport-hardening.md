@@ -2,8 +2,20 @@
 
 ## Stato
 
-Proposta. Nessuna modifica firmware, Core, OTA o protocollo è autorizzata da
-questa spec senza una fase successiva esplicita.
+Aggiornato al 18/11/2026.
+
+- **Gate di ingresso: soddisfatto.** Sorgente unica in Git (questo repository),
+  hash per cassa registrati in `fleet/casa.installed.json`, build ripetibile
+  con `tools/fleet build` (vedi [fleet.md](fleet.md)).
+- **Fase A, parte YAML: fatta.** La base è divisa per funzione in
+  `esphome/packages/satellite/` (commit `c124036`); la configurazione risolta
+  delle tre casse è rimasta identica.
+- **Resta da fare:** dividere il componente C++
+  `esphome/components/galileo_audio_tap/galileo_audio_tap.cpp` (circa 640 righe,
+  27 KB), che tiene ancora insieme socket, pacchetti, cattura e lifecycle TTS.
+
+Nessuna modifica di protocollo (`GLA2`) è autorizzata da questa spec senza una
+fase successiva esplicita.
 
 ## Gate di ingresso — obbligatorio prima del codice
 

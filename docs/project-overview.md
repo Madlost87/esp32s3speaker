@@ -3,7 +3,7 @@
 > Stato: documento storico di bring-up.
 >
 > La guida operativa corrente e' il README principale insieme a
-> `docs/voip-centralino-esp32.md`. Il firmware attivo oggi e'
+> [satellites.md](satellites.md) e [fleet.md](fleet.md). Il firmware attivo oggi e'
 > `esphome/galileo-va-direct-audio-cutover-base.yaml`; i profili storici sono
 > in `esphome/archivio/`.
 
@@ -41,7 +41,7 @@ The original local ESPHome file was intentionally thin and used:
 - pinned ref: `v1.1.1`
 
 That profile is no longer the operational baseline. The current firmware uses
-the full AFE profile in `esphome/galileo-va-afe.yaml`.
+the full AFE profile, then in `esphome/galileo-va-afe.yaml` (now archived in `esphome/archivio/`).
 
 Local substitutions define:
 
@@ -69,7 +69,7 @@ Validated:
 
 Later runtime validation moved the project to the full AFE baseline. Current
 validated items are tracked in `runtime-validation-20261008.md` and
-`voip-centralino-esp32.md`.
+`history/voip-centralino-esp32.md`.
 
 ## Home Assistant Assist Path
 
@@ -111,9 +111,9 @@ The ESP32-S3 path is prepared to participate in a Home Assistant Assist pipeline
 
 ## Next Actions
 
-1. Keep `esphome/galileo-va-afe.yaml` as the baseline.
-2. Test `Listen Feedback Sound` ON/OFF and with `Speaker Mute`.
-3. Measure wake reliability and false positives for `Okay Nabu + Hey Jarvis`.
+1. Keep `esphome/galileo-va-afe.yaml` (now `esphome/archivio/`, archived) as the baseline.
+2. Test `Listen Feedback Sound` ON/OFF and with `Speaker Mute` (switch only in the archived profile).
+3. Measure wake reliability and false positives for `Okay Nabu` (the only active wake word since 2026.11.7).
 4. Prepare the Galileo/Jarvis custom model when the ESPHome microWakeWord v2
    files are available.
 5. Keep audio stack, pinout, AFE mode, VoIP packages and buffer strategy stable

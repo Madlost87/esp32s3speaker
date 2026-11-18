@@ -1,27 +1,29 @@
 # Galileo ESP32-S3 Audio Satellite
 
-Firmware ESPHome, audit hardware e pacchetto di lavoro per trasformare una board ESP32-S3 audio in un satellite vocale locale per Galileo/Jarvis e Home Assistant Assist.
+Repository firmware (ESPHome) e gestione flotta delle casse Galileo.
 
-Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, rilevata dal firmware factory come compatibile con **Waveshare ESP32-S3-AUDIO-Board**. L'obiettivo e' usare la board come nodo vocale: wake word locale, microfono I2S, speaker integrato, LED di stato e integrazione con Home Assistant.
+Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, rilevata dal firmware factory come compatibile con **Waveshare ESP32-S3-AUDIO-Board**. La board fa da cassa vocale: wake word locale, microfoni, speaker, LED di stato, tasti e interno VoIP.
 
-## Stato Del Progetto
+## Stato attuale
 
-| Area | Stato | Note |
-| --- | --- | --- |
-| Audit hardware | Fatto | Identificazione chip, USB, flash, PSRAM, codec e partizioni |
-| Backup factory | Fatto | Dump completo flash 16 MB salvato localmente e ignorato da Git |
-| Build ESPHome | Pass | ESPHome 2026.9.1, profilo full AFE compilato correttamente |
-| Flash/OTA | Pass | Device online come `galileo-va.local` |
-| Wi-Fi/API ESPHome | Pass | IP osservato: `192.168.1.171`, API su porta `6053` |
-| Home Assistant | Pass | Connessione API e integrazione Assist verificate |
-| Wake word locale | Pass | `micro_wake_word` ESPHome v2 con `Okay Nabu + Hey Jarvis` attive al boot |
-| Audio runtime | Pass | Speaker, microfoni e round trip Assist testati sulla board |
-| Profilo audio operativo | Pass | Full AFE con dual mic, TDM, AEC, NS, SE e reference hardware |
-| VoIP locale | Pass | Satellite Taverna, interno `101`, SIP `5060/udp`, RTP base `40000` |
-| LED ring theme | OTA pass | Palette rosso/viola/blu con `Talk Glow Color` su wake/listening; validazione visiva da fare sul ring |
-| Listen feedback sound | Pass | Switch per-device `Listen Feedback Sound`, LED solo oppure LED + bip locale |
-| Golden firmware | Fatto | Recovery locale in `backups/golden-esp-voip-20261010/`, documentata in `docs/golden-firmware-recovery.md` |
-| Satellite Sala | OTA pass | `galileo-sala` su `192.168.1.172`, interno `102`, audio/control UDP `19009/19010`; validazione vocale e VoIP finale ancora richiesta |
+Tre casse in produzione, tutte sulla release `2026.11.8` dal 18/11/2026
+(tag da `fw-2026.11.1` a `fw-2026.11.8`):
+
+| Cassa | IP | Interno | Configurazione |
+| --- | --- | --- | --- |
+| Satellite Taverna | `192.168.1.171` | `101` | `esphome/galileo-va-direct-audio-cutover.yaml` |
+| Satellite Sala | `192.168.1.172` | `102` | `esphome/galileo-sala.yaml` |
+| Satellite Garage | `192.168.1.133` | `103` | `esphome/galileo-garage.yaml` |
+
+- Wake word: solo `Okay Nabu` (dalla 2026.11.7). `Alexa` e `Hey Jarvis` restano nel firmware ma spente.
+- Wake word riconosciuta: bip fisso di 120 ms, sempre attivo (non c'e' uno switch).
+- LED: pacchetto upstream `status_ws2812_ring.yaml`. Il tema custom KITT/Talk Glow esiste solo nei file archiviati.
+- Voce: audio diretto verso Galileo Core (`192.168.1.186`). L'Assist di Home Assistant non si collega in questo profilo.
+- VoIP: ogni cassa e' un peer SIP diretto, senza registrazione, del VoIP Stack dentro Home Assistant (`192.168.1.186`).
+- Mute: il mute della card media player e' lo switch `Speaker Mute` (dalla 2026.11.8). `Mic Mute` e' separato.
+
+Dettagli per cassa e build installate: [docs/satellites.md](docs/satellites.md).
+Release, rollout e rollback: [docs/fleet.md](docs/fleet.md).
 
 ## Hardware Rilevato
 
@@ -40,14 +42,14 @@ Il firmware originale rilevato era `xiaozhi` v1.8.9, con board SKU `waveshare-s3
 
 ## Architettura Audio
 
-La board usa ES7210 ed ES8311 su bus audio condiviso. Il firmware operativo usa
-il profilo full AFE con TDM a 48 kHz:
+La board usa ES7210 ed ES8311 su bus audio condiviso. Il firmware usa il
+profilo full AFE con TDM a 48 kHz:
 
 ```text
-ES7210 TDM slot 0/2 -> ESP32-S3 -> AFE/AEC/NS/SE -> micro_wake_word
+ES7210 TDM slot 0/2 -> ESP32-S3 -> AFE/AEC/NS/SE -> micro_wake_word, voce diretta, VoIP TX
 ES7210 TDM slot 1   -> playback reference -------> AEC
 
-Home Assistant TTS/media/VoIP -> ESP32-S3 -> ES8311 -> NS4150 -> speaker
+TTS da Galileo Core (HTTP), media e VoIP da Home Assistant -> ESP32-S3 -> ES8311 -> NS4150 -> speaker
 ```
 
 Pin principali:
@@ -64,20 +66,13 @@ Pin principali:
 | LED data | GPIO38 | Ring WS2812 |
 
 I microfoni sono configurati tramite ES7210 esterno, non PDM. L'AFE produce il
-flusso voce usato da ESPHome `micro_wake_word`, Assist e VoIP TX.
+flusso usato da `micro_wake_word`, dalla voce diretta verso Galileo Core e dal
+VoIP TX.
 
 ## Firmware
 
-Tre satelliti in produzione (Taverna, Sala, Garage) con la stessa base
-`esphome/galileo-va-direct-audio-cutover-base.yaml` e un profilo ciascuno:
-
-```text
-esphome/galileo-va-direct-audio-cutover.yaml   Satellite Taverna  .171  int. 101
-esphome/galileo-sala.yaml                      Satellite Sala     .172  int. 102
-esphome/galileo-garage.yaml                    Satellite Garage   .133  int. 103
-```
-
-Parametri, build installate e procedura OTA: [docs/satellites.md](docs/satellites.md).
+Le tre casse usano la stessa base `esphome/galileo-va-direct-audio-cutover-base.yaml`,
+divisa per funzione in `esphome/packages/satellite/`.
 
 La configurazione ha tre livelli: firmware (la base comune), sito
 (`esphome/sites/casa.yaml`: rete, Galileo Core, Wi-Fi, gruppi VoIP) e
@@ -88,13 +83,27 @@ ogni OTA, rollback). Una cassa nuova si aggiunge con `tools/fleet new`. Guida:
 
 La base usa componenti esterni AFE/audio/VoIP per sfruttare la board come il firmware factory: TDM 48 kHz, due microfoni fisici, reference hardware per AEC, speaker ES8311, LED ring e tasti fisici.
 
-I profili di laboratorio, il vecchio profilo stock e il golden di recovery sono in `esphome/archivio/` (vedi il suo README e `docs/golden-firmware-recovery.md`): non sono profili in produzione.
+I profili di laboratorio, il vecchio profilo stock e il golden di recovery sono in `esphome/archivio/` (vedi il suo README e [docs/golden-firmware-recovery.md](docs/golden-firmware-recovery.md)): non sono profili in produzione.
 
-Le credenziali Wi-Fi/API non sono versionate. Il template e':
+Le credenziali Wi-Fi/API non sono versionate. Il template e' `esphome/secrets.example.yaml`.
 
-```text
-esphome/secrets.example.yaml
-```
+## Contenuto del repository
+
+| Cartella | Contenuto |
+| --- | --- |
+| `esphome/` | base comune, `packages/satellite/`, `sites/casa.yaml`, un file per cassa, componenti locali in `components/`, template dei segreti |
+| `esphome/archivio/` | profili di laboratorio, vecchio profilo stock, golden AFE; in `non-inclusi-2026-11-18/` i YAML che nessuna cassa include piu' |
+| `fleet/` | inventario della flotta (`casa.yaml`) e release/hash installati (`casa.installed.json`) |
+| `tools/` | `fleet` / `fleet.py`: status, check, build, rollout, rollback, release, new, docs |
+| `docs/` | documentazione: indice in [docs/README.md](docs/README.md); i documenti superati sono in `docs/history/` |
+| `diagnostics/` | diagnostica hardware ripulita: chip, USB, sicurezza, partizioni, stringhe del firmware factory |
+| `legacy-research/` | materiale di ricerca precedente, non usato dal firmware |
+| `AUDIT_HARDWARE.md` | audit hardware della board |
+
+Non sono inclusi: documentazione e script Raspberry/ReSpeaker, dataset e modelli
+openWakeWord, file dello stack Home Assistant/MQTT/Zigbee/Wyoming, cache di
+build, virtualenv, log, binari generati, backup flash e segreti reali (Wi-Fi,
+API, OTA, Home Assistant, SIP).
 
 ## Wake Word Custom
 
@@ -105,98 +114,18 @@ nome_wake_word.json
 nome_wake_word.tflite
 ```
 
-Nel repository e' incluso un pacchetto da inviare a chi deve trainare una wake word custom:
+La gestione dei modelli caricati nel firmware e' in
+[docs/wake-word-models.md](docs/wake-word-models.md).
 
-```text
-handoff/micro_wake_word_request/
-handoff/micro_wake_word_request.tar.gz
-```
+Il pacchetto preparato il 12/10/2026 per chiedere una wake word custom (richiesta,
+target audio, esempio `hey_jarvis`, guida di training, flash di una board uguale)
+e' archiviato in `docs/history/handoff-micro-wake-word-2026-10-12/`. E' uno
+snapshot di quella data: va rivisto prima di riusarlo.
 
-Contiene una richiesta tecnica pronta, i dettagli del target audio e un esempio reale `hey_jarvis` in formato JSON + TFLite.
-La gestione dei modelli wake word caricati nel firmware operativo e' descritta in:
+## Documentazione
 
-```text
-docs/wake-word-models.md
-```
-Per un collega developer c'e' anche una guida rapida dedicata:
-
-```text
-handoff/micro_wake_word_request/DEVELOPER_QUICK_TRAINING_GUIDE.md
-```
-
-Per chi ha una board uguale e vuole provare il modello su hardware reale, il pacchetto include anche:
-
-```text
-handoff/micro_wake_word_request/FLASH_IDENTICAL_BOARD.md
-handoff/micro_wake_word_request/example_full_flash_yaml/galileo-va-afe-identical-board.yaml
-```
-
-## Struttura Repository
-
-```text
-.
-|-- README.md
-|-- MANIFEST.md
-|-- AUDIT_HARDWARE.md
-|-- esphome/
-|   |-- galileo-va-direct-audio-cutover-base.yaml   firmware comune (release, pin, componenti)
-|   |-- packages/satellite/                         la base divisa per funzione (audio, voip, ...)
-|   |-- galileo-va-direct-audio-cutover.yaml        Taverna
-|   |-- galileo-sala.yaml                           Sala
-|   |-- galileo-garage.yaml                         Garage
-|   |-- sites/casa.yaml                             rete e valori della casa
-|   |-- archivio/                                   profili di laboratorio e golden di recovery
-|   `-- secrets.example.yaml
-|-- fleet/
-|   |-- casa.yaml                                   inventario e ordine di rollout
-|   `-- casa.installed.json                         release e hash installati
-|-- tools/
-|   `-- fleet, fleet.py                             build, rollout, rollback, nuove casse
-|-- docs/
-|   |-- README.md
-|   |-- satellites.md
-|   |-- fleet.md
-|   |-- initial_board_audit.md
-|   |-- compatibility_audit.md
-|   |-- first_flash_checklist.md
-|   |-- golden-firmware-recovery.md
-|   |-- led-ring-theme.md
-|   |-- listen-feedback-sound.md
-|   |-- runtime-validation-20261008.md
-|   |-- voip-centralino-esp32.md
-|   |-- wake-word-models.md
-|   `-- references.md
-|-- diagnostics/
-|   |-- chip_info.txt
-|   |-- security_info.txt
-|   |-- partition_table.csv
-|   `-- usb_identification.txt
-`-- handoff/
-    `-- micro_wake_word_request/
-```
-
-## File Importanti
-
-- `docs/README.md` - indice della documentazione e distinzione tra documenti operativi e storici.
-- `AUDIT_HARDWARE.md` - audit aggiornato di hardware, firmware attuale, gap e piano interventi.
-- `docs/satellites.md` - profili, IP, interni, porte e build installate dei tre satelliti.
-- `docs/fleet.md` - gestione della flotta: release, build, rollout con canarino, rollback, nuove casse, nuovo sito.
-- `esphome/galileo-va-direct-audio-cutover-base.yaml` - base comune dei satelliti in produzione.
-- `esphome/archivio/` - golden di recovery, vecchio profilo stock e profili di laboratorio.
-- `docs/initial_board_audit.md` - audit non distruttivo iniziale, factory firmware, partizioni e backup.
-- `docs/compatibility_audit.md` - compatibilita' ESPHome/Home Assistant, pinout e stato test.
-- `docs/first_flash_checklist.md` - checklist storica del primo flash stock.
-- `docs/original_firmware_audio_adaptation.md` - confronto storico tra firmware factory Xiaozhi, stock ESPHome e passaggio AFE.
-- `docs/runtime-validation-20261008.md` - validazione della baseline full AFE.
-- `docs/voip-centralino-esp32.md` - guida operativa ESP32-S3 per VoIP, audio, tasti e deploy.
-- `docs/wake-word-models.md` - stato corrente dei modelli wake word.
-- `docs/golden-firmware-recovery.md` - procedura per ripristinare la cassa allo stato funzionante attuale.
-- `docs/led-ring-theme.md` - tema LED ring, effetti custom e rollback.
-- `docs/listen-feedback-sound.md` - spec del bip locale opzionale quando il satellite entra in ascolto.
-- `docs/references.md` - fonti hardware/software usate durante l'audit.
-- `handoff/micro_wake_word_request/REQUEST_TO_COLLEAGUE.md` - testo pronto per chiedere una wake word custom.
-- `handoff/micro_wake_word_request/DEVELOPER_QUICK_TRAINING_GUIDE.md` - guida rapida per trainare una micro wake word compatibile.
-- `handoff/micro_wake_word_request/FLASH_IDENTICAL_BOARD.md` - guida per compilare/flashare una board uguale.
+Indice dei documenti attuali e storici: [docs/README.md](docs/README.md).
+Lavoro aperto e ordine dei lavori: [docs/specs-index.md](docs/specs-index.md).
 
 ## Dati Locali Non Versionati
 
@@ -210,15 +139,3 @@ Sono esclusi da Git:
 - binari generati
 
 Il backup factory resta deliberatamente locale: e' utile per recovery, ma non appartiene al repository pubblico.
-
-## Lavoro Aperto
-
-La board e' gia' stata portata online, il profilo full AFE e' la baseline operativa e il flusso vocale principale e' stato testato. I prossimi lavori vanno fatti a piccoli passi, senza cambiare audio stack, pin, buffer o VoIP insieme ad altre feature:
-
-1. Testare sul campo lo switch `Listen Feedback Sound` con ON, OFF e `Speaker Mute`.
-2. Testare sul campo il tema LED ring con `KITT Scan` e `Talk Glow`.
-3. Tarare wake word e falsi positivi per la combinazione corrente `Okay Nabu + Hey Jarvis`.
-4. Preparare il modello custom Galileo/Jarvis quando sara' disponibile in formato ESPHome microWakeWord v2.
-5. Misurare barge-in, STT, volume speaker e clipping con test ripetibili.
-6. Valutare solo in profilo separato AGC AFE, gain ES7210 e una futura variante no-VoIP.
-7. Progettare la feature futura di feedback comando eseguito, distinta dal bip di ascolto.

@@ -1,5 +1,8 @@
 # Manifest di release — Satellite Taverna
 
+> Storico (24/10/2026, prima di `tools/fleet`): lo stato attuale e le build installate
+> sono in [satellites.md](../satellites.md) e [fleet.md](../fleet.md).
+
 Ultimo aggiornamento: 2026-10-24.
 
 Questo documento e' la sorgente di verita' operativa per la cassa ESP32-S3
@@ -67,7 +70,7 @@ successiva sostituire i dati qui sopra, senza dedurre l'hash dal commit.
 Il golden e' un rollback di emergenza. Caricarlo disabilita il flusso vocale
 diretto verso Galileo Core e riporta la cassa al percorso Assist di Home
 Assistant. La procedura completa resta in
-[`golden-firmware-recovery.md`](golden-firmware-recovery.md).
+[`golden-firmware-recovery.md`](../golden-firmware-recovery.md).
 
 ## Criteri di accettazione dopo OTA
 

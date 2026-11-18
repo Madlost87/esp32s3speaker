@@ -216,9 +216,10 @@ Restano a mano, nell'ordine:
    - portare il guadagno del microfono (`number.<cassa>_mic_gain`) a +18 dB:
      il firmware parte da 0 dB, troppo poco per parlare oltre mezzo metro
      ([satellites.md](satellites.md));
-   - aggiungere il contatto in `galileo-core/config/contacts.example.json`
-     del repository Home Assistant (sul Raspberry e' la rubrica attiva di
-     Core), cosi' "chiama <stanza>" funziona dalle altre casse;
+   - aggiungere il contatto in
+     [`galileo-core/config/sites/casa/contacts.json`](../../../homeassistant/galileo-core/config/sites/casa/contacts.json)
+     del repository Home Assistant (la rubrica di Core), cosi'
+     "chiama <stanza>" funziona dalle altre casse;
    - aggiungerlo alle dashboard Casa, Voce e Sistema;
    - aggiungere il suo pulsante "Test voce" in
      `ha_config/packages/satelliti/satelliti_test_voce.yaml`: premuto, la cassa
@@ -271,8 +272,6 @@ Dal lato server servono Home Assistant e Galileo Core per il nuovo sito:
 
 - Le build girano sul PC di sviluppo, dove c'e' il toolchain ESPHome. Sul
   Raspberry la compilazione sarebbe molto lenta.
-- Le build precedenti al sistema flotta non dichiarano la release: `status`
-  mostra `-` finche' la cassa non riceve la prima release `2026.11.1`.
 - Il controllo di salute non prova l'audio. Il test a voce sul canarino resta
   obbligatorio.
 - La compilazione puo' bloccarsi nel download dei componenti ESP-IDF, come e'

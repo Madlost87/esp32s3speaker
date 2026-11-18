@@ -3,20 +3,24 @@
 Questo indice è il punto di ripresa del lavoro. Distingue ciò che è concluso,
 ciò che può iniziare subito e ciò che è intenzionalmente rinviato.
 
+Le spec di questo repository sono spec firmware (prefisso "FW", per esempio
+FW-007, FW-010, FW-011). La loro numerazione è distinta da quella di
+`.openspec` nel repository Home Assistant (per esempio Spec 017 e 018 sotto).
+
 ## Stato del programma
 
 | Stato | Documento | Scopo | Prossima azione |
 |---|---|---|---|
 | Completata | [Spec 018 Core](../../../homeassistant/.openspec/specs/018-core-modularity-and-maintainability.md) | modularità Galileo Core | nessuna; conservare test e confini |
-| Pronta, da iniziare | [Spec 011 firmware](spec-011-firmware-modularity-and-transport-hardening.md) | modularizzare il firmware senza cambiare `GLA1` | chiudere il gate di ingresso |
+| In corso | [Spec 011 firmware](spec-011-firmware-modularity-and-transport-hardening.md) | modularizzare il firmware senza cambiare `GLA1` | gate soddisfatto e split YAML fatto (`c124036`); resta la divisione C++ di `galileo_audio_tap` |
 | Proposta futura | [Spec 017 discovery](../../../homeassistant/.openspec/specs/017-satellite-wifi-discovery-and-secure-provisioning.md) | discovery Wi-Fi, pairing e registry dinamico | attendere firmware/Core stabili |
 | Da scrivere dopo 011-A | Spec `GLA2` Core + firmware | HMAC, anti-replay, rotazione chiavi e migrazione dual-stack | non iniziare prima della fase A |
 
 ## Ordine obbligatorio
 
 ```text
-0. Gate di ingresso Spec 011
-1. Spec 011, Fase A: refactor firmware compatibile
+0. Gate di ingresso Spec 011 (soddisfatto)
+1. Spec 011, Fase A: refactor firmware compatibile (YAML fatto, C++ da fare)
 2. Pilot Garage + rollback + osservazione
 3. Estensione individuale a Sala e Taverna
 4. Spec GLA2 coordinata Core/firmware

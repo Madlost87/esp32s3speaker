@@ -6,7 +6,8 @@ Date: 2026-10-07
 >
 > Questo file descrive il passaggio iniziale dal firmware factory Xiaozhi allo
 > stock ESPHome e poi al profilo AFE. Dopo la validazione del 2026-10-08, il
-> profilo operativo e' `esphome/galileo-va-afe.yaml`.
+> profilo di riferimento era `esphome/galileo-va-afe.yaml`, oggi archiviato in
+> `esphome/archivio/`. Il firmware attuale e' descritto in [satellites.md](satellites.md).
 
 This note captures the result of comparing the original Xiaozhi factory firmware
 with the ESPHome firmware used for Galileo Voice.
@@ -41,7 +42,7 @@ The first maintained firmware was based on
 The safe "top within stock ESPHome" adaptation is in:
 
 ```text
-esphome/galileo-va.yaml
+esphome/archivio/galileo-va.yaml   (archiviato)
 ```
 
 It now:
@@ -72,7 +73,7 @@ Latest verification:
 The closer factory-style profile is:
 
 ```text
-esphome/galileo-va-afe.yaml
+esphome/archivio/galileo-va-afe.yaml   (archiviato)
 ```
 
 This profile started as the experimental attempt, then became the operational

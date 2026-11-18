@@ -3,7 +3,7 @@
 Experimental firmware:
 
 ```text
-esphome/galileo-va-afe-agc-test.yaml
+esphome/archivio/galileo-va-afe-agc-test.yaml   (archiviato)
 ```
 
 This profile keeps the full AFE baseline and only enables AGC:
@@ -67,5 +67,5 @@ silence detection for the wake-word-started Assist session.
 Working test profile:
 
 ```text
-esphome/galileo-va-afe-no-ha-vad-test.yaml
+esphome/archivio/galileo-va-afe-no-ha-vad-test.yaml   (archiviato)
 ```

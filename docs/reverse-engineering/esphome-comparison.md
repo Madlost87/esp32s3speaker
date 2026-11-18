@@ -2,16 +2,17 @@
 
 ## Baseline ESPHome
 
-Firmware operativo attuale:
+Profilo AFE di riferimento all'epoca dell'analisi (ottobre 2026, ora archiviato;
+il firmware attuale e' in [../satellites.md](../satellites.md)):
 
 ```text
-esphome/galileo-va-afe.yaml
+esphome/archivio/galileo-va-afe.yaml
 ```
 
 Profilo storico/fallback:
 
 ```text
-esphome/galileo-va.yaml
+esphome/archivio/galileo-va.yaml
 ```
 
 ## Tabella Funzionale
@@ -66,8 +67,8 @@ agc_enabled: false
 Esistono overlay sperimentali:
 
 ```text
-esphome/galileo-va-afe-agc-test.yaml
-esphome/galileo-va-afe-agc-lite.yaml
+esphome/archivio/galileo-va-afe-agc-test.yaml   (archiviato)
+esphome/archivio/galileo-va-afe-agc-lite.yaml   (archiviato)
 ```
 
 Valutazione:

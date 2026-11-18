@@ -1,5 +1,8 @@
 # Manifest di release — Satellite Sala
 
+> Storico (28/10/2026, prima di `tools/fleet`): lo stato attuale e le build installate
+> sono in [satellites.md](../satellites.md) e [fleet.md](../fleet.md).
+
 Ultimo aggiornamento: 2026-10-28.
 
 Questo documento registra il firmware installato su `galileo-sala` e la

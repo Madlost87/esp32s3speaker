@@ -1,5 +1,7 @@
 # Listen Feedback Sound
 
+> Storico: funzione presente solo nel profilo archiviato galileo-va-afe.yaml; non nel firmware attuale.
+
 ## Obiettivo
 
 Aggiungere un feedback locale, configurabile per singola cassa ESPHome, quando
@@ -45,7 +47,7 @@ domotico pronunciato.
 Prima implementazione:
 
 ```text
-esphome/galileo-va-afe.yaml
+esphome/archivio/galileo-va-afe.yaml
 ```
 
 Questo e' il profilo full AFE stabile usato dal satellite taverna.

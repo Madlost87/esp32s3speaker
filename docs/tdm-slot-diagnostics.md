@@ -5,7 +5,7 @@ Use this only when intentionally testing the ES7210 slot map.
 Diagnostic firmware:
 
 ```text
-esphome/galileo-va-afe-slot-diagnostics.yaml
+esphome/archivio/galileo-va-afe-slot-diagnostics.yaml   (archiviato)
 ```
 
 It includes the full AFE baseline and adds four diagnostic sensors:

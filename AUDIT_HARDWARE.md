@@ -2,6 +2,17 @@
 
 Data: 2026-10-08
 
+> **Nota (18/11/2026).** L'inventario hardware resta valido. Le parti sullo
+> stato del firmware (stato operativo qui sotto, "ESPHome attuale", piano P0,
+> "Miglioramenti implementati/ancora possibili", "Prossimo step consigliato")
+> sono una fotografia del 08/10/2026 del profilo `galileo-va-afe.yaml`, oggi
+> archiviato in `esphome/archivio/`. Il firmware attuale e' descritto in
+> [README.md](README.md) e [docs/satellites.md](docs/satellites.md).
+>
+> I percorsi `../hardware/esp32-s3-audio/...` sono fuori da questo repository,
+> nella cartella superiore (`speakersatellite/hardware/esp32-s3-audio/`): li' c'e'
+> anche il dump completo della flash factory.
+
 Stato operativo al momento dell'audit: firmware attivo `galileo-va-afe.yaml`, compilato con ESPHome 2026.9.1, caricato OTA e confermato avviato. La variante `galileo-va-afe-assist.yaml` e' stata rimossa dal ramo principale perche' avviava hardware audio e VAD ma non ripristinava correttamente il runtime voce.
 
 ## Fonti
@@ -109,7 +120,7 @@ Limite: non abbiamo sorgenti completi del firmware factory dentro il repository 
 
 ## ESPHome attuale
 
-Profilo attivo: `../hardware/esp32-s3-audio/esphome/galileo-va-afe.yaml`.
+Profilo attivo al 08/10/2026: `../hardware/esp32-s3-audio/esphome/galileo-va-afe.yaml` (oggi in questo repository in `esphome/archivio/galileo-va-afe.yaml`, archiviato).
 
 Uso hardware audio:
 
@@ -191,7 +202,7 @@ Conclusione: oggi il profilo full AFE e' la base stabile. Una variante senza VoI
 
 | Intervento | Beneficio | Rischio | Difficolta' | RAM/PSRAM | CPU | Test |
 | --- | --- | --- | --- | --- | --- | --- |
-| Tarare `Hey Jarvis` con `probability_cutoff` piu' permissiva | Riduce falsi negativi Jarvis | Falsi positivi | Bassa | invariata | invariata | 20 ripetizioni a 0.5/1/2 m, confronto Nabu |
+| ~~Tarare `Hey Jarvis` con `probability_cutoff` piu' permissiva~~ (obsoleto: `Hey Jarvis` e' spento dalla 2026.11.7) | Riduce falsi negativi Jarvis | Falsi positivi | Bassa | invariata | invariata | 20 ripetizioni a 0.5/1/2 m, confronto Nabu |
 | Aggiungere logging wake word piu' esplicito | Capire quale modello scatta | Basso | Bassa | minima | minima | Pronuncia Nabu/Jarvis e verifica log |
 | Verificare che entrambi i modelli siano abilitati dopo reboot | Evita regressione | Basso | Bassa | nulla | nulla | Log boot + HA entity |
 
@@ -273,4 +284,4 @@ ESPHome standard non espone da solo tutta la catena factory ESP-SR/AFE/TDM/refer
 
 ### Prossimo step consigliato
 
-P0: tarare solo `Hey Jarvis` nel profilo full AFE attivo, aggiungendo soglia per-modello e logging detection. Non cambiare audio stack, AFE, pin, buffer o VoIP nello stesso step.
+(Obsoleto: `Hey Jarvis` e' spento dalla 2026.11.7.) P0: tarare solo `Hey Jarvis` nel profilo full AFE attivo, aggiungendo soglia per-modello e logging detection. Non cambiare audio stack, AFE, pin, buffer o VoIP nello stesso step.

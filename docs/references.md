@@ -20,5 +20,5 @@
 | PROJECT | ESPHome Waveshare ESP32-S3 Audio VA | Michal Zaniewicz | v1.1.1 tested | https://github.com/MichalZaniewicz/esphome-waveshare-esp32-s3-audio-va | Candidate firmware, pinout, build test |
 | PROJECT | Waveshare ESP32-S3 Home Assistant Voice | hannes813 | current GitHub | https://github.com/hannes813/waveshare-esp32-s3-ai-home-assistant-voice | Alternative project comparison |
 | LOCAL | ESP32 factory boot log | Galileo repo | 2026-10-03 capture | `diagnostics/esp32_factory_boot.log` | Factory firmware identity and init evidence |
-| LOCAL | Selected factory firmware strings | Galileo repo | 2026-10-03 extraction | `hardware/esp32-s3-audio/diagnostics/factory_strings_selected.txt` | Xiaozhi/WakeNet/audio/OTA evidence |
+| LOCAL | Selected factory firmware strings | Galileo repo | 2026-10-03 extraction | `diagnostics/factory_strings_selected.txt` | Xiaozhi/WakeNet/audio/OTA evidence |
 | LOCAL | ESPHome build log | Local ignored build dir | 2026-10-03 build | `hardware/esp32-s3-audio/build-test/build.log` | Compile result and resource usage |

@@ -5,13 +5,13 @@
 > Per compilare e caricare il firmware operativo corrente usare `tools/fleet`
 > (`docs/fleet.md`); per il recovery `docs/golden-firmware-recovery.md`.
 
-Use only after confirming the factory backup exists and `galileo-va.yaml` compiles.
+Use only after confirming the factory backup exists and `esphome/archivio/galileo-va.yaml` (archiviato) compiles.
 
 ## Before Flash
 
 - Confirm backup SHA256: `d0b72eddaf4486a1bd25f4852f42d78dcd763c82e0bc0ffc3653991b317b75e8`
-- Create local `hardware/esp32-s3-audio/esphome/secrets.yaml`
-- Compile `hardware/esp32-s3-audio/esphome/galileo-va.yaml`
+- Create local `esphome/secrets.yaml`
+- Compile `esphome/archivio/galileo-va.yaml` (archiviato)
 - Keep the board connected by USB for first serial logs
 
 Last compile result:

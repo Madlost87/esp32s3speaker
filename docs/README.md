@@ -1,76 +1,57 @@
-# Documentation Index
+# Indice della documentazione
 
-Questo indice separa i documenti operativi attuali dai documenti storici di
-bring-up. Il profilo previsto per la voce e':
+Casse in produzione, parametri e build installate: [satellites.md](satellites.md).
+Release, rollout, rollback e nuove casse: [fleet.md](fleet.md).
 
-```text
-esphome/galileo-va-direct-audio-cutover.yaml
-```
+## Attuali
 
-La baseline AFE/golden resta disponibile esclusivamente per il rollback.
-Il manifest di release dichiara lo stato verificato e cio' che resta da
-registrare a ogni OTA.
+- [satellites.md](satellites.md): le tre casse (Taverna, Sala, Garage), parametri,
+  novita' per release, VoIP e build installate.
+- [fleet.md](fleet.md): `tools/fleet` (status, check, build, rollout, rollback,
+  release, new, docs), nuova cassa e nuovo sito.
+- [wake-word-models.md](wake-word-models.md): modelli `micro_wake_word` nel
+  firmware (attiva solo `Okay Nabu`).
+- [spec-010-local-wake-audio-feedback.md](spec-010-local-wake-audio-feedback.md):
+  bip locale alla wake word.
+- [spec-011-firmware-modularity-and-transport-hardening.md](spec-011-firmware-modularity-and-transport-hardening.md):
+  modularita' del firmware e hardening del trasporto.
+- [specs-index.md](specs-index.md): stato delle spec e ordine dei lavori.
+- [golden-firmware-recovery.md](golden-firmware-recovery.md): recovery verso il
+  golden del 10/10/2026 (il rollback normale e' `tools/fleet rollback`).
+- [reverse-engineering/README.md](reverse-engineering/README.md): analisi del
+  firmware originale Xiaozhi.
 
-Satelliti in produzione (Taverna, Sala, Garage): vedi [satellites.md](satellites.md).
-Aggiornare tutte le casse, aggiungerne una o replicare il sistema altrove: vedi [fleet.md](fleet.md).
+## Analisi e riferimenti
 
-Profilo direct-audio del primo satellite:
-
-- device ESPHome: `galileo-va`;
-- friendly name: `Satellite Taverna`;
-- IP statico: `192.168.1.171`;
-- ESPHome: `2026.9.1`;
-- audio: full AFE, TDM 48 kHz, dual mic, AEC/NS/SE, reference hardware;
-- wake word disponibili: `Alexa + Okay Nabu + Hey Jarvis`;
-- wake word attiva al boot: solo `Okay Nabu` (dalla 2026.11.7);
-- `Alexa` e `Hey Jarvis`: caricate ma disabilitate, pronte da riattivare;
-- VoIP: interno `101`, SIP `5060/udp`, RTP base `40000`;
-- feedback ascolto: switch per-device `Listen Feedback Sound`.
-
-Secondo satellite in esercizio:
-
-- device ESPHome: `galileo-sala` / `Satellite Sala`;
-- IP: `192.168.1.172`;
-- direct audio/control: `19009/19010`, con sessione distinta da Taverna;
-- VoIP: interno `102`, gruppi `RG Casa`, `RG Tutti`, `CG Casa`;
-- TTS: resampler a `250ms`, allineato al profilo Taverna dopo il fix del
-  watchdog durante le risposte Piper HTTP.
-
-## Operativi
-
-- `voip-centralino-esp32.md`: guida principale per deploy, VoIP, tasti,
-  audio, endpoint e regole operative del satellite.
-- `golden-firmware-recovery.md`: procedura di recovery verso lo stato
-  funzionante salvato localmente.
-- `satellite-release-manifest.md`: identita' del satellite, profilo operativo,
-  golden di rollback e dati da registrare a ogni OTA.
-- `satellite-sala-release-manifest.md`: identita', hash e checklist dell'OTA
-  del secondo satellite.
-- `wake-word-models.md`: stato corrente dei modelli `micro_wake_word` e
-  profili di test.
-- `led-ring-theme.md`: tema del ring LED, effetti custom e rollback.
-- `listen-feedback-sound.md`: specifica del bip locale opzionale quando il
-  satellite entra in ascolto.
-- `runtime-validation-20261008.md`: evidenza runtime della baseline full AFE.
-- `spec-007-direct-audio-test.md`: evidenza del test PCM reversibile verso
-  Galileo Core; non e' un profilo operativo o di cutover.
-
-## Analisi E Piani
-
-- `../AUDIT_HARDWARE.md`: audit hardware/firmware aggiornato e piano interventi.
-- `tdm-slot-diagnostics.md`: note diagnostiche sugli slot TDM.
-- `agc-test-plan.md`: piano di test per eventuale AGC AFE in profilo separato.
-- `references.md`: fonti hardware/software usate durante gli audit.
+- [../AUDIT_HARDWARE.md](../AUDIT_HARDWARE.md): audit hardware della board.
+- [references.md](references.md): fonti hardware/software.
+- [tdm-slot-diagnostics.md](tdm-slot-diagnostics.md): diagnostica degli slot TDM
+  (profilo archiviato).
+- [agc-test-plan.md](agc-test-plan.md): piano di test AGC (profilo archiviato).
 
 ## Storici
 
-Questi documenti restano utili per capire il percorso, ma non sono la guida
-operativa corrente:
+Utili per capire il percorso, non descrivono il firmware attuale.
 
-- `initial_board_audit.md`: audit iniziale e backup factory.
-- `compatibility_audit.md`: valutazione iniziale di compatibilita'.
-- `first_flash_checklist.md`: checklist del primo flash con profilo stock.
-- `original_firmware_audio_adaptation.md`: confronto storico tra firmware
-  Xiaozhi, profilo stock ESPHome e successivo profilo AFE.
-- `project-overview.md`: panoramica iniziale del progetto, superata dal README
-  principale e da `voip-centralino-esp32.md`.
+- [history/voip-centralino-esp32.md](history/voip-centralino-esp32.md): prima
+  messa in servizio VoIP di Taverna (ottobre 2026).
+- [history/satellite-release-manifest.md](history/satellite-release-manifest.md)
+  e [history/satellite-sala-release-manifest.md](history/satellite-sala-release-manifest.md):
+  manifest di release prima di `tools/fleet`.
+- [history/led-ring-theme.md](history/led-ring-theme.md): tema LED custom
+  KITT/Talk Glow, solo nei file archiviati.
+- [history/listen-feedback-sound.md](history/listen-feedback-sound.md): switch
+  `Listen Feedback Sound`, solo nel profilo archiviato.
+- `history/handoff-micro-wake-word-2026-10-12/`: pacchetto per chiedere una wake
+  word custom, fermo al 12/10/2026.
+- [runtime-validation-20261008.md](runtime-validation-20261008.md): validazione
+  della baseline full AFE.
+- [spec-007-direct-audio-test.md](spec-007-direct-audio-test.md): test PCM
+  diretto verso Galileo Core (ottobre 2026).
+- [initial_board_audit.md](initial_board_audit.md): audit iniziale e backup factory.
+- [compatibility_audit.md](compatibility_audit.md): valutazione iniziale di
+  compatibilita'.
+- [first_flash_checklist.md](first_flash_checklist.md): primo flash con profilo stock.
+- [original_firmware_audio_adaptation.md](original_firmware_audio_adaptation.md):
+  passaggio da Xiaozhi a stock ESPHome e poi ad AFE.
+- [project-overview.md](project-overview.md): panoramica iniziale del progetto.

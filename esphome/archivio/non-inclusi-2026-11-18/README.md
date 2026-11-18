@@ -23,7 +23,7 @@ Cosa contiene:
   `voip/speaker_mute_runtime.yaml`): quello usato e' in
   `packages/satellite/controls.yaml`;
 - `packages/status_ws2812_ring_galileo.yaml`: tema LED del vecchio profilo
-  `galileo-va-afe.yaml` (vedi `docs/led-ring-theme.md`).
+  `galileo-va-afe.yaml` (vedi `docs/history/led-ring-theme.md`).
 
 Per riusarne uno: riportarlo al suo percorso originale e correggere gli
 `!include` relativi, che da qui non si risolvono.

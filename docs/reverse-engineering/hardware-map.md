@@ -12,8 +12,8 @@
 
 Evidenze:
 
-- `hardware/esp32-s3-audio/docs/initial_board_audit.md`.
-- `hardware/esp32-s3-audio/docs/compatibility_audit.md`.
+- `docs/initial_board_audit.md`.
+- `docs/compatibility_audit.md`.
 - Stringa firmware: `waveshare-s3-audio-board`.
 
 ### Probabile
@@ -25,7 +25,7 @@ Evidenze:
 
 ### Confermato Nel Nostro Firmware ESPHome
 
-Il profilo attuale `esphome/galileo-va-afe.yaml` usa:
+Il profilo AFE `esphome/archivio/galileo-va-afe.yaml` (archiviato; stessi pin nel firmware attuale) usa:
 
 ```text
 I2C SDA   GPIO11

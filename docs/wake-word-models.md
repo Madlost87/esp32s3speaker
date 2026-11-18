@@ -28,7 +28,7 @@ stato dei tre modelli al boot.
 
 ## Perche' La UI Puo' Essere Asincrona
 
-Nel profilo AFE il firmware forza lo stato dei modelli con:
+Il firmware forza lo stato dei modelli con:
 
 ```cpp
 id(okay_nabu).enable();

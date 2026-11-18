@@ -32,8 +32,7 @@ Evidenze:
 
 - Header app a `0x100000` con magic `0xe9`.
 - `esp_app_desc` a `0x100020`, magic `0xabcd5432`.
-- Documenti: `docs/initial_board_audit.md` e
-  `hardware/esp32-s3-audio/docs/initial_board_audit.md`.
+- Documento: `docs/initial_board_audit.md`.
 
 ## Layout Flash
 

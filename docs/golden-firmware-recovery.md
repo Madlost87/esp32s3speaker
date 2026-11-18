@@ -1,7 +1,15 @@
 # Golden Firmware Recovery
 
+> Il rollback normale tra release si fa con `tools/fleet rollback <cassa>`
+> ([fleet.md](fleet.md)). Questa guida serve solo come ultima risorsa.
+>
+> Il golden e' lo stato Assist/AFE di Taverna del 10/10/2026, non il firmware
+> di produzione: aveva `Alexa + Okay Nabu` attive e usava l'Assist di Home
+> Assistant, mentre oggi le casse hanno solo `Okay Nabu` e la voce diretta
+> verso Galileo Core.
+
 Questa guida descrive il punto di ritorno locale per rimettere una cassa
-ESP32-S3 nello stato funzionante attuale.
+ESP32-S3 nello stato salvato il 10/10/2026.
 
 ## Golden Attuale
 
@@ -57,7 +65,11 @@ sha256sum -c SHA256SUMS
 
 ## Recovery Via OTA
 
-Usare questa strada se la cassa e' ancora online:
+Usare questa strada se la cassa e' ancora online. I profili sono in
+`esphome/archivio/`: si compila `galileo-va-afe-pinned-20261010.yaml`
+(bloccato agli hash del golden; `galileo-va-afe.yaml` non si compila piu' con
+ESPHome 2026.9.1). Prima serve il link a `secrets.yaml` descritto in
+`esphome/archivio/README.md`.
 
 ```bash
 cd /home/denny/progerttidenny/galileovianicolini/speakersatellite/esp32-s3-audio-docs
@@ -65,7 +77,20 @@ docker run --rm --network host --user 1000:1000 \
   -e HOME=/config -e UV_CACHE_DIR=/config/.cache/uv \
   -v "$PWD/esphome:/config" \
   ghcr.io/esphome/esphome:2026.9.1 \
-  upload /config/galileo-va-afe.yaml --device 192.168.1.171
+  run /config/archivio/galileo-va-afe-pinned-20261010.yaml --device 192.168.1.171
+```
+
+In alternativa, senza ricompilare, si carica il binario del golden con
+`--file`:
+
+```bash
+docker run --rm --network host --user 1000:1000 \
+  -e HOME=/config -e UV_CACHE_DIR=/config/.cache/uv \
+  -v "$PWD/esphome:/config" \
+  -v "$PWD/backups/golden-esp-voip-20261010:/golden:ro" \
+  ghcr.io/esphome/esphome:2026.9.1 \
+  upload /config/archivio/galileo-va-afe-pinned-20261010.yaml \
+  --device 192.168.1.171 --file /golden/galileo-va-golden.ota.bin
 ```
 
 ## Recovery Via USB
@@ -88,8 +113,11 @@ docker run --rm --network host --user 1000:1000 \
   -e HOME=/config -e UV_CACHE_DIR=/config/.cache/uv \
   -v "$PWD/esphome:/config" \
   ghcr.io/esphome/esphome:2026.9.1 \
-  upload /config/galileo-va-afe.yaml --device /dev/ttyACM0
+  run /config/archivio/galileo-va-afe-pinned-20261010.yaml --device /dev/ttyACM0
 ```
+
+Oppure, come sopra, `upload ... --file` con il binario del golden
+(`galileo-va-golden.factory.bin` per la flash completa via USB).
 
 Se la porta non e' `/dev/ttyACM0`, sostituirla con quella vista dal comando
 `ls`.
