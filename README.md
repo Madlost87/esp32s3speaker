@@ -6,8 +6,8 @@ Il progetto parte da una board commerciale **diymore ESP32-S3 AI Audio Board**, 
 
 ## Stato attuale
 
-Tre casse in produzione, tutte sulla release `2026.11.8` dal 18/11/2026
-(tag da `fw-2026.11.1` a `fw-2026.11.8`):
+Tre casse in produzione, tutte sulla release `2026.11.9` dal 19/11/2026
+(tag da `fw-2026.11.1` a `fw-2026.11.9`):
 
 | Cassa | IP | Interno | Configurazione |
 | --- | --- | --- | --- |
@@ -21,6 +21,7 @@ Tre casse in produzione, tutte sulla release `2026.11.8` dal 18/11/2026
 - Voce: audio diretto verso Galileo Core (`192.168.1.186`). L'Assist di Home Assistant non si collega in questo profilo.
 - VoIP: ogni cassa e' un peer SIP diretto, senza registrazione, del VoIP Stack dentro Home Assistant (`192.168.1.186`).
 - Mute: il mute della card media player e' lo switch `Speaker Mute` (dalla 2026.11.8). `Mic Mute` e' separato.
+- 2026.11.9: solo pulizia. Tolti i pacchetti dell'era Assist che nessuno usava (azione `voice_quiet`, sensori di diagnostica SIP, suoneria dei timer di Assist). Dettagli in [docs/satellites.md](docs/satellites.md).
 
 Dettagli per cassa e build installate: [docs/satellites.md](docs/satellites.md).
 Release, rollout e rollback: [docs/fleet.md](docs/fleet.md).

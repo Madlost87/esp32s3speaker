@@ -100,6 +100,10 @@ Il clic singolo e' identico al vecchio ramo senza timer: con una chiamata in
 corso risponde o riaggancia, altrimenti avvia l'ascolto. Doppio clic e
 pressione lunga sono invariati. Verifica: la configurazione risolta delle tre
 casse cambia solo in questi punti e nel numero di release.
+Installata il 19/11/2026: `fleet check --active --core` OK su tutte e tre e
+Home Assistant ha rimosso da solo i 6 sensori. La prova a mano del tasto
+BOOT (clic per l'ascolto, clic per rispondere e per riagganciare) e' ancora
+da fare.
 
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.
@@ -123,13 +127,13 @@ credenziali.
 <!-- Generata da tools/fleet.py dal file fleet/casa.installed.json: non modificare a mano. -->
 | Cassa | Release | Firmware | Build (`build_time`) | Installata | SHA-256 OTA (16) |
 | --- | --- | --- | --- | --- | --- |
-| Satellite Garage | 2026.11.8 | b925eb6 | 2026-11-18 12:00:43 +0100 | 2026-11-18 12:04 | `0ac62afc01054914` |
-| Satellite Sala | 2026.11.8 | b925eb6 | 2026-11-18 12:02:01 +0100 | 2026-11-18 12:08 | `f69c1f80674be94f` |
-| Satellite Taverna | 2026.11.8 | b925eb6 | 2026-11-18 12:03:33 +0100 | 2026-11-18 12:09 | `e5c79c59b3d25edb` |
+| Satellite Garage | 2026.11.9 | 0bf24e1 | 2026-11-18 23:50:31 +0100 | 2026-11-18 23:56 | `ad9d4540488a1e5a` |
+| Satellite Sala | 2026.11.9 | 0bf24e1 | 2026-11-18 23:52:22 +0100 | 2026-11-19 00:00 | `c5b19d5c712db1b1` |
+| Satellite Taverna | 2026.11.9 | 0bf24e1 | 2026-11-18 23:54:14 +0100 | 2026-11-19 00:01 | `e4c4a28f8e489687` |
 <!-- fleet:installed:end -->
 
-Tutte e tre le casse sono sulla release `2026.11.8` dal 18/11/2026 (tag da
-`fw-2026.11.1` a `fw-2026.11.8`). Fa fede la tabella generata qui sopra.
+Tutte e tre le casse sono sulla release `2026.11.9` dal 19/11/2026 (tag da
+`fw-2026.11.1` a `fw-2026.11.9`). Fa fede la tabella generata qui sopra.
 
 ESPHome aggiorna `build_time` solo se cambia la configurazione YAML, quindi la
 data mostrata in Home Assistant non basta: fa fede l'hash. `pre-2026.11.1`
