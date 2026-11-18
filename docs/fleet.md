@@ -66,6 +66,8 @@ Comandi:
 ```bash
 tools/fleet status                 # stato live di tutte le casse
 tools/fleet status sala            # una sola
+tools/fleet check --core http://192.168.1.186:8099   # controlli in sola lettura
+tools/fleet check --active         # anche la prova dei mute (ripristina lo stato)
 tools/fleet release 2026.11.2      # nuova release nella base
 tools/fleet build                  # compila e archivia tutte le casse
 tools/fleet rollout                # canarino, pausa, poi le altre
@@ -116,6 +118,13 @@ tools/fleet new cucina --ip 192.168.1.173 --area "Cucina 1" --phonebook
    Le casse gia' sulla release vengono saltate, salvo `--force`. Al primo
    controllo fallito ripristina la build precedente su quella cassa e si ferma
    senza toccare le successive.
+
+   Dopo il rollout, `tools/fleet check --active --core http://192.168.1.186:8099`
+   controlla ogni cassa: salute, mute della card allineato a `Speaker Mute`,
+   mute e Non disturbare spenti, prova di sincronizzazione dei mute in entrambe
+   le direzioni (lo stato iniziale viene sempre ripristinato) e `/health` del
+   Core. Non sostituisce la prova a voce ("Okay Nabu, che ore sono") ne' una
+   chiamata.
 
 6. **Registrazione.** Lo script aggiorna `fleet/casa.installed.json` e la
    tabella in `satellites.md`. Committarli:

@@ -3,6 +3,7 @@
 
 Comandi:
   status                 stato live di ogni cassa (release, build, VoIP, wake word)
+  check    [id ...]      controlli di funzionamento (sola lettura; --active prova i mute)
   build    [id ...]      compila e archivia i binari della release corrente
   rollout  [id ...]      OTA in ordine: canarino, pausa per il test, poi le altre
   rollback id [--to R]   reinstalla la build precedente (o la release R)
@@ -216,6 +217,117 @@ def cmd_status(fleet: Fleet, args) -> int:
         print(f"{dev['id']:9} {dev['ip']:15} {p['release']:15} {p['build_time'][:19]:20} {str(p['voip_state']):6} "
               f"{'on' if p['wake_word'] else 'off':5} {up_s:10} {'; '.join(notes)}")
     return 1 if bad else 0
+
+
+# ----------------------------------------------------------------- check ----
+CHECK_SETTLE_S = 2.0
+
+
+async def _check_device(dev: dict, active: bool) -> list[tuple[str, bool, str]]:
+    """Controlli su una cassa via ESPHome API. Ritorna (controllo, ok, dettaglio).
+
+    In sola lettura non cambia nulla. Con active=True prova la sincronizzazione
+    mute della card <-> Speaker Mute (firmware 2026.11.8) e ripristina sempre lo
+    stato iniziale.
+    """
+    import aioesphomeapi
+    from aioesphomeapi import MediaPlayerCommand, MediaPlayerInfo, SwitchInfo
+
+    results: list[tuple[str, bool, str]] = []
+    p = await probe(dev["ip"])
+    problems = health(dev, p, None)
+    results.append(("salute (nome, VoIP idle, endpoint, wake word)", not problems, "; ".join(problems) or "ok"))
+
+    client = aioesphomeapi.APIClient(dev["ip"], API_PORT, None)
+    await asyncio.wait_for(client.connect(login=True), 8)
+    try:
+        entities, _ = await client.list_entities_services()
+        switches = {e.object_id: e.key for e in entities if isinstance(e, SwitchInfo)}
+        players = [e for e in entities if isinstance(e, MediaPlayerInfo)]
+        states: dict[int, object] = {}
+        client.subscribe_states(lambda st: states.__setitem__(st.key, st))
+        await asyncio.sleep(2.5)
+
+        def sw(object_id: str) -> bool | None:
+            st = states.get(switches.get(object_id, -1))
+            return getattr(st, "state", None)
+
+        def muted() -> bool | None:
+            st = states.get(players[0].key) if players else None
+            return getattr(st, "muted", None)
+
+        missing = [o for o in ("speaker_mute", "mic_mute") if o not in switches] + ([] if players else ["media_player"])
+        if missing:
+            results.append(("entita' attese", False, "mancano: " + ", ".join(missing)))
+            return results
+
+        spk, mic, card = sw("speaker_mute"), sw("mic_mute"), muted()
+        results.append(("mute card = Speaker Mute", card == spk, f"card={card} switch={spk}"))
+        results.append(("Speaker Mute spento", spk is False, f"switch={spk}"))
+        results.append(("Mic Mute spento", mic is False, f"switch={mic}"))
+        if "do_not_disturb" in switches:
+            dnd = sw("do_not_disturb")
+            results.append(("Non disturbare spento", dnd is False, f"switch={dnd}"))
+
+        if active:
+            start_spk, start_card = spk, card
+            mp_key = players[0].key
+
+            async def settle() -> tuple[bool | None, bool | None]:
+                await asyncio.sleep(CHECK_SETTLE_S)
+                return muted(), sw("speaker_mute")
+
+            try:
+                steps = (
+                    ("card mute -> switch", lambda: client.media_player_command(mp_key, command=MediaPlayerCommand.MUTE), (True, True)),
+                    ("card unmute -> switch", lambda: client.media_player_command(mp_key, command=MediaPlayerCommand.UNMUTE), (False, False)),
+                    ("switch on -> card", lambda: client.switch_command(switches["speaker_mute"], True), (True, True)),
+                    ("switch off -> card", lambda: client.switch_command(switches["speaker_mute"], False), (False, False)),
+                )
+                for name, action, expected in steps:
+                    action()
+                    got = await settle()
+                    results.append((f"prova mute: {name}", got == expected, f"card={got[0]} switch={got[1]}"))
+            finally:
+                client.switch_command(switches["speaker_mute"], bool(start_spk))
+                client.media_player_command(mp_key, command=MediaPlayerCommand.MUTE if start_card else MediaPlayerCommand.UNMUTE)
+                got = await settle()
+                results.append(("ripristino stato iniziale", got == (start_card, start_spk), f"card={got[0]} switch={got[1]}"))
+    finally:
+        await client.disconnect()
+    return results
+
+
+def _check_core(url: str) -> tuple[str, bool, str]:
+    import urllib.request
+
+    try:
+        with urllib.request.urlopen(url.rstrip("/") + "/health", timeout=8) as r:
+            body = json.loads(r.read().decode() or "{}")
+        ok = r.status == 200 and body.get("status", "ok") == "ok"
+        return ("Galileo Core /health", ok, str(body.get("status", r.status)))
+    except Exception as e:  # noqa: BLE001
+        return ("Galileo Core /health", False, type(e).__name__)
+
+
+def cmd_check(fleet: Fleet, args) -> int:
+    print(f"Sito {fleet.site} - controlli {'attivi (mute)' if args.active else 'in sola lettura'}\n")
+    failed = 0
+    if args.core:
+        name, ok, detail = _check_core(args.core)
+        failed += not ok
+        print(f"core      {'OK ' if ok else 'KO '} {name}: {detail}\n")
+    for dev in fleet.devices(args.devices):
+        try:
+            results = asyncio.run(_check_device(dev, args.active))
+        except Exception as e:  # noqa: BLE001
+            results = [("raggiungibile via ESPHome API", False, type(e).__name__)]
+        for name, ok, detail in results:
+            failed += not ok
+            print(f"{dev['id']:9} {'OK ' if ok else 'KO '} {name}: {detail}")
+        print()
+    print("Tutto OK." if not failed else f"{failed} controlli falliti.")
+    return 1 if failed else 0
 
 
 def built_bin(dev: dict) -> Path:
@@ -483,6 +595,9 @@ def main() -> int:
     ap.add_argument("--site", default="casa", help="inventario fleet/<sito>.yaml (default: casa)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("status"); p.add_argument("devices", nargs="*")
+    p = sub.add_parser("check"); p.add_argument("devices", nargs="*")
+    p.add_argument("--active", action="store_true", help="prova anche la sincronizzazione dei mute (ripristina lo stato)")
+    p.add_argument("--core", help="URL di Galileo Core da controllare, es. http://192.168.1.186:8099")
     p = sub.add_parser("build"); p.add_argument("devices", nargs="*")
     p.add_argument("--allow-dirty", action="store_true", help="build di prova con modifiche non committate")
     p = sub.add_parser("rollout"); p.add_argument("devices", nargs="*")
@@ -498,7 +613,7 @@ def main() -> int:
     sub.add_parser("docs")
     args = ap.parse_args()
     fleet = Fleet(args.site)
-    return {"status": cmd_status, "build": cmd_build, "rollout": cmd_rollout, "rollback": cmd_rollback,
+    return {"status": cmd_status, "check": cmd_check, "build": cmd_build, "rollout": cmd_rollout, "rollback": cmd_rollback,
             "release": cmd_release, "new": cmd_new, "docs": cmd_docs}[args.cmd](fleet, args)
 
 
