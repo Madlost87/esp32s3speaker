@@ -105,6 +105,22 @@ Home Assistant ha rimosso da solo i 6 sensori. La prova a mano del tasto
 BOOT (clic per l'ascolto, clic per rispondere e per riagganciare) e' ancora
 da fare.
 
+Chiamate di prova a voce del 19/11/2026 (Sala chiama Taverna, interno 101):
+
+- "chiudi la chiamata" detto alla Taverna ha riagganciato (14:43);
+- "rispondi" non e' andato a buon fine: la cassa Garage, che oggi sta
+  fisicamente in Taverna ma ha l'area Garage, ha sentito la parola di
+  attivazione per prima e ha preso il turno, cosi' il Core ha mandato
+  "rispondi" al Garage, che non squillava (14:45). Il firmware non c'entra.
+
+Da allora (Galileo Core `e4ea967`) "rispondi", "rifiuta" e "chiudi la
+chiamata" passano all'unica altra cassa **della stessa area** di Home
+Assistant che squilla o e' in chiamata; con aree diverse resta tutto come
+prima. Due casse nella stessa stanza devono quindi avere la stessa area.
+Regola completa: `homeassistant/docs/operations/comandi-vocali-stanze.md`.
+Per ora, con Garage e Taverna vicine ma in aree diverse, il tasto della
+cassa che squilla risponde sempre.
+
 Le sessioni dirette devono coincidere con
 `GALILEO_DIRECT_VOICE_SATELLITES_JSON` nel `.env` di Galileo Core sul Raspberry.
 
@@ -115,6 +131,7 @@ Le sessioni dirette devono coincidere con
 | Rubrica e interni | `homeassistant/voip/phonebook.json` |
 | Sorgenti audio dirette | `.env` di Galileo Core (`GALILEO_DIRECT_VOICE_SATELLITES_JSON`) |
 | Aree, dashboard, package | `homeassistant/docs/operations/home-assistant-config.md` |
+| Comandi vocali per stanza e chiamate tra casse vicine | `homeassistant/docs/operations/comandi-vocali-stanze.md` |
 | Centralino VoIP | `homeassistant/docs/operations/voip-centralino.md` |
 
 ## Build installate
